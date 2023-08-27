@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>jQuery Countdown</title>
+<link rel="stylesheet" href="css/jquery.countdown.css">
+<style type="text/css">
+#defaultCountdown { width: 240px; height: 45px; }
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="js/jquery.plugin.min.js"></script>
+<script src="js/jquery.countdown.js"></script>
+<style type="text/css">
+	.is-countdown {
+		background-color: transparent;
+		border: none;
+	}
+	.is-countdown .countdown-row .countdown-section {
+		font-size: 10px;
+	}
+	.is-countdown .countdown-row .countdown-section:first-child {
+		margin-right: -30px;
+	}
+	.is-countdown .countdown-row .countdown-section:last-child {
+		margin-left: -30px;
+	}
+</style>
+<script>
+$(function () {
+	var liftoffTime = 1;
+	$("#defaultCountdown").countdown({
+		until: liftoffTime, format: 'HMS',
+		onExpiry: liftOff,
+	});
+});
+function liftOff() {
+	console.log('its done');
+}
+</script>
+</head>
+<body>
+	<div id="defaultCountdown"></div>
+</body>
+</html>

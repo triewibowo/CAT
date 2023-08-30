@@ -40,12 +40,23 @@
         <div class="widget-bg">
             <div class="widget-body">
                   <div class="row">
+                    <input type="hidden" name="id_type" value="1">
                     <div class="col-lg-3">
-                   <div class="form-group">
+                            <div class="form-group">
                                 <label>Jenis Sub Tes</label>
                                 <select class="form-control" name="id_sub">
                                     <?php foreach ($dataSub as $rsub => $vsub): ?>
                                         <option value="<?= $vsub->id_sub ?>" selected><?= $vsub->sub_name ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Pelajaran</label>
+                                <select class="form-control" name="id_lesson">
+                                    <?php foreach ($dataLesson as $rlesson => $vlesson): ?>
+                                        <option value="<?= $vlesson->id_lesson ?>" selected><?= $vlesson->lesson_name ?></option>
                                     <?php endforeach ?>
                                 </select>
                             </div>

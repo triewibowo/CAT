@@ -94,75 +94,77 @@ class AssignmentCtrl extends MY_Controller {
 	}
 
 	public function create_question() {
-		if ($this->input->post('question_') == '') {
-			$this->message('Ooppsss','Anda belum membuat soal, pastikan anda membuat soal terlebih dahulu','error');
-			redirect('page/create_question/'.$this->input->post('id_assignment'));
-		}
-		$dataQuestion = [
-			'id_lesson' => $this->input->post('id_lesson'),
-			'question_' => $this->input->post('question_'),
-			'question_created' => date('Y-m-d H:i:s')
-		];
-		// IMAGE QUESTION //
-		if ($_FILES['question_image']['name']) {
-			$this->imageConf('assignments/'.$this->input->post('assignment_path')); // Validation image
-            if(!$this->upload->do_upload('question_image')) :
-                $this->message('Oopppsss',$this->upload->display_errors(),'error');
-            	redirect('page/create_question/'.$this->input->post('id_assignment'));
-            else :
-            	$dataUpload = $this->upload->data();
-            	$dataQuestion['question_image'] = str_replace(' ', '_', $dataUpload['file_name']);
-            	// COMPRESS IMAGE //
-            	$resolution = ['width' => 500, 'height' => 500];
-	            $this->compreesImage('assignments/'.$this->input->post('assignment_path'),$dataUpload['file_name'],$resolution);
-            endif;
-		} // IMAGE QUESTION //
-		// SOUND QUESTION //
-		if ($_FILES['question_sound']['name']) {
-			$this->soundConf('assignments/'.$this->input->post('assignment_path')); // Validation image
-            if(!$this->upload->do_upload('question_sound')) :
-                $this->message('Oopppsss',$this->upload->display_errors(),'error');
-            	redirect('page/create_question/'.$this->input->post('id_assignment'));
-            else :
-            	$dataUpload = $this->upload->data();
-            	$dataQuestion['question_sound'] = str_replace(' ', '_', $dataUpload['file_name']);
-            endif;
-		} // SOUND QUESTION //
-		$idQuestion = $this->assignment->insertQuestion($dataQuestion);
-		// FOR OPTION //
-		foreach (json_decode($this->input->post('JSONanswer')) as $row => $value) {
-			$answer = [
-				'id_question' => $idQuestion,
-				'option_' => $this->input->post('option_'.$value->row),
-				'option_created' => date('Y-m-d H:i:s')
-			];
-			if ($value->row == $this->input->post('choosedAnswer')) {
-				$answer['option_true'] = 1;
+		// print_r(json_encode($this->input->post('id_type')));
+		// die();
+		try {
+			$type = $this->input->post('id_type');
+		
+			if ($this->input->post('question_') == '') {
+				print_r(json_encode($type));
+				die();
+				$this->message('Ooppsss','Anda belum membuat soal, pastikan anda membuat soal terlebih dahulu','error');
+				redirect('page/create_question/'.$this->input->post('id_assignment'));
 			}
-			// IMAGE OPTION //
-			if ($_FILES['option_image'.$value->row]['name']) {
+			$dataQuestion = [
+				'id_lesson' => $this->input->post('id_lesson'),
+				'id_sub' 	=> $this->input->post('id_sub'),
+				'id_type' 	=> $type,
+				'question_' => $this->input->post('question_'),
+				'question_level' => $this->input->post('id_level'),
+				'question_created' => date('Y-m-d H:i:s')
+			];
+
+			// IMAGE QUESTION //
+			if (isset($_FILES['question_image']['name']) && $_FILES['question_image']['name']) {
 				$this->imageConf('assignments/'.$this->input->post('assignment_path')); // Validation image
-	            if(!$this->upload->do_upload('option_image'.$value->row)) :
-	                $this->message('Oopppsss','Unggah jawaban nomor '.($value->row + 1).' gagal, detail -> '.$this->upload->display_errors(),'error');
-	            	redirect('page/create_question/'.$this->input->post('id_assignment'));
-	            else :
-	            	$dataUpload = $this->upload->data();
-	            	$answer['option_image'] = str_replace(' ', '_', $dataUpload['file_name']);
-	            	// COMPRESS IMAGE //
-	            	$resolution = ['width' => 500, 'height' => 500];
-		            $this->compreesImage('assignments/'.$this->input->post('assignment_path'),$dataUpload['file_name'],$resolution);
-	            endif;
-			} // END IMAGE OPTION //
-			$this->assignment->insertOption($answer);
+				if(!$this->upload->do_upload('question_image')) :
+					$this->message('Oopppsss',$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$dataQuestion['question_image'] = str_replace(' ', '_', $dataUpload['file_name']);
+					// COMPRESS IMAGE //
+					$resolution = ['width' => 500, 'height' => 500];
+					$this->compreesImage('assignments/'.$this->input->post('assignment_path'),$dataUpload['file_name'],$resolution);
+				endif;
+			} // IMAGE QUESTION //
+			// SOUND QUESTION //
+			if (isset($_FILES['question_sound']['name']) && $_FILES['question_sound']['name']) {
+				$this->soundConf('assignments/'.$this->input->post('assignment_path')); // Validation image
+				if(!$this->upload->do_upload('question_sound')) :
+					$this->message('Oopppsss',$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$dataQuestion['question_sound'] = str_replace(' ', '_', $dataUpload['file_name']);
+				endif;
+			} // SOUND QUESTION //
+			$idQuestion = $this->assignment->insertQuestion($dataQuestion);
+			// FOR OPTION //
+			if ($type == 1) {
+				$this->optionsBenarSalah($this->input->post('answers'), $idQuestion);
+			} else if ( $type == 2) {
+				$answers 			= json_decode($this->input->post('JSONanswer'));
+				$assignment_path 	= $this->input->post('assignment_path');
+				$choosedAnswer 		= $this->input->post('choosedAnswer');
+				foreach ($answers as $row => $value) {
+					$option = $this->input->post('option_'.$value->row);
+					$this->optionsBerganda($value, $idQuestion, $option, $assignment_path, $choosedAnswer);
+				}
+			}
+
+			// INSERT ASSIGNMENT QUESTION //
+			// $assignmentQuestion = [
+			// 	'id_assignment' => $this->input->post('id_assignment'),
+			// 	'id_question' => $idQuestion
+			// ];
+			// $this->assignment->insertAssignmentQuestion($assignmentQuestion);
+			$this->message('Yeeayy!','Soal dan jawaban berhasil disimpan :)','success');
+			redirect('page/create_question/'.$this->input->post('id_assignment'));
+		} catch (\Throwable $th) {
+			$this->message('Error', 'Terjadi kesalahan: ' . $e->getMessage(), 'error');
+        	redirect('page/create_question/'.$this->input->post('id_assignment'));	
 		}
-		// INSERT ASSIGNMENT QUESTION //
-		$assignmentQuestion = [
-			'id_assignment' => $this->input->post('id_assignment'),
-			'id_question' => $idQuestion
-		];
-		$this->assignment->insertAssignmentQuestion($assignmentQuestion);
-		$this->message('Yeeayy!','Soal dan jawaban berhasil disimpan :)','success');
-		redirect('page/create_question/'.$this->input->post('id_assignment'));
 	}
 	public function updateQuestion() {
 		if ($this->input->post('question_') == '') {
@@ -235,6 +237,67 @@ class AssignmentCtrl extends MY_Controller {
 		}
 		$this->message('Yeeayy!','Soal dan jawaban berhasil diubah :)','success');
 		redirect('page/update_question/'.$this->input->post('id_assignment').'/'.$this->input->post('id_question'));
+	}
+
+	public function optionsBenarSalah($answer, $idQuestion){
+		$data = [
+			'id_question'    => $idQuestion,
+			'option_'        => ($answer == true) ? 'Benar' : 'Salah',
+			'option_true'    => ($answer == true) ? 1 : 0,
+			'option_created' => date('Y-m-d H:i:s')
+		];
+	
+		try {
+			$insertResult = $this->assignment->insertOption($data);
+	
+			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+	}
+
+	public function optionsBerganda($value, $idQuestion, $option, $assignment_path, $choosedAnswer){
+
+		$answer = [
+			'id_question'		=> $idQuestion,
+			'option_'			=> $option,
+			'option_created' 	=> date('Y-m-d H:i:s')
+		];
+
+		if ($value->row == $choosedAnswer) {
+			$answer['option_true'] = 1;
+		}
+
+		try {
+			// IMAGE OPTION //
+			if (isset($_FILES['option_image'.$value->row]['name']) && $_FILES['option_image'.$value->row]['name']) {
+				$this->imageConf('assignments/'.$assignment_path); // Validation image
+				if(!$this->upload->do_upload('option_image'.$value->row)) :
+					$this->message('Oopppsss','Unggah jawaban nomor '.($value->row + 1).' gagal, detail -> '.$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$answer['option_image'] = str_replace(' ', '_', $dataUpload['file_name']);
+					// COMPRESS IMAGE //
+					$resolution = ['width' => 500, 'height' => 500];
+					$this->compreesImage('assignments/'.$assignment_path,$dataUpload['file_name'],$resolution);
+				endif;
+			} // END IMAGE OPTION //
+			$insertResult = $this->assignment->insertOption($answer);
+
+			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+		
 	}
 
 	public function removeQuestion($id_question = NULL, $id_assignment = NULL) {

@@ -57,6 +57,21 @@ class MasterModel extends CI_Model {
 	}
 	// END //
 
+	// SUBTEST CATEGORIES //
+	public function getAllSubtestCat() {
+		$this->db->where('cat_hide', 0);
+		$this->db->order_by('cat_name', 'asc');
+		return $this->db->get('ms_subtest_categories')->result_object();
+	}
+	public function insertSubtestCat($data) {
+		return $this->db->insert('ms_subtest_categories', $data);
+	}
+	public function updateSubtestCat($data) {
+		$this->db->where('id_cat', $data['id_cat']);
+		return $this->db->update('ms_subtest_categories', $data);
+	}
+	// END //
+
 	// CLASS //
 	public function getAllClass() {
 		$this->db->where('class_hide', 0);
@@ -85,19 +100,19 @@ class MasterModel extends CI_Model {
 		// Loop through subtest
 		foreach ($subtests as &$subtest) {
 			$this->db->where('id_sub', $subtest->id_sub);
-			$lessons = $this->db->get('lesson_subtests')->result_object();
+			$categories = $this->db->get('category_subtests')->result_object();
 
-			foreach ($lessons as &$lesson_class) {
-				if (!empty($lesson_class->id_lesson)) {
-					$this->db->where('id_lesson', $lesson_class->id_lesson);
-					$lesson = $this->db->get('ms_lesson')->row();
-					if ($lesson) {
-						$lesson_class->lesson_name = $lesson->lesson_name;
+			foreach ($categories as &$subtest_category) {
+				if (!empty($subtest_category->id_cat)) {
+					$this->db->where('id_cat', $subtest_category->id_cat);
+					$category = $this->db->get('ms_subtest_categories')->row();
+					if ($category) {
+						$subtest_category->cat_name = $category->cat_name;
 					}
 				}
 			}
 
-			$subtest->lessons = $lessons;
+			$subtest->categories = $categories;
 		}
 
     	return $subtests;
@@ -120,26 +135,26 @@ class MasterModel extends CI_Model {
 	}
 	// END //
 
-	// LESSON SUBTEST //
-	public function getAllLessonSubtest() {
+	// CATEGORY SUBTEST //
+	public function getAllCategorySubtest() {
 		$this->db->where('val_hide', 0);
 		$this->db->order_by('id_asubtest', 'asc');
-		return $this->db->get('lesson_subtests')->result_object();
+		return $this->db->get('category_subtests')->result_object();
 	}
-	public function getLessonSubtestById($id_subtest) {
-		$this->db->where('id_asubtest', $id_subtest);
-		return $this->db->get('lesson_subtests')->row_object();
+	public function getCategorySubtestById($id_subtest) {
+		$this->db->where('id_asub', $id_subtest);
+		return $this->db->get('category_subtests')->row_object();
 	}
-	public function insertLessonSubtest($data) {
-		return $this->db->insert('lesson_subtests', $data);
+	public function insertCategorySubtest($data) {
+		return $this->db->insert('category_subtests', $data);
 	}
-	public function updateLessonSubtest($data) {
-		$this->db->where('id_asubtest', $data['id_asubtest']);
-		return $this->db->update('lesson_subtests', $data);
+	public function updateCategorySubtest($data) {
+		$this->db->where('id_asub', $data['id_asubtest']);
+		return $this->db->update('category_subtests', $data);
 	}
-	public function deleteLessonSubtest($id_sub) {
+	public function deleteCategorySubtest($id_sub) {
 		$this->db->where('id_sub', $id_sub);
-		return $this->db->delete('lesson_subtests');
+		return $this->db->delete('category_subtests');
 	}
 	// END //
 

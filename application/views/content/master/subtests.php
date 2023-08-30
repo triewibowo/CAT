@@ -67,10 +67,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Jenis Sub Tes</label>
-                                                <select class="form-control select2" name="lessons[]" multiple="multiple" style="height: 15%" required>
-                                                    <?php foreach ($dataLesson as $lesson): ?>
-                                                        <option value="<?= $lesson->id_lesson ?>" <?= in_array($lesson->id_lesson, array_column($value->lessons, 'id_lesson')) ? 'selected' : '' ?>>
-                                                            <?= $lesson->lesson_name ?>
+                                                <select class="form-control select2" name="categories[]" multiple="multiple" style="height: 15%" required>
+                                                    <?php foreach ($dataCategory as $category): ?>
+                                                        <option value="<?= $category->id_cat ?>" <?= in_array($category->id_cat, array_column($value->categories, 'id_cat')) ? 'selected' : '' ?>>
+                                                            <?= $category->cat_name ?>
                                                         </option>
                                                     <?php endforeach ?>
                                                 </select>
@@ -109,9 +109,9 @@
                     </div>
                     <div class="form-group">
                         <label>Jenis Sub Tes</label>
-                        <select class="form-control select2" name="lessons[]" multiple="multiple"  style="height: 15%" required>
-                            <?php foreach ($dataLesson as $rles => $vles): ?>
-                                <option value="<?= $vles->id_lesson ?>"><?= $vles->lesson_name ?></option>
+                        <select class="form-control select2" name="categories[]" multiple="multiple"  style="height: 15%" required>
+                            <?php foreach ($dataCategory as $rles => $vles): ?>
+                                <option value="<?= $vles->id_cat ?>"><?= $vles->cat_name ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>

@@ -93,8 +93,26 @@ class AssignmentModel extends CI_Model {
 	public function getAllQuestion() {
 		$this->db->where('ms_question.question_hide', 0);
 		$this->db->order_by('ms_question.id_question', 'desc');
-		$this->db->join('ms_question_subtest', 'ms_question.id_sub = ms_question_subtest.id_sub', 'left');
-		return $this->db->get('ms_question')->result_object();
+		// $this->db->join('ms_question_subtest', 'ms_question.id_sub = ms_question_subtest.id_sub', 'left');
+		// return $this->db->get('ms_question')->result_object();
+		$questions = $this->db->get('ms_question')->result_object();
+
+		// Loop through subtest
+		foreach ($questions as &$question) {
+			$this->db->where('id_lesson', $question->id_lesson);
+			$lesson = $this->db->get('ms_lesson')->row();
+
+			$this->db->where('id_sub', $question->id_sub);
+			$subtest = $this->db->get('ms_question_subtest')->row();
+
+			$this->db->where('id_type', $question->id_type);
+			$type = $this->db->get('ms_question_type')->row();
+
+			$question->lesson = $lesson;
+			$question->subtest = $subtest;
+			$question->type = $type;
+		}
+    	return $questions;
 	}
 	public function getAnswerByQuestion($id_question) {
 		$this->db->where('id_question', $id_question);

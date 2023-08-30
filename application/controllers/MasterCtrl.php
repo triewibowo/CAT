@@ -72,6 +72,28 @@ class MasterCtrl extends MY_Controller {
 		redirect('page/lessons');
 	}
 
+	public function categories($id_cat = NULL) {
+		if ($this->input->post()) {
+			$data = $this->input->post();
+			if ($this->input->post('id_cat')) {
+				$this->master->updateSubtestCat($data);
+				$this->message('Selamat!','Data kategori berhasil diubah','success');
+			} else {
+				$data['cat_created'] = date('Y-m-d');
+				$this->master->insertSubtestCat($data);
+				$this->message('Selamat!','Data kategori berhasil ditambahkan','success');
+			}
+		} elseif($id_cat) {
+			$data = [
+				'id_cat' => $id_cat,
+				'cat_hide' => 1
+			];
+			$this->master->updateSubtestCat($data);
+			$this->message('Selamat!','Data kategori berhasil dihapus','success');
+		}
+		redirect('page/categories');
+	}
+
 	public function classes($id_class = NULL) {
 		if ($this->input->post()) {
 			$data = $this->input->post();
@@ -112,18 +134,18 @@ class MasterCtrl extends MY_Controller {
 						$this->master->updateSubtest($data_subtest);
 
 						// Delete dulu semua relasi yang mempunyai id_sub ini di leeson_classes
-						$delete = $this->master->deleteLessonSubtest($data['id_sub']);
+						$delete = $this->master->deleteCategorySubtest($data['id_sub']);
 				
 						if ($delete) {
-							foreach ($data['lessons'] as $key => $value) {
+							foreach ($data['categories'] as $key => $value) {
 								// Menyiapkan data untuk menghubungkan kelas dengan pelajaran
 								$data_lesson_class = [
-									'id_lesson' => (int) $value,
+									'id_cat' => (int) $value,
 									'id_sub'  => $data['id_sub'],
 								];
 								
 								// Menyimpan hubungan antara kelas dan pelajaran
-								$this->master->insertLessonSubtest($data_lesson_class);
+								$this->master->insertCategorySubtest($data_lesson_class);
 							}
 					
 							$this->message('Selamat!', 'Data kelas berhasil diubah', 'success');
@@ -154,15 +176,15 @@ class MasterCtrl extends MY_Controller {
 					// Menyimpan data kelas baru ke dalam database
 					$response = $this->master->insertSubtest($data_sub);
 				
-					foreach ($data['lessons'] as $key => $value) {
+					foreach ($data['categories'] as $key => $value) {
 						// Menyiapkan data untuk menghubungkan kelas dengan pelajaran
 						$data_lesson_subtest = [
-							'id_lesson' => (int) $value,
-							'id_sub'  => $response,
+							'id_cat' => (int) $value,
+							'id_sub'  => (int) $response,
 						];
 						
 						// Menyimpan hubungan antara kelas dan pelajaran
-						$this->master->insertLessonSubtest($data_lesson_subtest);
+						$this->master->insertCategorySubtest($data_lesson_subtest);
 					}
 				
 					$this->message('Selamat!', 'Data kelas berhasil ditambahkan', 'success');

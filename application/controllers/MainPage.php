@@ -62,6 +62,12 @@ class MainPage extends MY_Controller {
 		$this->parseData['title'] = 'Data Pelajaran ';
 		$this->load->view('MainView',$this->parseData);
 	}
+	public function categories() {
+		$this->parseData['dataCategories'] = $this->master->getAllSubtestCat();
+		$this->parseData['content'] = 'content/master/categories';
+		$this->parseData['title'] = 'Data Kategori ';
+		$this->load->view('MainView',$this->parseData);
+	}
 	public function classes() {
 		$this->parseData['dataClasses'] = $this->master->getAllClass();
 		$this->parseData['content'] = 'content/master/classes';
@@ -70,7 +76,7 @@ class MainPage extends MY_Controller {
 	}
 	public function subtests() {
 		$this->parseData['dataSubtest'] = $this->master->getAllSubtest();
-		$this->parseData['dataLesson'] = $this->master->getAllLesson();
+		$this->parseData['dataCategory'] = $this->master->getAllSubtestCat();
 		$this->parseData['content'] = 'content/master/subtests';
 		$this->parseData['title'] = 'Data Subtes ';
 		$this->load->view('MainView',$this->parseData);
@@ -327,6 +333,7 @@ class MainPage extends MY_Controller {
 
 	public function create_question_var($id_type = NULL) {
 		$dataSub = $this->master->getAllSub();
+		$dataLesson = $this->master->getAllLesson();
 		$dataLevel = $this->master->getAllLevel();
 		if ($id_type==1) {
 			
@@ -347,6 +354,7 @@ class MainPage extends MY_Controller {
 			$this->parseData['content'] = 'content/assignment/create_question_5';
 		}
 		$this->parseData['dataSub'] = $dataSub;
+		$this->parseData['dataLesson'] = $dataLesson;
 		$this->parseData['dataLevel'] = $dataLevel;
 		$this->parseData['title'] = 'Buat Soal ';
 		$this->load->view('MainView',$this->parseData);

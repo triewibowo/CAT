@@ -24,7 +24,8 @@
                 <ul class="list-unstyled sub-menu">
                     
                         <li><a href="<?= site_url('page/users') ?>">Pengguna</a></li>
-                        <li><a href="<?= site_url('page/lessons') ?>">Kategori</a></li>
+                        <li><a href="<?= site_url('page/lessons') ?>">Pelajaran</a></li>
+                        <li><a href="<?= site_url('page/categories') ?>">Kategori</a></li>
                         <li><a href="<?= site_url('page/subtests') ?>">Sub Tes</a></li>
                         <li><a href="<?= site_url('page/classes') ?>">Kelas</a></li>
                         <li><a href="<?= site_url('page/teachers') ?>">Pengajar</a></li>

@@ -24,8 +24,9 @@
                         <th style="width:5%">#</th>
                         <th style="width:10%">Pelajaran</th>
                         <th>Pertanyaan</th>
-                        <th style="width:10%">Total</th>
-                        <th style="width:20%">Dibuat</th>
+                        <th style="width:15%">Subtes</th>
+                        <th style="width:10%">Jenis</th>
+                        <th style="width:10%">Dibuat</th>
                         <th style="width:10%">Aksi</th>
                     </tr>
                 </thead>
@@ -33,12 +34,13 @@
                     <?php foreach ($dataQuestion as $row => $value): ?>
                         <tr>
                             <td><?= $row + 1 ?></td>
-                            <td><?= $value->lesson_name ?></td>
+                            <td><?= ($value->lesson) ? $value->lesson->lesson_name : '' ?></td>
                             <td><?= $value->question_ ?></td>
-                            <td><?= $value->totalAnswer ?> jawaban</td>
-                            <td><?= $value->question_created ?></td>
+                            <td><?= ($value->subtest) ? $value->subtest->sub_name : '' ?></td>
+                            <td><?= ($value->type) ? $value->type->type_name : '' ?></td>
+                            <td><?= date('d-M-Y', strtotime($value->question_created)) ?></td>
                             <td>
-                                <a title="Detail Soal" href="<?= site_url('page/detail_question/'.$value->id_assignment.'/'.$value->id_question.'/true') ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a>
+                                <!-- <a title="Detail Soal" href="<?= site_url('page/detail_question/'.$value->id_assignment.'/'.$value->id_question.'/true') ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a> -->
                             </td>
                         </tr>
                     <?php endforeach ?>

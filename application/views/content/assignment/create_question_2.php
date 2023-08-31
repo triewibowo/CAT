@@ -170,7 +170,7 @@
                     }
                 </style>
                 <input type="hidden" id="totalAnswer" name="totalAnswer" value="0">
-                <input type="hidden" id="choosedAnswer" name="choosedAnswer" value="0">
+                <input type="hidden" id="choosedAnswer" name="choosedAnswer[]" value="0">
                 <input type="hidden" id="JSONanswer" name="JSONanswer">
                 <script type="text/javascript">
                     var JSONanswer = [];

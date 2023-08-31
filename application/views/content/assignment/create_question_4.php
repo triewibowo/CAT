@@ -42,12 +42,23 @@
         <div class="widget-bg">
             <div class="widget-body">
             <div class="row">
+            <input type="hidden" name="id_type" value="4">
                     <div class="col-lg-3">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
                                 <select class="form-control" name="id_sub">
                                     <?php foreach ($dataSub as $rsub => $vsub): ?>
                                         <option value="<?= $vsub->id_sub ?>" selected><?= $vsub->sub_name ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Pelajaran</label>
+                                <select class="form-control" name="id_lesson">
+                                    <?php foreach ($dataLesson as $rlesson => $vlesson): ?>
+                                        <option value="<?= $vlesson->id_lesson ?>" selected><?= $vlesson->lesson_name ?></option>
                                     <?php endforeach ?>
                                 </select>
                             </div>
@@ -159,7 +170,7 @@
                     }
                 </style>
                 <input type="hidden" id="totalAnswer" name="totalAnswer" value="0">
-                <input type="hidden" id="choosedAnswer" name="choosedAnswer" value="0">
+                <input type="hidden" id="choosedAnswer" name="choosedAnswer[]" value="0">
                 <input type="hidden" id="JSONanswer" name="JSONanswer">
                 <script type="text/javascript">
                     var JSONanswer = [];
@@ -291,12 +302,30 @@
                     <!-- FOR APPEND ANSWER -->
                 </div>
                 <script type="text/javascript">
+                    var choosedAnswerArray = [];
+
                     function chooseAnswer(count) {
-                        $.each($(".chooseAnswer"),function(i,v){
-                            $(this).removeClass('active');
+                        $.each($(".chooseAnswer"), function(i, v) {
+                            if ("chooseAnswer" + count == $(v).attr("id")) {
+                            if ($(this).hasClass("active")) {
+                                console.log($(v).attr("id"));
+                                $(this).removeClass("active");
+                            } else {
+                                $("#chooseAnswer" + count).addClass("active");
+                            }
+                            }
                         });
-                        $("#chooseAnswer"+count).addClass('active');
-                        $("#choosedAnswer").val(count);
+
+                        var number = parseInt(count);
+
+                        if (choosedAnswerArray.includes(number)) {
+                            choosedAnswerArray.splice(choosedAnswerArray.indexOf(number), 1);
+                        } else {
+                            choosedAnswerArray.push(number);
+                        }
+
+                        console.log(choosedAnswerArray);
+                        $("#choosedAnswer").val(choosedAnswerArray);
                     }
                     function removeAnswer(row) {
                         var sure = confirm('Anda yakin ingin menghapus jawaban ini ?');

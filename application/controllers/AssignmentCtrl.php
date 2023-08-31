@@ -94,7 +94,8 @@ class AssignmentCtrl extends MY_Controller {
 	}
 
 	public function create_question() {
-		// print_r(json_encode($this->input->post('id_type')));
+		// print_r(json_encode($this->input->post('choosedAnswer')[0]));
+		// print_r(json_encode(in_array(1,$this->input->post('choosedAnswer'))));
 		// die();
 		try {
 			$type = $this->input->post('id_type');
@@ -143,10 +144,11 @@ class AssignmentCtrl extends MY_Controller {
 			// FOR OPTION //
 			if ($type == 1) {
 				$this->optionsBenarSalah($this->input->post('answers'), $idQuestion);
-			} else if ( $type == 2) {
+			} else if ( $type == 2 || $type == 4) {
 				$answers 			= json_decode($this->input->post('JSONanswer'));
 				$assignment_path 	= $this->input->post('assignment_path');
 				$choosedAnswer 		= $this->input->post('choosedAnswer');
+				$choosedAnswer 		= explode(",", $choosedAnswer[0]);
 				foreach ($answers as $row => $value) {
 					$option = $this->input->post('option_'.$value->row);
 					$this->optionsBerganda($value, $idQuestion, $option, $assignment_path, $choosedAnswer);
@@ -268,7 +270,7 @@ class AssignmentCtrl extends MY_Controller {
 			'option_created' 	=> date('Y-m-d H:i:s')
 		];
 
-		if ($value->row == $choosedAnswer) {
+		if (in_array($value->row, $choosedAnswer)) {
 			$answer['option_true'] = 1;
 		}
 

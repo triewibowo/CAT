@@ -40,6 +40,7 @@
         <div class="widget-bg">
             <div class="widget-body">
                   <div class="row">
+                  <input type="hidden" name="id_type" value="3">
                     <div class="col-lg-3">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
@@ -50,14 +51,30 @@
                                 </select>
                             </div>
                         </div>
-                          <div class="col-lg-3">
-                   <div class="form-group">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Pelajaran</label>
+                                <select class="form-control" name="id_lesson">
+                                    <?php foreach ($dataLesson as $rlesson => $vlesson): ?>
+                                        <option value="<?= $vlesson->id_lesson ?>" selected><?= $vlesson->lesson_name ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
                                 <label>Level Soal</label>
                                 <select class="form-control" name="id_level">
                                     <?php foreach ($dataLevel as $rlevel => $vlevel): ?>
                                         <option value="<?= $vlevel->level_value ?>" selected><?= $vlevel->level_name ?></option>
                                     <?php endforeach ?>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Timer</label>
+                                <input type="number" class="form-control" name="timer" placeholder="Format detik" required>
                             </div>
                         </div>
                     </div>
@@ -111,9 +128,9 @@
                 </div><!-- / Row -->
                <div class="row">
     <div class="col-lg-4">
-    <div class="form-group">
-                                        <input type="text" class="form-control" name="assignment_type" required >
-                                    </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="answer" required >
+        </div>
     </div>
 </div><!-- / Row -->
 <!-- MODAL SAVE -->

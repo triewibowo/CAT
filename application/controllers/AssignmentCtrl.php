@@ -94,8 +94,7 @@ class AssignmentCtrl extends MY_Controller {
 	}
 
 	public function create_question() {
-		// print_r(json_encode($this->input->post('choosedAnswer')[0]));
-		// print_r(json_encode(in_array(1,$this->input->post('choosedAnswer'))));
+		// print_r(json_encode($this->input->post()));
 		// die();
 		try {
 			$type = $this->input->post('id_type');
@@ -111,6 +110,7 @@ class AssignmentCtrl extends MY_Controller {
 				'id_sub' 	=> $this->input->post('id_sub'),
 				'id_type' 	=> $type,
 				'question_' => $this->input->post('question_'),
+				'timer' 	=> $this->input->post('timer'),
 				'question_level' => $this->input->post('id_level'),
 				'question_created' => date('Y-m-d H:i:s')
 			];
@@ -153,6 +153,16 @@ class AssignmentCtrl extends MY_Controller {
 					$option = $this->input->post('option_'.$value->row);
 					$this->optionsBerganda($value, $idQuestion, $option, $assignment_path, $choosedAnswer);
 				}
+			}else if ( $type == 3){
+				$this->answerIsianSingkat($this->input->post('answer'), $idQuestion);
+			}else if ($type == 5){
+				$answers 			= json_decode($this->input->post('JSONanswer'));
+				$assignment_path 	= $this->input->post('assignment_path');
+				foreach ($answers as $row => $value) {
+					$option = $this->input->post('option_'.$value->row);
+					$answer = $this->input->post('answer_'.$value->row);
+					$this->optionsMatch($value, $idQuestion, $option, $assignment_path, $answer);
+				}
 			}
 
 			// INSERT ASSIGNMENT QUESTION //
@@ -162,10 +172,10 @@ class AssignmentCtrl extends MY_Controller {
 			// ];
 			// $this->assignment->insertAssignmentQuestion($assignmentQuestion);
 			$this->message('Yeeayy!','Soal dan jawaban berhasil disimpan :)','success');
-			redirect('page/create_question/'.$this->input->post('id_assignment'));
+			redirect('page/bank/'.$this->input->post('id_assignment'));
 		} catch (\Throwable $th) {
 			$this->message('Error', 'Terjadi kesalahan: ' . $e->getMessage(), 'error');
-        	redirect('page/create_question/'.$this->input->post('id_assignment'));	
+        	redirect('page/bank/'.$this->input->post('id_assignment'));	
 		}
 	}
 	public function updateQuestion() {
@@ -262,6 +272,26 @@ class AssignmentCtrl extends MY_Controller {
 		}
 	}
 
+	public function answerIsianSingkat($answer, $idQuestion){
+		$data = [
+			'id_question'    => $idQuestion,
+			'answer'        => $answer,
+			'option_created' => date('Y-m-d H:i:s')
+		];
+	
+		try {
+			$insertResult = $this->assignment->insertAnswer($data);
+	
+			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+	}
+
 	public function optionsBerganda($value, $idQuestion, $option, $assignment_path, $choosedAnswer){
 
 		$answer = [
@@ -292,6 +322,56 @@ class AssignmentCtrl extends MY_Controller {
 			$insertResult = $this->assignment->insertOption($answer);
 
 			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+		
+	}
+
+	public function optionsMatch($value, $idQuestion, $option, $assignment_path, $answerMatch){
+
+		$answer = [
+			'id_question'		=> $idQuestion,
+			'option_'			=> $option,
+			'option_created' 	=> date('Y-m-d H:i:s')
+		];
+
+		try {
+			// IMAGE OPTION //
+			if (isset($_FILES['option_image'.$value->row]['name']) && $_FILES['option_image'.$value->row]['name']) {
+				$this->imageConf('assignments/'.$assignment_path); // Validation image
+				if(!$this->upload->do_upload('option_image'.$value->row)) :
+					$this->message('Oopppsss','Unggah jawaban nomor '.($value->row + 1).' gagal, detail -> '.$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$answer['option_image'] = str_replace(' ', '_', $dataUpload['file_name']);
+					// COMPRESS IMAGE //
+					$resolution = ['width' => 500, 'height' => 500];
+					$this->compreesImage('assignments/'.$assignment_path,$dataUpload['file_name'],$resolution);
+				endif;
+			} // END IMAGE OPTION //
+			$insertResult = $this->assignment->insertMatch($answer);
+
+			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+			
+			$match = [
+				'id_match'			=> $insertResult,
+				'answer_'			=> $answerMatch,
+				'option_true'		=> 1,
+				'option_created' 	=> date('Y-m-d H:i:s')
+			];
+
+			$insertMatchResult = $this->assignment->insertMatchAnswer($match);
+
+
+			if ($insertMatchResult === false) {
 				return false; // Jika insert gagal, fungsi akan mengembalikan false
 			}
 	
@@ -408,7 +488,9 @@ class AssignmentCtrl extends MY_Controller {
 					$dataRow = [
 						'question_' 		=> $row['B'],
 						'id_sub'			=> (int) $this->master->getSubtestName($row['C'])->id_sub,
-						'question_level' 	=> (int) $row['D'],
+						'id_lesson'			=> (int) $this->master->getLessontName($row['D'])->id_lesson,
+						'question_level' 	=> (int) $row['F'],
+						'timer' 			=> (int) $row['E'],
 						'id_type' 			=> (int) $data[8]['A'],
 						'question_created' 	=> date('Y-m-d'),
 					];
@@ -417,20 +499,55 @@ class AssignmentCtrl extends MY_Controller {
 					$questionId = $this->assignment->insertQuestion($dataRow);
 	
 					for ($i = 0; $i < count($keys); $i += 2) {
-						if (!in_array($keys[$i], ['A', 'B', 'C', 'D'])) {
+						if (!in_array($keys[$i], ['A', 'B', 'C', 'D', 'E', 'F'])) {
 							$answer = $row[$keys[$i]];
 							$is_correct = $row[$keys[$i + 1]];
 					
 							if ($answer !== null && $is_correct !== null) {
-								$pair = [
-									'id_question' 		=> $questionId,
-									'option_' 			=> $answer,
-									'option_true' 		=> $is_correct,
-									'option_created' 	=> date('Y-m-d'),
-								];
+								if ((int) $data[8]['A'] == 1) {
+									$pair = [
+										'id_question' 		=> $questionId,
+										'option_' 			=> $answer,
+										'option_true' 		=> $is_correct,
+										'option_created' 	=> date('Y-m-d'),
+									];
+									// Insert pilihan jawaban ke dalam database
+									$this->assignment->insertOption($pair);
+								} else if ((int) $data[8]['A'] == 2 || (int) $data[8]['A'] == 4) {
+									$pair = [
+										'id_question' 		=> $questionId,
+										'option_' 			=> $answer,
+										'option_true' 		=> $is_correct,
+										'option_created' 	=> date('Y-m-d'),
+									];
+									// Insert pilihan jawaban ke dalam database
+									$this->assignment->insertOption($pair);
+								} else if ((int) $data[8]['A'] == 3) {
+									$pair = [
+										'id_question' 		=> $questionId,
+										'answer' 			=> $answer,
+										'option_created' 	=> date('Y-m-d'),
+									];
+									// Insert pilihan jawaban ke dalam database
+									$this->assignment->insertAnswer($pair);
+								} else if ((int) $data[8]['A'] == 5) {
+									$pair = [
+										'id_question' 		=> $questionId,
+										'option_' 			=> $answer,
+										'option_created' 	=> date('Y-m-d'),
+									];
+									// Insert pilihan jawaban ke dalam database
+									$insertResult = $this->assignment->insertMatch($pair);
+
+									$match = [
+										'id_match' 			=> $insertResult,
+										'answer_' 			=> $is_correct,
+										'option_created' 	=> date('Y-m-d'),
+									];
+
+									$this->assignment->insertMatchAnswer($match);
+								} 
 	
-								// Insert pilihan jawaban ke dalam database
-								$this->assignment->insertOption($pair);
 							}
 						}
 					}				

@@ -48,6 +48,10 @@ class MasterModel extends CI_Model {
 		$this->db->order_by('lesson_name', 'asc');
 		return $this->db->get('ms_lesson')->result_object();
 	}
+	public function getLessontName($lesson_name) {
+		$this->db->where('lesson_name', $lesson_name);
+		return $this->db->get('ms_lesson')->row_object();
+	}
 	public function insertLesson($data) {
 		return $this->db->insert('ms_lesson', $data);
 	}

@@ -63,14 +63,20 @@
                                 </select>
                             </div>
                         </div>
-                          <div class="col-lg-3">
-                   <div class="form-group">
+                        <div class="col-lg-3">
+                            <div class="form-group">
                                 <label>Level Soal</label>
                                 <select class="form-control" name="id_level">
                                     <?php foreach ($dataLevel as $rlevel => $vlevel): ?>
                                         <option value="<?= $vlevel->level_value ?>" selected><?= $vlevel->level_name ?></option>
                                     <?php endforeach ?>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Timer</label>
+                                <input type="number" class="form-control" name="timer" placeholder="Format detik" required>
                             </div>
                         </div>
                     </div>

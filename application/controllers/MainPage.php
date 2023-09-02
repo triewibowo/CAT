@@ -739,11 +739,11 @@ class MainPage extends MY_Controller {
 				$spreadsheet = IOFactory::load('assets/temp_xls/' . $path_name);
 				break;
 			case '3':
-				$path_name = 'rules_question_majemuk.xls';
+				$path_name = 'rules_question_isian_singkat.xls';
 				$spreadsheet = IOFactory::load('assets/temp_xls/' . $path_name);
 				break;
 			case '4':
-				$path_name = 'rules_question_isian_singkat.xls';
+				$path_name = 'rules_question_majemuk.xls';
 				$spreadsheet = IOFactory::load('assets/temp_xls/' . $path_name);
 				break;
 			case '5':
@@ -760,10 +760,16 @@ class MainPage extends MY_Controller {
 
 		// Set up the list of options for the dropdown
 		$options = [];
+		$lesson_options = [];
 		$subtests = $this->master->getAllSubtest();
+		$lessons = $this->master->getAllLesson();
 
 		foreach ($subtests as $subtest) {
 			array_push($options, $subtest->sub_name); // Ganti "nama_field" dengan nama field yang sesuai
+		}
+
+		foreach ($lessons as $lesson) {
+			array_push($lesson_options, $lesson->lesson_name); // Ganti "nama_field" dengan nama field yang sesuai
 		}
 
 		// Set data validation to create dropdown
@@ -772,6 +778,13 @@ class MainPage extends MY_Controller {
 			->setErrorStyle(DataValidation::STYLE_INFORMATION) // Use DataValidation::STYLE_INFORMATION
 			->setShowDropDown(true)
 			->setFormula1('"' . implode(',', $options) . '"'); // Comma-separated list
+
+		// Set data validation to create dropdown
+		$validation = $worksheet->getCell('D13')->getDataValidation();
+		$validation->setType(DataValidation::TYPE_LIST) // Use DataValidation::TYPE_LIST
+			->setErrorStyle(DataValidation::STYLE_INFORMATION) // Use DataValidation::STYLE_INFORMATION
+			->setShowDropDown(true)
+			->setFormula1('"' . implode(',', $lesson_options) . '"'); // Comma-separated list
 
 		// Save the edited spreadsheet
 		$writer = IOFactory::createWriter($spreadsheet, 'Xls');

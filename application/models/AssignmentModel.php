@@ -47,6 +47,18 @@ class AssignmentModel extends CI_Model {
 	public function insertOption($data) {
 		return $this->db->insert('question_option', $data);
 	}
+	public function insertMatch($data) {
+		$this->db->insert('question_match', $data);
+		return $this->db->insert_id();
+	}
+	public function insertAnswer($data) {
+		return $this->db->insert('question_answer', $data);
+		
+	}
+	public function insertMatchAnswer($data) {
+		return $this->db->insert('question_match_answer', $data);
+		
+	}
 	public function CheckAssignmentQuestionByAssignmentAndQuestion($id_assignment,$id_question) {
 		$this->db->where('id_assignment', $id_question);
 		return $this->db->get('assignment_question')->row_object();

@@ -42,7 +42,7 @@
         <div class="widget-bg">
             <div class="widget-body">
             <div class="row">
-            <input type="hidden" name="id_type" value="4">
+            <input type="hidden" name="id_type" value="5">
                     <div class="col-lg-3">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
@@ -116,12 +116,12 @@
                     <textarea data-toggle="tinymce" name="question_" data-plugin-options='{ "height": 300 }'></textarea>
                     <br />
                     <div class="row">
-                        <div class="col-sm-2">
+                        <!-- <div class="col-sm-2">
                             <a href="#imageQuestion" data-toggle="modal" class="btn btn-outline-primary btn-block btn-sm"><i class="feather feather-image"></i> Unggah Gambar</a>
                         </div>
                         <div class="col-sm-2">
                             <a href="#soundQuestion" data-toggle="modal" class="btn btn-outline-success btn-block btn-sm"><i class="feather feather-music"></i> Unggah Suara</a>
-                        </div>
+                        </div> -->
                     </div><!-- / Row -->
                 </div><!-- / Question_ -->
                 <!-- END QUESTION -->
@@ -159,14 +159,13 @@
                 <style type="text/css">
                     .chooseAnswer {
                         width: 100%;
-                        height: 150px;
+                        height: 40px;
                         background-color: #737373;
                         cursor: pointer;
                         border-radius: 4px;
                         color: white;
-                        font-size: 35px;
+                        font-size: 24px;
                         text-align: center;
-                        padding-top: 40px;
                     }
                     .chooseAnswer.active {
                         background-color: #32B61C;
@@ -209,11 +208,14 @@
                         </script>
                         <div class="row" id="rowAnswer">
                             <div class="col-sm-1">
-                                <div id="chooseAnswer<?= $i ?>" class="chooseAnswer" onclick="chooseAnswer('<?= $i ?>')"><?php include "numberToChar.php"; ?></div>
+                                <div id="chooseAnswer<?= $i ?>" class="chooseAnswer"><?php include "numberToChar.php"; ?></div>
                             </div>
                             <div class="col-sm-11">
-                                <textarea class="form-control" style="height:150px" name="option_<?= $i ?>" data-toggle="tinymce"></textarea>
-                                <a style="margin-top:10px" href="#answerImage<?= $i ?>" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>
+                                <div class="row">
+                                    <input class="form-control col mr-3" name="option_<?= $i ?>" placeholder="Opsi"></input>
+                                    <input class="form-control col" name="answer_<?= $i ?>" placeholder="Match"></input>
+                                </div>
+                                <!-- <a style="margin-top:10px" href="#answerImage<?= $i ?>" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a> -->
                             </div>
                         </div><!-- / Row -->
                         <br />
@@ -253,12 +255,15 @@
                             var alph = alphabet(totalAnswer);
                             _html += '<div class="row" id="rowAnswer'+totalAnswer+'">';
                                 _html += '<div class="col-sm-1">';
-                                    _html += '<div id="chooseAnswer'+totalAnswer+'" class="chooseAnswer" onclick="chooseAnswer(\'' + totalAnswer + '\')"><span class="forAlph">'+alph+'</span></div>';
+                                    _html += '<div id="chooseAnswer'+totalAnswer+'" class="chooseAnswer"><span class="forAlph">'+alph+'</span></div>';
                                 _html += '</div>';
                                 _html += '<div class="col-sm-11">';
-                                    _html += '<textarea class="form-control text-blank" style="height:150px" name="option_'+totalAnswer+'" id="textareaBlank'+totalAnswer+'"></textarea>';
-                                    _html += '<a style="margin-top:10px" href="#answerImage'+totalAnswer+'" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>';
-                                    _html += '<button type="button" style="margin-top:10px;margin-left:10px" onclick="removeAnswer(\'' + totalAnswer + '\')" class="btn btn-sm btn-outline-danger"><i class="feather feather-x"></i>&nbsp; Hapus Jawaban</a>';
+                                _html += '<div class="row">';
+                                    _html += '<input class="form-control col-sm text-blank mr-3" name="option_'+totalAnswer+'" placeholder="Opsi"></input>';
+                                    _html += '<input class="form-control col-sm text-blank" name="answer_'+totalAnswer+'" placeholder="Match"></input>';
+                                    // _html += '<a style="margin-top:10px" href="#answerImage'+totalAnswer+'" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>';
+                                    _html += '</div>';
+                                    _html += '<button type="button" style="margin-top:10px" onclick="removeAnswer(\'' + totalAnswer + '\')" class="btn btn-sm btn-outline-danger"><i class="feather feather-x"></i>&nbsp; Hapus Jawaban</a>';
                                 _html += '</div>';
                             _html += '</div>'; // ROW END
                             // FOR MODAL IMAGE //
@@ -308,31 +313,6 @@
                     <!-- FOR APPEND ANSWER -->
                 </div>
                 <script type="text/javascript">
-                    var choosedAnswerArray = [];
-
-                    function chooseAnswer(count) {
-                        $.each($(".chooseAnswer"), function(i, v) {
-                            if ("chooseAnswer" + count == $(v).attr("id")) {
-                            if ($(this).hasClass("active")) {
-                                console.log($(v).attr("id"));
-                                $(this).removeClass("active");
-                            } else {
-                                $("#chooseAnswer" + count).addClass("active");
-                            }
-                            }
-                        });
-
-                        var number = parseInt(count);
-
-                        if (choosedAnswerArray.includes(number)) {
-                            choosedAnswerArray.splice(choosedAnswerArray.indexOf(number), 1);
-                        } else {
-                            choosedAnswerArray.push(number);
-                        }
-
-                        console.log(choosedAnswerArray);
-                        $("#choosedAnswer").val(choosedAnswerArray);
-                    }
                     function removeAnswer(row) {
                         var sure = confirm('Anda yakin ingin menghapus jawaban ini ?');
                         if (sure) {

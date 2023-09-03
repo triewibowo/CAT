@@ -136,12 +136,23 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($dataCategories as $vCat): ?>
+                                            <!-- <?php foreach ($dataCategories as $vCat): ?>
                                                 <tr>
                                                     <td><input type="checkbox" name="id_class[]" value="<?= $vCat->id_lesson ?>"></td>
                                                     <td><?= $vCat->lesson_name ?></td>
                                                 </tr>
-                                            <?php endforeach ?>
+                                            <?php endforeach ?> -->
+                                            <?php foreach ($categories as $category): ?>
+                                                <input type="checkbox" name="kategori[<?= $category->id ?>][id]" value="<?= $category->id ?>">
+                                                <label><?= $category->name ?></label>
+
+                                                <?php foreach ($subcategories as $subcategory): ?>
+                                                    <?php if ($subcategory->category_id == $category->id): ?>
+                                                        <input type="checkbox" name="kategori[<?= $category->id ?>][sub][]" value="<?= $subcategory->id ?>">
+                                                        <label><?= $subcategory->name ?></label>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>

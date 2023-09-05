@@ -8,40 +8,93 @@ class AssignmentCtrl extends MY_Controller {
 		redirect('page/assignments');
 	}
 	public function create() {
-		if (!$this->input->post()) {
+		// print_r(json_encode($this->input->post()));
+		// die();
+		try {
+			if (!$this->input->post()) {
+				redirect('page/create');
+			}
+			$classes 	= $this->input->post('id_class');	
+			$categories = $this->input->post('category');
+			$students 	= $this->master->getAllStudentByClass($classes);	
+			$duration	= 0;
+			$data 		= $this->input->post();
+			unset($data['show_report']);
+			unset($data['show_analytic']);
+			unset($data['id_class']);
+			unset($data['category']);
+			if ($this->input->post('show_analytic')) {
+				$data['show_analytic'] = 1;
+			}
+			if ($this->input->post('show_report')) {
+				$data['show_report'] = 1;
+			}
+			$data['id_'] = $this->session->userdata('id_');
+			$data['author_'] = $this->session->userdata('level');
+			$data['assignment_created'] = date('Y-m-d H:i:s');
+			$dirName = date('s').'-'.substr(sha1($data['id_']), 4,7).'-'.$data['id_'];
+			if (!is_dir('assets/images/assignments/'.$dirName)) {
+				mkdir('./assets/images/assignments/' . $dirName, 0777, TRUE);
+			}
+			$data['assignment_path'] = $dirName;
+			$idAssignment = $this->assignment->insertAssignment($data);
+
+			foreach ($categories as $key => $category) {
+				$categ = [
+					'id_assignment'	=> $idAssignment,
+					'id_category'	=> $category['id'],
+				];
+
+				$id_categories = $this->assignment->insertAssignmentCategory($categ);
+
+				// ASSIGNMENT SUBTEST
+				foreach ($category['sub'] as $k => $cat) {
+					$duration += $cat['timer'];
+
+					$sub = [
+						'id_assignment'	=> $idAssignment,
+						'id_category'	=> $id_categories,
+						'id_subtest'	=> $cat['id'],
+						'qty_soal'		=> $cat['question_qty'],
+						'timer'			=> $cat['timer'],
+					];
+
+					$this->assignment->insertAssignmentDetailSubtest($sub);
+				}
+			}
+			
+			// STUDENT //
+			foreach ($students as $key => $student) {
+				$input_student = [
+					'id_assignment'	=> $idAssignment,
+					'id_student'	=> $student->id_student,
+					'duration'		=> $duration,
+					'status'		=> 0
+				];
+
+				$this->assignment->insertBegin($input_student);
+			}
+
+			// CLASS //
+			foreach ($classes as $key => $class) {
+				$input_class = [
+					'id_assignment'	=> $idAssignment,
+					'id_class'		=> $class
+				];
+
+				$this->assignment->insertAssignmentClass($input_class);
+			}
+
+			$this->message('Selamat!','Data ujian berhasil di simpan, silahkan buat soal untuk melanjutkan','success');
+			redirect('page/assignments/');
+		} catch (Exception $e) {
+			// Tangani pengecualian di sini
+			$this->message('Error','Terjadi kesalahan: ' . $e->getMessage(),'error');
+			// Redirect atau tampilkan pesan kesalahan sesuai dengan kebutuhan Anda.
 			redirect('page/create');
 		}
-		$data = $this->input->post();
-		unset($data['show_report']);
-		unset($data['show_analytic']);
-		unset($data['id_class']);
-		if ($this->input->post('show_analytic')) {
-			$data['show_analytic'] = 1;
-		}
-		if ($this->input->post('show_report')) {
-			$data['show_report'] = 1;
-		}
-		$data['id_'] = $this->session->userdata('id_');
-		$data['author_'] = $this->session->userdata('level');
-		$data['assignment_created'] = date('Y-m-d H:i:s');
-		$dirName = date('s').'-'.substr(sha1($data['id_']), 4,7).'-'.$data['id_'];
-		if (!is_dir('assets/images/assignments/'.$dirName)) {
-			mkdir('./assets/images/assignments/' . $dirName, 0777, TRUE);
-		}
-		$data['assignment_path'] = $dirName;
-		$idAssignment = $this->assignment->insertAssignment($data);
-		
-		// CLASS //
-		foreach ($this->input->post('id_class') as $row => $value) {
-			$single = [
-				'id_assignment' => $idAssignment,
-				'id_class' => $value
-			];
-			$this->assignment->insertAssignmentClass($single);
-		}
-		$this->message('Selamat!','Data ujian berhasil di simpan, silahkan buat soal untuk melanjutkan','success');
-		redirect('page/list_question/'.$idAssignment);
 	}
+
 	public function update() {
 		if (!$this->input->post()) {
 			redirect('page/assignments');

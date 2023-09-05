@@ -266,6 +266,51 @@ class AssignmentModel extends CI_Model {
 		$query = "SELECT * FROM assignment_class WHERE id_class = '$id_class' ORDER BY id_aclass DESC";
 		return $this->db->query($query)->result_object();
 	}
+
+	// ASSIGNMENT CATEGORY //
+	public function getAllAssignmentCategory() {
+		$this->db->order_by('id_acat', 'asc');
+		return $this->db->get('assignment_categories')->result_object();
+	}
+	public function getAssignmentCategoryById($id_subtest) {
+		$this->db->where('id_acat', $id_subtest);
+		return $this->db->get('assignment_categories')->row_object();
+	}
+	public function insertAssignmentCategory($data) {
+		$this->db->insert('assignment_categories', $data);
+		return $this->db->insert_id();
+	}
+	public function updateAssignmentCategory($data) {
+		$this->db->where('id_acat', $data['id_acat']);
+		return $this->db->update('assignment_categories', $data);
+	}
+	public function deleteAssignmentCategory($id_sub) {
+		$this->db->where('id_acat', $id_sub);
+		return $this->db->delete('assignment_categories');
+	}
+	// END //
+
+	// ASSIGNMENT DETAIL SUBTEST //
+	public function getAllAssignmentDetailSubtest() {
+		$this->db->order_by('id_detail', 'asc');
+		return $this->db->get('assignment_detail_subtest')->result_object();
+	}
+	public function getAssignmentDetailSubtestById($id_subtest) {
+		$this->db->where('id_detail', $id_subtest);
+		return $this->db->get('assignment_detail_subtest')->row_object();
+	}
+	public function insertAssignmentDetailSubtest($data) {
+		return $this->db->insert('assignment_detail_subtest', $data);
+	}
+	public function updateAssignmentDetailSubtest($data) {
+		$this->db->where('id_detail', $data['id_detail']);
+		return $this->db->update('assignment_detail_subtest', $data);
+	}
+	public function deleteAssignmentDetailSubtest($id_sub) {
+		$this->db->where('id_detail', $id_sub);
+		return $this->db->delete('assignment_detail_subtest');
+	}
+	// END //
 }
 
 /* End of file AssignmentModel.php */

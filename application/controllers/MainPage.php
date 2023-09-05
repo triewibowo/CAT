@@ -197,17 +197,8 @@ class MainPage extends MY_Controller {
 		$this->load->view('MainView',$this->parseData);
 	}
 	public function create() {
-		if ($this->session->userdata('level') == 'guru') {
-			$dataClasses = $this->master->getClassByTeacher($this->session->userdata('id_'));
-			$dataLessons = $this->master->getLessonByTeacher($this->session->userdata('id_'));
-		} else {
-			$dataClasses = $this->master->getAllClass();
-			$dataLessons = $this->master->getAllLesson();
-		}
-		$dataCategories = $this->master->getAllLesson();
-		$this->parseData['dataLessons'] = $dataLessons;
-		$this->parseData['dataCategories'] = $dataCategories;
-		$this->parseData['dataClasses'] = $dataClasses;
+		$this->parseData['dataCategories'] = $this->master->getAllSubtestCatWithRelation();
+		$this->parseData['dataClasses'] = $this->master->getAllClass();
 		$this->parseData['content'] = 'content/assignment/create';
 		$this->parseData['title'] = 'Buat Ujian ';
 		$this->load->view('MainView',$this->parseData);

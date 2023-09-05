@@ -62,6 +62,31 @@ class MasterModel extends CI_Model {
 	// END //
 
 	// SUBTEST CATEGORIES //
+	public function getAllSubtestCatWithRelation() {
+		$this->db->where('cat_hide', 0);
+		$this->db->order_by('cat_name', 'asc');
+		$categories = $this->db->get('ms_subtest_categories')->result_object();
+
+		// Loop through subtest
+		foreach ($categories as &$category) {
+			$this->db->where('id_cat', $category->id_cat);
+			$subtests = $this->db->get('category_subtests')->result_object();
+
+			foreach ($subtests as &$subtest) {
+				if (!empty($subtest->id_sub)) {
+					$this->db->where('id_sub', $subtest->id_sub);
+					$sub = $this->db->get('ms_question_subtest')->row();
+					if ($sub) {
+						$subtest->sub_name = $sub->sub_name;
+					}
+				}
+			}
+			
+			$category->subtest = $subtests;
+		}
+
+    	return $categories;
+	}
 	public function getAllSubtestCat() {
 		$this->db->where('cat_hide', 0);
 		$this->db->order_by('cat_name', 'asc');
@@ -220,6 +245,11 @@ class MasterModel extends CI_Model {
 		$this->db->where('ms_student.student_hide', '0');
 		$this->db->where('ms_student.id_class',$class);
 		$this->db->join('ms_class', 'ms_student.id_class = ms_class.id_class', 'left');
+		return $this->db->get('ms_student')->result_object();
+	}
+	public function getAllStudentByClass($ids) {
+		$this->db->order_by('student_name', 'asc');
+		$this->db->where_in('id_class', $ids);
 		return $this->db->get('ms_student')->result_object();
 	}
 	public function getStudentById($id_student) {

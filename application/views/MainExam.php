@@ -18,6 +18,7 @@
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\plugins\jquery\jquery.min.js"></script>
         <script src="<?= base_url('assets/countdown/js/jquery.plugin.min.js') ?>"></script>
         <script src="<?= base_url('assets/countdown/js/jquery.countdown.js') ?>"></script>
+        <script src="<?= base_url('assets/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.js') ?>"></script>
 
         <!-- EOF CSS INCLUDE -->                           
         <style type="text/css">
@@ -120,6 +121,7 @@
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\plugins\datatables\jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\plugins.js"></script>        
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\actions.js"></script>
+        <script src="<?= base_url() ?>/assets\js\bootstrap.min.js"></script>
         <script src="<?= base_url('assets/sweetalert/swal.min.js') ?>"></script>
         <script src="<?= base_url('assets/mediaelement/mmp.min.js') ?>"></script>
     </body>

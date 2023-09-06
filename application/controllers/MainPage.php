@@ -117,25 +117,30 @@ class MainPage extends MY_Controller {
 		$this->load->view('MainView',$this->parseData);
 	}
 	public function students($class = null) {
-		if ($this->session->userdata('level') == 'admin' OR $this->session->userdata('level') == 'staff') {
-			$dataStudent = $this->master->getAllStudent($class);
-		} else {
-			$dataStudent = [];
-			foreach ($this->master->getClassByTeacher($this->session->userdata('id_')) as $row => $value) {
-				foreach ($this->master->getStudentByClass($value->id_class) as $r => $v) {
-					array_push($dataStudent, $v);
-				}
-			}	
-		}
-		// SEND TO SESSION //
-		if ($dataStudent AND $class) {
-			$SESS_ = [
-				'STUDENT_DATA_EXPORT' => $dataStudent,
-				'CLASS_DATA_EXPORT' => $class
-			];
-			$this->session->set_userdata($SESS_);
-		}
+		// if ($this->session->userdata('level') == 'admin' OR $this->session->userdata('level') == 'staff') {
+		// 	$dataStudent = $this->master->getAllStudent($class);
+		// } else {
+		// 	$dataStudent = [];
+		// 	foreach ($this->master->getClassByTeacher($this->session->userdata('id_')) as $row => $value) {
+		// 		foreach ($this->master->getStudentByClass($value->id_class) as $r => $v) {
+		// 			array_push($dataStudent, $v);
+		// 		}
+		// 	}	
+		// }
+		// // SEND TO SESSION //
+		// if ($dataStudent AND $class) {
+		// 	$SESS_ = [
+		// 		'STUDENT_DATA_EXPORT' => $dataStudent,
+		// 		'CLASS_DATA_EXPORT' => $class
+		// 	];
+		// 	$this->session->set_userdata($SESS_);
+		// }
 		// END //
+		if ($class) {
+			$dataStudent = $this->master->getAllStudent($class);
+		}else{
+			$dataStudent = $this->master->getStudents();
+		}
 		$this->parseData['mclass'] = $this->master->getAllClass();
 		$this->parseData['cls'] = $class;
 		$this->parseData['dataStudents'] = $dataStudent;

@@ -311,6 +311,38 @@ class AssignmentModel extends CI_Model {
 		return $this->db->delete('assignment_detail_subtest');
 	}
 	// END //
+
+	public function getExamByStudent($id_student) {
+		$this->db->where('id_student', $id_student);
+		$students = $this->db->get('assignment_begin')->result_object();
+
+		foreach ($students as $index => $student) {
+			$this->db->where('id_assignment', $student->id_assignment);
+			$student->assignment = $this->db->get('ms_assignment')->row();
+	
+			$this->db->where('id_assignment', $student->id_assignment);
+			$categories = $this->db->get('assignment_categories')->result_object();
+
+			$student->assignment->categories = $categories;
+
+			foreach ($categories as $key => $category) {
+				$this->db->where('id_cat', $category->id_category);
+				$category->category = $this->db->get('ms_subtest_categories')->row();
+
+				$this->db->where('id_category', $category->id_acat);
+				$this->db->where('id_assignment', $category->id_assignment);
+				$subtests = $this->db->get('assignment_detail_subtest')->result_object();
+				$category->subtests = $subtests;
+
+				foreach ($subtests as $k => $subtest) {
+					$this->db->where('id_sub', $subtest->id_subtest);
+					$subtest->subtest = $this->db->get('ms_question_subtest')->row();
+				}
+			}
+		}
+
+    	return $students;
+	}
 }
 
 /* End of file AssignmentModel.php */

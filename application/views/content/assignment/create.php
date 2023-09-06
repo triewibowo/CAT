@@ -58,7 +58,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Nama Tes</label>
-                                <input type="text" class="form-control" name="assignment_type" required >
+                                <input type="text" class="form-control" name="assignment_name" required >
                             </div>
                             <!-- <div class="row">
                                 <div class="col-sm-6">

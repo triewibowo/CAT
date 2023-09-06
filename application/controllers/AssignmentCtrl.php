@@ -43,6 +43,7 @@ class AssignmentCtrl extends MY_Controller {
 				$categ = [
 					'id_assignment'	=> $idAssignment,
 					'id_category'	=> $category['id'],
+					'status'		=> 0,
 				];
 
 				$id_categories = $this->assignment->insertAssignmentCategory($categ);
@@ -57,6 +58,8 @@ class AssignmentCtrl extends MY_Controller {
 						'id_subtest'	=> $cat['id'],
 						'qty_soal'		=> $cat['question_qty'],
 						'timer'			=> $cat['timer'],
+						'status'		=> 0,
+						'total_soal'	=> 0,
 					];
 
 					$this->assignment->insertAssignmentDetailSubtest($sub);

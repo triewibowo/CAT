@@ -43,7 +43,7 @@
                     <?php foreach ($dataAssignment as $row => $value): ?>
                         <tr>
                             <td><?= $row + 1 ?></td>
-                            <td><?= $value->lesson_name.' - '.$value->assignment_type ?></td>
+                            <td><?= $value->assignment_name.' - '.$value->assignment_type ?></td>
                             <td><?= $value->assignment_kkm ?>%</td>
                             <td><?= $value->totalQuestion ?> Soal</td>
                             <td><?= $value->assignment_author ?></td>

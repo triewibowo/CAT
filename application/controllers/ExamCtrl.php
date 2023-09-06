@@ -36,25 +36,29 @@ class ExamCtrl extends CI_Controller {
 	}
 	public function lists() {
 		$dataAssignments = [];
-		foreach ($this->assignment->getAllAssignmentStudent() as $row => $value) {
-			$push = false;
-			foreach ($this->assignment->getClassByAssignment($value->id_assignment) as $r => $v) {
-				if ($v->id_class == $this->session->userdata('globalStudent')->id_class) {
-					$push = true;
-				}
-			}
-			if ($push) {
-				if ($value->assignment_active == 1) {
-					if (!$this->assignment->checkDoneAssignment($value->id_assignment,$this->session->userdata('globalStudent')->id_student)) {
-						array_push($dataAssignments, $value);
-					}
-				}
-			}
-		}
-		foreach ($dataAssignments as $r => $v) {
-			$dataAssignments[$r]->totalQuestion = count($this->assignment->getQuestionByAssignment($v->id_assignment));
-		}
-		$this->dataParse['dataAssignments'] = $dataAssignments;
+		$id = (int) $this->session->globalStudent->id_student;
+		// foreach ($this->assignment->getAllAssignmentStudent() as $row => $value) {
+		// 	$push = false;
+		// 	foreach ($this->assignment->getClassByAssignment($value->id_assignment) as $r => $v) {
+		// 		if ($v->id_class == $this->session->userdata('globalStudent')->id_class) {
+		// 			$push = true;
+		// 		}
+		// 	}
+		// 	if ($push) {
+		// 		if ($value->assignment_active == 1) {
+		// 			if (!$this->assignment->checkDoneAssignment($value->id_assignment,$this->session->userdata('globalStudent')->id_student)) {
+		// 				array_push($dataAssignments, $value);
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// foreach ($dataAssignments as $r => $v) {
+		// 	$dataAssignments[$r]->totalQuestion = count($this->assignment->getQuestionByAssignment($v->id_assignment));
+		// }
+
+		$this->dataParse['dataAssignments'] = $this->assignment->getExamByStudent($id);
+		// print_r(json_encode($this->dataParse['dataAssignments']));
+		// die();
 		$this->dataParse['title'] = 'List Ujian - Boy Science Club';
 		$this->dataParse['content'] = 'exam/content/lists';
 		$this->load->view('MainExam',$this->dataParse);

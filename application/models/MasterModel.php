@@ -247,6 +247,24 @@ class MasterModel extends CI_Model {
 		$this->db->join('ms_class', 'ms_student.id_class = ms_class.id_class', 'left');
 		return $this->db->get('ms_student')->result_object();
 	}
+	public function getStudents() {
+		$this->db->where('student_hide', 0);
+		$this->db->order_by('student_name', 'asc');
+		$students = $this->db->get('ms_student')->result_object();
+
+		// Loop through subtest
+		foreach ($students as &$student) {
+			$this->db->where('id_class', $student->id_class);
+			$classes = $this->db->get('ms_class')->row();
+			if ($classes) {
+				$student->class_name = $classes->class_name;
+			}else{
+				$student->class_name = null;
+			}
+		}
+
+    	return $students;
+	}
 	public function getAllStudentByClass($ids) {
 		$this->db->order_by('student_name', 'asc');
 		$this->db->where_in('id_class', $ids);

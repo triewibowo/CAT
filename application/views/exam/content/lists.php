@@ -121,7 +121,7 @@
 										</ul>
 									</div>
 	                    			<div class="modal-footer">
-	                    				<a href="<?= site_url('exam/begin/'.$value->id_assignment) ?>" class="btn btn-primary btn-block">Ya, Saya siap!</a>
+	                    				<a href="<?= site_url('exam/beginExam/'.$value->id_abegin) ?>" class="btn btn-primary btn-block">Ya, Saya siap!</a>
 	                    			</div>
 	                    		</div>
 	                    	</div>

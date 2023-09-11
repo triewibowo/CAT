@@ -59,8 +59,18 @@ class ExamCtrl extends CI_Controller {
 		$this->dataParse['dataAssignments'] = $this->assignment->getExamByStudent($id);
 		// print_r(json_encode($this->dataParse['dataAssignments']));
 		// die();
-		$this->dataParse['title'] = 'List Ujian - Boy Science Club';
+		$this->dataParse['title'] = 'List Ujian';
 		$this->dataParse['content'] = 'exam/content/lists';
+		$this->load->view('MainExam',$this->dataParse);
+	}
+	public function beginExam($id_begin = NULL) {
+		$id = (int) $this->session->globalStudent->id_student;
+
+		$this->dataParse['dataAssignments'] = $this->assignment->getExamByAssignmentBegin($id_begin, $id);
+		// print_r(json_encode($this->dataParse['dataAssignments']));
+		// die();
+		$this->dataParse['title'] = 'Mulai Ujian';
+		$this->dataParse['content'] = 'exam/content/baseBegin';
 		$this->load->view('MainExam',$this->dataParse);
 	}
 	public function begin($id_assignment = NULL) {
@@ -235,6 +245,62 @@ class ExamCtrl extends CI_Controller {
 		redirect('Auth/exam');
 	}
 
+	public function getQuestion(){
+		$data = json_decode($this->input->post('question'), true);
+		$id = (int) $this->session->globalStudent->id_student;
+		$subtest = 1;
+		try{
+
+			// Update status subtest ke proses
+			if($data['subtest']['status'] == 0){
+				$d = [
+					'id_detail' => $data['subtest']['id_detail'],
+					'status' 	=> 1,
+				];
+				$this->assignment->updateAssignmentDetailSubtest($d);
+				$subtest = 1;
+			}
+
+			// Update status subtest ke selesai
+			if($data['subtest']['status'] == 1 && $data['subtest']['qty_soal'] <= $data['qty']){
+				$d = [
+					'id_detail' => $data['subtest']['id_detail'],
+					'status' 	=> 2,
+				];
+				$this->assignment->updateAssignmentDetailSubtest($d);
+				$subtest = 2;
+			}
+
+			$soal = $this->assignment->getQuestionSubtestLevel($data['id_sub'], $data['level']);
+
+			$response = [
+				'status' => 'success',
+				'message' => 'Data soal berhasil diambil',
+				'data' => $soal,
+				'subtest' => $subtest,
+				'exams' => $this->assignment->getExamByAssignmentBegin($data['id_begin'], $id),
+				'subtest_status' => $subtest == 2 ? true : false
+			];
+			// Mengirim respons JSON
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+
+		} catch (\Exception $e) {
+
+			// Jika terjadi error, kirim respons error
+			$response = [
+				'status' => 'error',
+				'message' => 'Terjadi kesalahan saat mengambil data',
+				'error' => $e->getMessage()
+			];
+	
+			// Mengirim respons JSON
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+		}
+	}
 }
 
 /* End of file ExamCtrl.php */

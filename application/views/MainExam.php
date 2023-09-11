@@ -29,6 +29,18 @@
                 min-height: 400px;
                 padding: 10px 50px;
             }
+
+            /* CSS untuk footer */
+            .x-content-footer {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                background-color: white;
+                color: black;
+                text-align: center;
+                padding: 10px 0; /* Atur padding sesuai kebutuhan */
+            }
+
         </style>
     </head>
     <body class="x-dashboard">

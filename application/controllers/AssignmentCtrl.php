@@ -18,6 +18,7 @@ class AssignmentCtrl extends MY_Controller {
 			$categories = $this->input->post('category');
 			$students 	= $this->master->getAllStudentByClass($classes);	
 			$duration	= 0;
+			$total_soal	= 0;
 			$data 		= $this->input->post();
 			unset($data['show_report']);
 			unset($data['show_analytic']);
@@ -51,6 +52,7 @@ class AssignmentCtrl extends MY_Controller {
 				// ASSIGNMENT SUBTEST
 				foreach ($category['sub'] as $k => $cat) {
 					$duration += $cat['timer'];
+					$total_soal += $cat['question_qty'];
 
 					$sub = [
 						'id_assignment'	=> $idAssignment,
@@ -72,6 +74,7 @@ class AssignmentCtrl extends MY_Controller {
 					'id_assignment'	=> $idAssignment,
 					'id_student'	=> $student->id_student,
 					'duration'		=> $duration,
+					'total_soal'	=> $total_soal,
 					'status'		=> 0
 				];
 

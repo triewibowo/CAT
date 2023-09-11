@@ -76,6 +76,38 @@ class AssignmentModel extends CI_Model {
 		$this->db->where('question_hide', 0);
 		return $this->db->get('ms_question')->row_object();
 	}
+	public function getQuestionSubtestLevel($id_sub, $level) {
+		$this->db->where('id_sub', $id_sub);
+		$this->db->where('question_level', $level);
+		$this->db->where('question_hide', 0);
+		$this->db->order_by('RAND()'); // Mengurutkan data secara acak
+		$question = $this->db->get('ms_question')->row();
+
+		if ($question->id_type == 1 ||
+			$question->id_type == 2 ||
+			$question->id_type == 4) {
+			$this->db->where('id_question', $question->id_question);
+			$this->db->where('option_hide', 0);
+			$question->answer = $this->db->get('question_option')->result_object();
+		}else if ($question->id_type == 3){
+			$this->db->where('id_question', $question->id_question);
+			$this->db->where('option_hide', 0);
+			$question->answer = $this->db->get('question_answer')->result_object();
+		}else{
+			$this->db->where('id_question', $question->id_question);
+			$this->db->where('option_hide', 0);
+			$question->answer = $this->db->get('question_match')->result_object();
+
+			foreach ($question->answer as $key => $value) {
+				$this->db->where('id_match', $value->id_option);
+				$this->db->where('option_hide', 0);
+				$value->match = $this->db->get('question_match_answer')->result_object();
+			}
+
+		}
+
+		return $question;
+	}
 	public function updateQuestion($data) {
 		$this->db->where('id_question', $data['id_question']);
 		return $this->db->update('ms_question', $data);
@@ -304,7 +336,29 @@ class AssignmentModel extends CI_Model {
 	}
 	public function updateAssignmentDetailSubtest($data) {
 		$this->db->where('id_detail', $data['id_detail']);
-		return $this->db->update('assignment_detail_subtest', $data);
+		$result = $this->db->update('assignment_detail_subtest', $data);
+		
+		// Memeriksa apakah pembaruan berhasil
+		if ($result) {
+			// Jika berhasil, ambil data yang telah diperbarui
+			$this->db->where('id_detail', $data['id_detail']);
+			$updatedData = $this->db->get('assignment_detail_subtest')->row();
+
+			$this->db->where('id_sub', $updatedData->id_subtest);
+			$updatedData->subtest = $this->db->get('ms_question_subtest')->row();
+			if ($updatedData) {
+				return $updatedData;
+			}else{
+				$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response= [
+					'messange' => "data kosong"
+				]));
+			}
+		} else {
+			// Jika gagal, kembalikan FALSE
+			return FALSE;
+		}
 	}
 	public function deleteAssignmentDetailSubtest($id_sub) {
 		$this->db->where('id_detail', $id_sub);
@@ -342,6 +396,37 @@ class AssignmentModel extends CI_Model {
 		}
 
     	return $students;
+	}
+
+	public function getExamByAssignmentBegin($id_begin,$id_student) {
+		$this->db->where('id_student', $id_student);
+		$this->db->where('id_abegin', $id_begin);
+		$begin = $this->db->get('assignment_begin')->row();
+
+		$this->db->where('id_assignment', $begin->id_assignment);
+		$begin->assignment = $this->db->get('ms_assignment')->row();
+
+		$this->db->where('id_assignment', $begin->id_assignment);
+		$categories = $this->db->get('assignment_categories')->result_object();
+
+		$begin->assignment->categories = $categories;
+
+		foreach ($categories as $index => $category) {
+			$this->db->where('id_cat', $category->id_category);
+			$category->category = $this->db->get('ms_subtest_categories')->row();
+
+			$this->db->where('id_category', $category->id_acat);
+			$this->db->where('id_assignment', $category->id_assignment);
+			$subtests = $this->db->get('assignment_detail_subtest')->result_object();
+			$category->subtests = $subtests;
+
+			foreach ($subtests as $k => $subtest) {
+				$this->db->where('id_sub', $subtest->id_subtest);
+				$subtest->subtest = $this->db->get('ms_question_subtest')->row();
+			}
+		}
+
+    	return $begin;
 	}
 }
 

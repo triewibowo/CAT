@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : local
  Source Server Type    : MySQL
- Source Server Version : 50621
+ Source Server Version : 100422
  Source Host           : localhost:3306
  Source Schema         : db_ujian_online
 
  Target Server Type    : MySQL
- Target Server Version : 50621
+ Target Server Version : 100422
  File Encoding         : 65001
 
- Date: 24/08/2023 10:10:29
+ Date: 06/09/2023 16:02:49
 */
 
 SET NAMES utf8mb4;
@@ -22,104 +22,174 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `assignment_analytics`;
 CREATE TABLE `assignment_analytics`  (
-  `id_aanalytics` int(60) NOT NULL AUTO_INCREMENT,
-  `id_assignment` int(50) NULL DEFAULT NULL,
-  `id_student` int(50) NULL DEFAULT NULL,
-  `id_question` int(50) NULL DEFAULT NULL,
-  `id_option` int(60) NULL DEFAULT NULL,
+  `id_aanalytics` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_student` int NULL DEFAULT NULL,
+  `id_question` int NULL DEFAULT NULL,
+  `id_option` int NULL DEFAULT NULL,
   `option_char` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `analytics_status` enum('true','false','empty') CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `analytics_created` datetime(0) NULL DEFAULT NULL,
+  `analytics_created` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id_aanalytics`) USING BTREE,
   INDEX `id_assignment`(`id_assignment`) USING BTREE,
   CONSTRAINT `assignment_analytics_ibfk_1` FOREIGN KEY (`id_assignment`) REFERENCES `ms_assignment` (`id_assignment`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_analytics
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for assignment_begin
 -- ----------------------------
 DROP TABLE IF EXISTS `assignment_begin`;
 CREATE TABLE `assignment_begin`  (
-  `id_abegin` int(20) NOT NULL AUTO_INCREMENT,
-  `id_assignment` int(50) NULL DEFAULT NULL,
-  `id_student` int(50) NULL DEFAULT NULL,
+  `id_abegin` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_student` int NULL DEFAULT NULL,
   `time_begin` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`id_abegin`) USING BTREE,
-  INDEX `id_assignment`(`id_assignment`) USING BTREE,
-  INDEX `id_student`(`id_student`) USING BTREE,
-  CONSTRAINT `assignment_begin_ibfk_1` FOREIGN KEY (`id_assignment`) REFERENCES `ms_assignment` (`id_assignment`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `assignment_begin_ibfk_2` FOREIGN KEY (`id_student`) REFERENCES `ms_student` (`id_student`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+  `status` int NULL DEFAULT NULL,
+  `duration` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id_abegin`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_begin
+-- ----------------------------
+INSERT INTO `assignment_begin` VALUES (26, 7, 138, NULL, 0, '62');
+INSERT INTO `assignment_begin` VALUES (27, 8, 138, NULL, 0, '42');
+
+-- ----------------------------
+-- Table structure for assignment_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `assignment_categories`;
+CREATE TABLE `assignment_categories`  (
+  `id_acat` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_category` int NULL DEFAULT NULL,
+  `status` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id_acat`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_categories
+-- ----------------------------
+INSERT INTO `assignment_categories` VALUES (37, 7, 2, 0);
+INSERT INTO `assignment_categories` VALUES (38, 7, 1, 0);
+INSERT INTO `assignment_categories` VALUES (39, 8, 2, 0);
 
 -- ----------------------------
 -- Table structure for assignment_class
 -- ----------------------------
 DROP TABLE IF EXISTS `assignment_class`;
 CREATE TABLE `assignment_class`  (
-  `id_aclass` int(10) NOT NULL AUTO_INCREMENT,
-  `id_assignment` int(50) NULL DEFAULT NULL,
-  `id_class` int(10) NULL DEFAULT NULL,
-  PRIMARY KEY (`id_aclass`) USING BTREE,
-  INDEX `id_assignment`(`id_assignment`) USING BTREE,
-  INDEX `id_class`(`id_class`) USING BTREE,
-  CONSTRAINT `assignment_class_ibfk_1` FOREIGN KEY (`id_assignment`) REFERENCES `ms_assignment` (`id_assignment`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `assignment_class_ibfk_2` FOREIGN KEY (`id_class`) REFERENCES `ms_class` (`id_class`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+  `id_aclass` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_class` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id_aclass`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of assignment_class
 -- ----------------------------
-INSERT INTO `assignment_class` VALUES (1, 1, 1);
-INSERT INTO `assignment_class` VALUES (2, 4, 1);
-INSERT INTO `assignment_class` VALUES (3, 5, 4);
-INSERT INTO `assignment_class` VALUES (6, 7, 2);
-INSERT INTO `assignment_class` VALUES (8, 7, 1);
-INSERT INTO `assignment_class` VALUES (9, 7, 4);
-INSERT INTO `assignment_class` VALUES (10, 9, 1);
-INSERT INTO `assignment_class` VALUES (25, 14, 1);
-INSERT INTO `assignment_class` VALUES (26, 15, 1);
+INSERT INTO `assignment_class` VALUES (37, 7, 11);
+INSERT INTO `assignment_class` VALUES (38, 8, 11);
+
+-- ----------------------------
+-- Table structure for assignment_detail_subtest
+-- ----------------------------
+DROP TABLE IF EXISTS `assignment_detail_subtest`;
+CREATE TABLE `assignment_detail_subtest`  (
+  `id_detail` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_category` int NULL DEFAULT NULL,
+  `id_subtest` int NULL DEFAULT NULL,
+  `qty_soal` int NULL DEFAULT NULL,
+  `timer` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `status` int NULL DEFAULT NULL,
+  `total_soal` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id_detail`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_detail_subtest
+-- ----------------------------
+INSERT INTO `assignment_detail_subtest` VALUES (40, 7, 37, 9, 10, '15', 0, 0);
+INSERT INTO `assignment_detail_subtest` VALUES (41, 7, 37, 8, 15, '15', 0, 0);
+INSERT INTO `assignment_detail_subtest` VALUES (42, 7, 38, 9, 10, '12', 0, 0);
+INSERT INTO `assignment_detail_subtest` VALUES (43, 7, 38, 8, 25, '20', 0, 0);
+INSERT INTO `assignment_detail_subtest` VALUES (44, 8, 39, 9, 12, '17', 0, 0);
+INSERT INTO `assignment_detail_subtest` VALUES (45, 8, 39, 8, 22, '25', 0, 0);
 
 -- ----------------------------
 -- Table structure for assignment_question
 -- ----------------------------
 DROP TABLE IF EXISTS `assignment_question`;
 CREATE TABLE `assignment_question`  (
-  `id_aquestion` int(50) NOT NULL AUTO_INCREMENT,
-  `id_assignment` int(50) NULL DEFAULT NULL,
-  `id_question` int(10) NULL DEFAULT NULL,
+  `id_aquestion` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_question` int NULL DEFAULT NULL,
   `val_hide` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id_aquestion`) USING BTREE,
   INDEX `id_assignment`(`id_assignment`) USING BTREE,
   INDEX `id_question`(`id_question`) USING BTREE,
   CONSTRAINT `assignment_question_ibfk_1` FOREIGN KEY (`id_assignment`) REFERENCES `ms_assignment` (`id_assignment`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `assignment_question_ibfk_2` FOREIGN KEY (`id_question`) REFERENCES `ms_question` (`id_question`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_question
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for assignment_result
 -- ----------------------------
 DROP TABLE IF EXISTS `assignment_result`;
 CREATE TABLE `assignment_result`  (
-  `id_aresult` int(50) NOT NULL AUTO_INCREMENT,
-  `id_assignment` int(50) NULL DEFAULT NULL,
-  `id_student` int(50) NULL DEFAULT NULL,
-  `result_true` int(10) NULL DEFAULT NULL,
-  `result_false` int(10) NULL DEFAULT NULL,
+  `id_aresult` int NOT NULL AUTO_INCREMENT,
+  `id_assignment` int NULL DEFAULT NULL,
+  `id_student` int NULL DEFAULT NULL,
+  `result_true` int NULL DEFAULT NULL,
+  `result_false` int NULL DEFAULT NULL,
   `result_score` float NULL DEFAULT NULL,
   `result_status` enum('lulus','gagal') CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `result_created` datetime(0) NULL DEFAULT NULL,
-  `result_update` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  `result_created` datetime NULL DEFAULT NULL,
+  `result_update` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_aresult`) USING BTREE,
   INDEX `id_assignment`(`id_assignment`) USING BTREE,
   CONSTRAINT `assignment_result_ibfk_1` FOREIGN KEY (`id_assignment`) REFERENCES `ms_assignment` (`id_assignment`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of assignment_result
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for category_subtests
+-- ----------------------------
+DROP TABLE IF EXISTS `category_subtests`;
+CREATE TABLE `category_subtests`  (
+  `id_asub` int NOT NULL AUTO_INCREMENT,
+  `id_cat` int NULL DEFAULT NULL,
+  `id_sub` int NULL DEFAULT NULL,
+  `val_hide` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id_asub`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of category_subtests
+-- ----------------------------
+INSERT INTO `category_subtests` VALUES (2, 2, 9, NULL);
+INSERT INTO `category_subtests` VALUES (3, 1, 9, NULL);
+INSERT INTO `category_subtests` VALUES (4, 2, 8, NULL);
+INSERT INTO `category_subtests` VALUES (5, 1, 8, NULL);
 
 -- ----------------------------
 -- Table structure for ms_admin
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_admin`;
 CREATE TABLE `ms_admin`  (
-  `id_admin` int(10) NOT NULL AUTO_INCREMENT,
+  `id_admin` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `password` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `full_name` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
@@ -127,7 +197,7 @@ CREATE TABLE `ms_admin`  (
   `admin_hide` tinyint(1) NULL DEFAULT 0,
   `admin_created` date NULL DEFAULT NULL,
   PRIMARY KEY (`id_admin`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_admin
@@ -135,43 +205,53 @@ CREATE TABLE `ms_admin`  (
 INSERT INTO `ms_admin` VALUES (1, 'admin', '$1$Ju3.ei3.$ABHHxCLVKvQhAS1hdA3pU/', 'Administrator', 'admin', 0, '2018-12-07');
 INSERT INTO `ms_admin` VALUES (2, 'ganyu', '$1$FFnrGunX$2ySHHn3u/a9e4ap3c7UdA1', 'Ganyu', 'staff', 1, '2021-05-04');
 INSERT INTO `ms_admin` VALUES (3, 'agus', '$1$T93.gg4.$blWaGKhT6lgoQiK9E76AB/', 'agus', 'staff', 0, '2023-07-30');
+INSERT INTO `ms_admin` VALUES (4, 'aku', '$1$dZo4r84I$/VzY1KjEY8jjP/bNk.4gF1', 'Aku adalah aku', 'staff', 0, '2023-09-05');
 
 -- ----------------------------
 -- Table structure for ms_assignment
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_assignment`;
 CREATE TABLE `ms_assignment`  (
-  `id_assignment` int(50) NOT NULL AUTO_INCREMENT,
-  `id_` int(10) NULL DEFAULT NULL,
+  `id_assignment` int NOT NULL AUTO_INCREMENT,
+  `id_` int NULL DEFAULT NULL,
   `author_` enum('admin','guru','staff') CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `id_lesson` int(10) NULL DEFAULT NULL,
+  `id_lesson` int NULL DEFAULT NULL,
   `assignment_type` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `assignment_order` enum('asc','desc','random') CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `assignment_author` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `assignment_kkm` int(10) NULL DEFAULT NULL,
-  `question_used` int(10) NULL DEFAULT 0,
+  `assignment_kkm` int NULL DEFAULT NULL,
+  `question_used` int NULL DEFAULT 0,
   `assignment_path` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `show_report` tinyint(1) NULL DEFAULT 0,
   `show_analytic` tinyint(1) NULL DEFAULT 0,
   `assignment_active` tinyint(1) NULL DEFAULT 0,
   `assignment_hide` tinyint(1) NULL DEFAULT 0,
-  `assignment_duration` int(10) NULL DEFAULT NULL,
-  `assignment_created` datetime(0) NULL DEFAULT NULL,
-  `assignment_updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  `assignment_duration` int NULL DEFAULT NULL,
+  `assignment_created` datetime NULL DEFAULT NULL,
+  `assignment_updated` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
+  `assignment_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id_assignment`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of ms_assignment
+-- ----------------------------
+INSERT INTO `ms_assignment` VALUES (5, 1, 'admin', NULL, 'UAS', NULL, 'Pak Dadang', NULL, 0, '10-192b791-1', 0, 0, 0, 0, NULL, '2023-09-04 21:44:10', '2023-09-04 21:44:10', NULL);
+INSERT INTO `ms_assignment` VALUES (6, 1, 'admin', NULL, 'UAS', NULL, 'Penulis', NULL, 0, '27-192b791-1', 0, 0, 0, 0, NULL, '2023-09-04 21:49:27', '2023-09-04 21:49:27', NULL);
+INSERT INTO `ms_assignment` VALUES (7, 1, 'admin', NULL, 'UAS', NULL, 'Ojan', NULL, 0, '36-192b791-1', 0, 0, 0, 0, NULL, '2023-09-05 22:30:36', '2023-09-05 23:20:03', 'Tes Ini');
+INSERT INTO `ms_assignment` VALUES (8, 1, 'admin', NULL, 'A+UTS', NULL, 'Yayan', NULL, 0, '35-192b791-1', 0, 0, 0, 0, NULL, '2023-09-05 22:48:35', '2023-09-05 23:20:06', 'Tes Itu');
 
 -- ----------------------------
 -- Table structure for ms_class
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_class`;
 CREATE TABLE `ms_class`  (
-  `id_class` int(10) NOT NULL AUTO_INCREMENT,
+  `id_class` int NOT NULL AUTO_INCREMENT,
   `class_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `class_hide` tinyint(1) NULL DEFAULT 0,
   `class_created` date NULL DEFAULT NULL,
   PRIMARY KEY (`id_class`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_class
@@ -180,38 +260,45 @@ INSERT INTO `ms_class` VALUES (1, 'Penalaran Kuantitatif\n', 0, '2018-01-30');
 INSERT INTO `ms_class` VALUES (2, 'Kemampuan Literasi\n', 0, '2018-01-30');
 INSERT INTO `ms_class` VALUES (3, 'Kemampuan Verbal\n', 0, '2018-01-30');
 INSERT INTO `ms_class` VALUES (4, 'Pengetahuan Alam dan  Sosial', 0, '2018-01-30');
+INSERT INTO `ms_class` VALUES (11, 'Ilmu Langlang', 0, '2023-08-25');
+INSERT INTO `ms_class` VALUES (12, 'ilmu Hal', 0, '2023-08-25');
+INSERT INTO `ms_class` VALUES (13, 'Dadang', 0, '2023-08-25');
+INSERT INTO `ms_class` VALUES (14, 'Hantu', 0, '2023-08-25');
+INSERT INTO `ms_class` VALUES (15, 'Dadang Nunggala Lala', 0, '2023-08-26');
 INSERT INTO `ms_class` VALUES (17, 'Akhlaqul Karimah', 0, '2023-08-22');
+INSERT INTO `ms_class` VALUES (18, 'Ilmu Kocak', 0, '2023-08-25');
 
 -- ----------------------------
 -- Table structure for ms_lesson
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_lesson`;
 CREATE TABLE `ms_lesson`  (
-  `id_lesson` int(10) NOT NULL AUTO_INCREMENT,
+  `id_lesson` int NOT NULL AUTO_INCREMENT,
   `lesson_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `lesson_hide` tinyint(1) NULL DEFAULT 0,
   `lesson_created` date NULL DEFAULT NULL,
   PRIMARY KEY (`id_lesson`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_lesson
 -- ----------------------------
-INSERT INTO `ms_lesson` VALUES (1, 'Tes Potensi Skolastik', 0, '2018-01-30');
-INSERT INTO `ms_lesson` VALUES (15, 'Tes Kompetensi Akademik\n', 0, NULL);
-INSERT INTO `ms_lesson` VALUES (16, 'Tes Potensi Akhlak', 1, '2023-08-22');
+INSERT INTO `ms_lesson` VALUES (1, 'Ipa', 0, '2018-01-30');
+INSERT INTO `ms_lesson` VALUES (15, 'Matematika', 0, '2023-08-25');
+INSERT INTO `ms_lesson` VALUES (16, 'Psikologi', 0, '2023-08-22');
+INSERT INTO `ms_lesson` VALUES (17, 'Seni Budaya', 0, '2023-08-25');
 
 -- ----------------------------
 -- Table structure for ms_log
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_log`;
 CREATE TABLE `ms_log`  (
-  `id_log` int(255) NOT NULL AUTO_INCREMENT,
+  `id_log` int NOT NULL AUTO_INCREMENT,
   `log_author` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
   `log_desc` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
-  `log_created` datetime(0) NULL DEFAULT NULL,
+  `log_created` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id_log`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_log
@@ -221,56 +308,60 @@ INSERT INTO `ms_log` VALUES (2, 'Admin - Sandi Ramadhan', 'Menghapus data user b
 INSERT INTO `ms_log` VALUES (3, 'Guru - Kakashi Hatake', 'Membuat ujian UTS untuk pelajaran Matematika', '2018-06-14 09:23:41');
 INSERT INTO `ms_log` VALUES (4, 'admin - Administrator', 'User menambahkan siswa baru', '2021-05-04 02:56:24');
 INSERT INTO `ms_log` VALUES (5, 'admin - Administrator', 'User menambahkan siswa baru', '2023-07-30 22:01:02');
+INSERT INTO `ms_log` VALUES (6, 'admin - Administrator', 'User menambahkan siswa baru', '2023-09-05 21:33:56');
 
 -- ----------------------------
 -- Table structure for ms_question
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_question`;
 CREATE TABLE `ms_question`  (
-  `id_question` int(50) NOT NULL AUTO_INCREMENT,
-  `id_lesson` int(10) NULL DEFAULT NULL,
+  `id_question` int NOT NULL AUTO_INCREMENT,
+  `id_lesson` int NOT NULL,
   `question_` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `question_image` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `question_sound` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `question_created` datetime(0) NULL DEFAULT NULL,
-  `question_update` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  `question_created` datetime NULL DEFAULT NULL,
+  `question_update` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
   `question_hide` tinyint(1) NULL DEFAULT 0,
-  `question_level` int(11) NULL DEFAULT NULL,
-  `id_type` int(11) NULL DEFAULT NULL,
-  `id_sub` int(11) NULL DEFAULT NULL,
+  `question_level` int NULL DEFAULT NULL,
+  `id_type` int NOT NULL,
+  `id_sub` int NOT NULL,
+  `timer` int NOT NULL COMMENT 'detik',
   PRIMARY KEY (`id_question`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
--- Table structure for ms_question_category
+-- Records of ms_question
 -- ----------------------------
-DROP TABLE IF EXISTS `ms_question_category`;
-CREATE TABLE `ms_question_category`  (
-  `id_cat` int(10) NOT NULL AUTO_INCREMENT,
-  `cat_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `cat_hide` tinyint(1) NULL DEFAULT 0,
-  `cat_created` date NULL DEFAULT NULL,
-  PRIMARY KEY (`id_cat`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of ms_question_category
--- ----------------------------
-INSERT INTO `ms_question_category` VALUES (1, 'Tes Potensi Skolastik', 0, NULL);
-INSERT INTO `ms_question_category` VALUES (2, 'Tes Kompetensi Akademik', 0, NULL);
+INSERT INTO `ms_question` VALUES (38, 1, 'Ini Benar Salah 1', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0, 3, 1, 2, 60);
+INSERT INTO `ms_question` VALUES (39, 15, 'Ini Benar Salah 2', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0, 3, 1, 1, 60);
+INSERT INTO `ms_question` VALUES (40, 16, 'Ini Benar Salah 3', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0, 3, 1, 3, 60);
+INSERT INTO `ms_question` VALUES (41, 17, 'Ini Benar Salah 4', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0, 3, 1, 6, 60);
+INSERT INTO `ms_question` VALUES (42, 15, 'Ini Benar Salah 5', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0, 3, 1, 4, 60);
+INSERT INTO `ms_question` VALUES (43, 1, 'Ini soal berganda 1', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0, 3, 2, 3, 60);
+INSERT INTO `ms_question` VALUES (44, 16, 'Ini soal berganda 2', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0, 3, 2, 7, 60);
+INSERT INTO `ms_question` VALUES (45, 15, 'Ini soal berganda 3', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0, 3, 2, 2, 60);
+INSERT INTO `ms_question` VALUES (46, 1, 'Ini soal berganda 4', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0, 3, 2, 4, 60);
+INSERT INTO `ms_question` VALUES (47, 17, 'Ini soal berganda 5', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0, 3, 2, 8, 60);
+INSERT INTO `ms_question` VALUES (49, 16, 'Ini soal menjodohkan', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0, 3, 5, 3, 60);
+INSERT INTO `ms_question` VALUES (50, 17, 'Ini soal isian singkat', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:53:41', 0, 3, 3, 2, 60);
+INSERT INTO `ms_question` VALUES (51, 17, '<p>adsasda</p>', NULL, NULL, '2023-09-02 22:55:06', '2023-09-02 22:55:06', 0, 5, 3, 9, 60);
+INSERT INTO `ms_question` VALUES (52, 17, 'Ini soal isian singkat', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 22:56:40', 0, 3, 3, 2, 60);
+INSERT INTO `ms_question` VALUES (53, 0, 'Contoh Soal', NULL, NULL, '2023-09-02 00:00:00', '2023-09-02 23:01:12', 0, 3, 3, 2, 60);
+INSERT INTO `ms_question` VALUES (54, 15, 'Isi jodohkan', NULL, NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0, 3, 5, 3, 60);
 
 -- ----------------------------
 -- Table structure for ms_question_level
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_question_level`;
 CREATE TABLE `ms_question_level`  (
-  `id_level` int(10) NOT NULL AUTO_INCREMENT,
+  `id_level` int NOT NULL AUTO_INCREMENT,
   `level_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `level_hide` tinyint(1) NULL DEFAULT 0,
   `level_created` date NULL DEFAULT NULL,
-  `level_value` int(4) NULL DEFAULT NULL,
+  `level_value` int NULL DEFAULT NULL,
   PRIMARY KEY (`id_level`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_question_level
@@ -286,13 +377,13 @@ INSERT INTO `ms_question_level` VALUES (5, '5', 0, NULL, 5);
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_question_subtest`;
 CREATE TABLE `ms_question_subtest`  (
-  `id_sub` int(10) NOT NULL AUTO_INCREMENT,
-  `id_cat` int(11) NULL DEFAULT NULL,
+  `id_sub` int NOT NULL AUTO_INCREMENT,
+  `id_cat` int NULL DEFAULT NULL,
   `sub_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `sub_hide` tinyint(1) NULL DEFAULT 0,
   `sub_created` date NULL DEFAULT NULL,
   PRIMARY KEY (`id_sub`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_question_subtest
@@ -300,19 +391,24 @@ CREATE TABLE `ms_question_subtest`  (
 INSERT INTO `ms_question_subtest` VALUES (1, 1, 'Penalaran Kuantitatif', 0, NULL);
 INSERT INTO `ms_question_subtest` VALUES (2, 1, 'Kemampuan Literasi', 0, NULL);
 INSERT INTO `ms_question_subtest` VALUES (3, 1, 'Kemampuan Verbal', 0, NULL);
-INSERT INTO `ms_question_subtest` VALUES (4, 2, 'Pengetahuan Alam dan  Sosial', 0, NULL);
+INSERT INTO `ms_question_subtest` VALUES (4, 2, 'Pengetahuan Alam dan Sosial', 0, NULL);
+INSERT INTO `ms_question_subtest` VALUES (5, NULL, 'Kemampuan Literasi', 1, '2023-08-27');
+INSERT INTO `ms_question_subtest` VALUES (6, NULL, 'Ilmu Bagus', 0, '2023-08-27');
+INSERT INTO `ms_question_subtest` VALUES (7, NULL, 'Ilmu Laduni', 0, '2023-08-27');
+INSERT INTO `ms_question_subtest` VALUES (8, NULL, 'Coba', 0, '2023-08-27');
+INSERT INTO `ms_question_subtest` VALUES (9, NULL, 'Tatang', 0, '2023-08-28');
 
 -- ----------------------------
 -- Table structure for ms_question_type
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_question_type`;
 CREATE TABLE `ms_question_type`  (
-  `id_type` int(10) NOT NULL AUTO_INCREMENT,
+  `id_type` int NOT NULL AUTO_INCREMENT,
   `type_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `type_hide` tinyint(1) NULL DEFAULT 0,
   `type_created` date NULL DEFAULT NULL,
   PRIMARY KEY (`id_type`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_question_type
@@ -328,10 +424,10 @@ INSERT INTO `ms_question_type` VALUES (5, 'Menjodohkan', 0, NULL);
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_student`;
 CREATE TABLE `ms_student`  (
-  `id_student` int(50) NOT NULL AUTO_INCREMENT,
-  `id_class` int(10) NULL DEFAULT NULL,
-  `student_nis` int(30) NULL DEFAULT NULL,
-  `student_nisn` int(100) NULL DEFAULT NULL,
+  `id_student` int NOT NULL AUTO_INCREMENT,
+  `id_class` int NULL DEFAULT NULL,
+  `student_nis` int NULL DEFAULT NULL,
+  `student_nisn` int NULL DEFAULT NULL,
   `student_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `student_password` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `student_email` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
@@ -343,7 +439,7 @@ CREATE TABLE `ms_student`  (
   `parent_password` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `student_hide` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id_student`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 138 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 139 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_student
@@ -356,26 +452,26 @@ INSERT INTO `ms_student` VALUES (5, 8, 9077, NULL, 'Afrialia Winda Nabila', '$1$
 INSERT INTO `ms_student` VALUES (6, 8, 9078, NULL, 'Ajeng Setiawati', '$1$FXhFTT9z$Xtrj62OTA/CVnwy3w87W80', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (7, 8, 9079, NULL, 'Akmal Triputra', '$1$UabDdfhB$Q5PUk7IKILPhBzbx0ydMS/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (8, 8, 9080, NULL, 'Amberly Anadya P', '$1$95/76VGF$HxNGpOuq5Cd5klpAAtrk8.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (9, 11, 9081, NULL, 'Arief Budiman', '$1$oSQbd4dL$6lr01vnEo6RfzoiytNyay.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (10, 11, 9082, NULL, 'Diandrani Alegra F', '$1$MjMPlu3D$S/kRUayEAWJOzMCPgtc8Z/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (11, 11, 9083, NULL, 'Dyah Kinanti', '$1$Fhq8ROmD$Cbq59sLQQ7uqWqv2oP932.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (12, 11, 9084, NULL, 'Fera Cesilia', '$1$0j7hodSJ$GpbRQAVwARz3ObZhgRnq6/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (13, 11, 9085, NULL, 'Fina Aulia W', '$1$K/vC71ly$o94VycCCAfHlkPXmLY5280', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (14, 11, 9086, NULL, 'M. Haykal', '$1$euz0qEj6$TWSdO.tDGObfo6.REqEoH1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (15, 11, 9087, NULL, 'Irma Julia', '$1$KCgJE3pX$PWfzKZZdOF3s1mgnC51db0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (16, 11, 9088, NULL, 'Kayla Mahira', '$1$9AjrxzKd$tUrBa8wxPlM6WCOMi0Lua/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (17, 11, 9089, NULL, 'Komang Ayu', '$1$KHM0b11g$xydaFCJx/HhSmp9SBIFot/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (18, 11, 9090, NULL, 'Lidya Caterine', '$1$nIQQYmSZ$w7Glpggjr8nyNfGBdo750/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (19, 11, 9091, NULL, 'M. Noufal Afif', '$1$UWJgawKp$f7sBLD.0CnMmYZWiXdFho0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (20, 11, 9092, NULL, 'Muti\'ah Yasmin', '$1$GhQPkTsi$mlH3PuEkIsqGSgm6Ymvpf/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (21, 11, 9093, NULL, 'Najwa Tjalib', '$1$AWDBEYQ8$PZ0Dk22eT5hx5asF6qpFG1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (22, 11, 9094, NULL, 'Rico Kurniawan A.', '$1$F7XYCuYg$lxDJf9.tuR31VkKok4RAg.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (23, 11, 9095, NULL, 'Ridwan Syah P', '$1$HQ7usDUk$9XRX/HGzYCCJwnGWp1Ea5.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (24, 11, 9096, NULL, 'Shahna Aulia G', '$1$wjRsIL1C$aBvqpMTF9HvvvgM1rHpOa1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (25, 11, 9097, NULL, 'Suci Mahadewi', '$1$1eonVFnk$bYTqyisYfn430H2CcROJu0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (26, 11, 9098, NULL, 'Syafira Tasha H', '$1$8tpJWoqz$Fz/ihTynaIZmSq6/B7GWh1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (27, 11, 9099, NULL, 'Wahyu Satrio W', '$1$P3FTFCEg$7fsFBpeCBIriE9u56bBuC1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (28, 11, 9100, NULL, 'Adela Nurma Yasya', '$1$NslmQex4$VwKLE2MCgJ.QoWjXkElMV1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (9, 18, 9081, NULL, 'Arief Budiman', '$1$oSQbd4dL$6lr01vnEo6RfzoiytNyay.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (10, 18, 9082, NULL, 'Diandrani Alegra F', '$1$MjMPlu3D$S/kRUayEAWJOzMCPgtc8Z/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (11, 18, 9083, NULL, 'Dyah Kinanti', '$1$Fhq8ROmD$Cbq59sLQQ7uqWqv2oP932.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (12, 18, 9084, NULL, 'Fera Cesilia', '$1$0j7hodSJ$GpbRQAVwARz3ObZhgRnq6/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (13, 18, 9085, NULL, 'Fina Aulia W', '$1$K/vC71ly$o94VycCCAfHlkPXmLY5280', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (14, 18, 9086, NULL, 'M. Haykal', '$1$euz0qEj6$TWSdO.tDGObfo6.REqEoH1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (15, 18, 9087, NULL, 'Irma Julia', '$1$KCgJE3pX$PWfzKZZdOF3s1mgnC51db0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (16, 18, 9088, NULL, 'Kayla Mahira', '$1$9AjrxzKd$tUrBa8wxPlM6WCOMi0Lua/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (17, 18, 9089, NULL, 'Komang Ayu', '$1$KHM0b11g$xydaFCJx/HhSmp9SBIFot/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (18, 18, 9090, NULL, 'Lidya Caterine', '$1$nIQQYmSZ$w7Glpggjr8nyNfGBdo750/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (19, 18, 9091, NULL, 'M. Noufal Afif', '$1$UWJgawKp$f7sBLD.0CnMmYZWiXdFho0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (20, 18, 9092, NULL, 'Muti\'ah Yasmin', '$1$GhQPkTsi$mlH3PuEkIsqGSgm6Ymvpf/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (21, 18, 9093, NULL, 'Najwa Tjalib', '$1$AWDBEYQ8$PZ0Dk22eT5hx5asF6qpFG1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (22, 18, 9094, NULL, 'Rico Kurniawan A.', '$1$F7XYCuYg$lxDJf9.tuR31VkKok4RAg.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (23, 18, 9095, NULL, 'Ridwan Syah P', '$1$HQ7usDUk$9XRX/HGzYCCJwnGWp1Ea5.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (24, 18, 9096, NULL, 'Shahna Aulia G', '$1$wjRsIL1C$aBvqpMTF9HvvvgM1rHpOa1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (25, 18, 9097, NULL, 'Suci Mahadewi', '$1$1eonVFnk$bYTqyisYfn430H2CcROJu0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (26, 18, 9098, NULL, 'Syafira Tasha H', '$1$8tpJWoqz$Fz/ihTynaIZmSq6/B7GWh1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (27, 18, 9099, NULL, 'Wahyu Satrio W', '$1$P3FTFCEg$7fsFBpeCBIriE9u56bBuC1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (28, 18, 9100, NULL, 'Adela Nurma Yasya', '$1$NslmQex4$VwKLE2MCgJ.QoWjXkElMV1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (29, 14, 9101, NULL, 'Annisa Salsabila', '$1$NRjXderV$8ea8GBIcc5RT/lDRle3Ub1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (30, 14, 9102, NULL, 'Alvito Rahmadhani', '$1$2LKl8hDt$l.btgFXa2W2mteaZ.NNkv1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (31, 14, 9103, NULL, 'Arya Adi Putra', '$1$JfiZS7Wf$JrIrAsz7Bf2wnV38Q3oZR0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
@@ -396,14 +492,14 @@ INSERT INTO `ms_student` VALUES (45, 14, 9117, NULL, 'Rachel Putrindoyo', '$1$yr
 INSERT INTO `ms_student` VALUES (46, 14, 9118, NULL, 'Reza Pradipta A', '$1$76T4BYxK$ZxtIDr2F18ADr4N1yik2B0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (47, 14, 9119, NULL, 'Rizky Alif', '$1$SoeNhsNh$jA8x0OitYxyFWob8XDYb./', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (48, 14, 9120, NULL, 'Risyafiqa N', '$1$HgvLejJF$qt8w9jIsrbC8BDWIi0PDX.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (49, 16, 9121, NULL, 'Sahla Amrina', '$1$Rus/k61T$pV9CXh7K.u8rNPcmmf7Sh/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (50, 16, 9122, NULL, 'Salsabila Salma', '$1$9RTQINH6$MAlcdbmvU.Pa/Hyc6XqvX0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (51, 16, 9123, NULL, 'Syifa Ibtikal', '$1$iJTUK53j$aFAQ2twekYC1wjGfwzNl81', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (52, 16, 9124, NULL, 'Tiara Sastya V', '$1$EBF/0JoA$SCVA/LuUx..IGtFxfi5wl1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (53, 16, 9125, NULL, 'Titto Nugraha', '$1$d7HLDrBn$tYyGTXPqnU0pdwWjGLm59/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (54, 16, 9126, NULL, 'Utari', '$1$YbiSc70k$d25qjazEvXGaMDAf3P71D1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (55, 16, 9127, NULL, 'Yasmin Darin', '$1$t9GsvCEz$8tocpsECk23fCqvpjGLxM.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
-INSERT INTO `ms_student` VALUES (56, 16, 9128, NULL, 'Zahra Hauni', '$1$TwkPdyLc$6QCsrZ07Fqtu.DC9QAk0T/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (49, 17, 9121, NULL, 'Sahla Amrina', '$1$Rus/k61T$pV9CXh7K.u8rNPcmmf7Sh/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (50, 17, 9122, NULL, 'Salsabila Salma', '$1$9RTQINH6$MAlcdbmvU.Pa/Hyc6XqvX0', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (51, 17, 9123, NULL, 'Syifa Ibtikal', '$1$iJTUK53j$aFAQ2twekYC1wjGfwzNl81', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (52, 17, 9124, NULL, 'Tiara Sastya V', '$1$EBF/0JoA$SCVA/LuUx..IGtFxfi5wl1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (53, 17, 9125, NULL, 'Titto Nugraha', '$1$d7HLDrBn$tYyGTXPqnU0pdwWjGLm59/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (54, 17, 9126, NULL, 'Utari', '$1$YbiSc70k$d25qjazEvXGaMDAf3P71D1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (55, 17, 9127, NULL, 'Yasmin Darin', '$1$t9GsvCEz$8tocpsECk23fCqvpjGLxM.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
+INSERT INTO `ms_student` VALUES (56, 17, 9128, NULL, 'Zahra Hauni', '$1$TwkPdyLc$6QCsrZ07Fqtu.DC9QAk0T/', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (57, 12, 9001, NULL, 'Adinda Ghina', '$1$Q6trXAnJ$hDGtf6HowCZRCDN/ONBTP.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (58, 12, 9002, NULL, 'Afifah Najmi', '$1$Gx63A0TH$ARJP7OBKbalUBajiwh/NW1', '', '', NULL, '2018-03-01', '', '', NULL, 0);
 INSERT INTO `ms_student` VALUES (59, 12, 9003, NULL, 'Annisa Fath', '$1$vr9D20vs$kgfBN3IF0QikwpH71i4at.', '', '', NULL, '2018-03-01', '', '', NULL, 0);
@@ -485,13 +581,32 @@ INSERT INTO `ms_student` VALUES (134, 1, 2013310017, NULL, 'Uchiha Sasuke', '$1$
 INSERT INTO `ms_student` VALUES (135, 1, 213123, NULL, 'asd', '$1$99/.ce..$DZXyDx9dv.FLs6Za1c1oU/', 'sandi@gmail.com', '213', '77f528afdbf622504d977a40fdfed000.jpg', '2018-09-07', NULL, NULL, NULL, 1);
 INSERT INTO `ms_student` VALUES (136, 1, 12831028, NULL, 'Xinqiu', '$1$mrazlYMU$sOvHoyOuGVSX/CbOcN6TJ0', 'xinqiu@gmail.com', '081231253615', '3efbad6d27d47c608284481678ff9800.png', '2021-05-04', NULL, NULL, NULL, 0);
 INSERT INTO `ms_student` VALUES (137, 2, 1122, NULL, 'Agus', '$1$79/.Cr4.$YQWDXxKpvr9MX4iQZIoQJ0', '', '', NULL, '2023-08-22', NULL, NULL, NULL, 0);
+INSERT INTO `ms_student` VALUES (138, 11, 1234, NULL, 'Anies', '$1$9M3SdQO6$yyk2EtimuBwIcwy.WBE2D.', 'user@gmail.com', '018293839', NULL, '2023-09-05', NULL, NULL, NULL, 0);
+
+-- ----------------------------
+-- Table structure for ms_subtest_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `ms_subtest_categories`;
+CREATE TABLE `ms_subtest_categories`  (
+  `id_cat` int NOT NULL AUTO_INCREMENT,
+  `cat_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `cat_hide` tinyint(1) NULL DEFAULT 0,
+  `cat_created` date NULL DEFAULT NULL,
+  PRIMARY KEY (`id_cat`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of ms_subtest_categories
+-- ----------------------------
+INSERT INTO `ms_subtest_categories` VALUES (1, 'Tes Potensi Skolastik', 0, NULL);
+INSERT INTO `ms_subtest_categories` VALUES (2, 'Tes Kompetensi Akademik', 0, NULL);
 
 -- ----------------------------
 -- Table structure for ms_teacher
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_teacher`;
 CREATE TABLE `ms_teacher`  (
-  `id_teacher` int(10) NOT NULL AUTO_INCREMENT,
+  `id_teacher` int NOT NULL AUTO_INCREMENT,
   `teacher_name` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `teacher_username` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `teacher_password` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
@@ -502,7 +617,7 @@ CREATE TABLE `ms_teacher`  (
   `teacher_created` date NULL DEFAULT NULL,
   `teacher_hide` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id_teacher`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_teacher
@@ -514,10 +629,10 @@ INSERT INTO `ms_teacher` VALUES (1, 'Zhongli', 'zhongli', '$1$bRJlXSfi$qCvgjv0U5
 -- ----------------------------
 DROP TABLE IF EXISTS `ms_token`;
 CREATE TABLE `ms_token`  (
-  `id_token` int(100) NOT NULL AUTO_INCREMENT,
+  `id_token` int NOT NULL AUTO_INCREMENT,
   `access_token` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
   PRIMARY KEY (`id_token`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 142 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 170 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of ms_token
@@ -581,45 +696,193 @@ INSERT INTO `ms_token` VALUES (138, '$1$jH1.wj..$s90C9uoKNSEIxUkZ6ujjL1');
 INSERT INTO `ms_token` VALUES (139, '$1$am..bP0.$y2jEi0QoQ82BYeN4sc.0u0');
 INSERT INTO `ms_token` VALUES (140, '$1$Jj1.ez..$TPF4rQc.65jse16JBPJUV.');
 INSERT INTO `ms_token` VALUES (141, '$1$P92.s34.$fQ3/hJ4kIJKOe4QNHwTM60');
+INSERT INTO `ms_token` VALUES (142, '$1$26xg0t3U$OodYafhNNEuCa6VJH0T0z1');
+INSERT INTO `ms_token` VALUES (143, '$1$kMNohfRU$W8XdY6YjWWZRVWmzC9jlC.');
+INSERT INTO `ms_token` VALUES (144, '$1$UfMZ7PbV$GfUCeX2ttKS31O.lxIp0v.');
+INSERT INTO `ms_token` VALUES (145, '$1$lylUrXEv$k.kudZwINoGZm7kdsx22Z0');
+INSERT INTO `ms_token` VALUES (146, '$1$XDc4wrUz$ei/cY6c3zB4NLC6e7dxCl.');
+INSERT INTO `ms_token` VALUES (147, '$1$kc80aqQM$EdHTmgjRY/H6SDOwMSZA.1');
+INSERT INTO `ms_token` VALUES (148, '$1$zyM4kDB/$dzwYFRZV89KtApQRoHWaX1');
+INSERT INTO `ms_token` VALUES (149, '$1$HR3EmZjD$OLXQnFRtDUmK1NvErZYWV0');
+INSERT INTO `ms_token` VALUES (150, '$1$P.TjzJi6$RLkVrzK91HrSyD5ztZ2dP/');
+INSERT INTO `ms_token` VALUES (151, '$1$eAG.HzVW$0WvYMIszvb5Cf0MaxtH221');
+INSERT INTO `ms_token` VALUES (152, '$1$uBE3cYrp$x69oIqWQ84Bp25Yrmqueb/');
+INSERT INTO `ms_token` VALUES (153, '$1$e3SpBeGP$8u7/ekSkL7NnWVkmvXbGL/');
+INSERT INTO `ms_token` VALUES (154, '$1$CNx3J7.X$OSpa7M3Cu1QcoeMoLCXA70');
+INSERT INTO `ms_token` VALUES (155, '$1$MEBB.xTM$FmISTEyE.EoC7Gj/7x1Ro/');
+INSERT INTO `ms_token` VALUES (156, '$1$dCFBrPdz$eQhzQmla0vvH14KQiniU//');
+INSERT INTO `ms_token` VALUES (157, '$1$CoVL1mwG$RmIywC2kQkiJ6yISXLkhO.');
+INSERT INTO `ms_token` VALUES (158, '$1$bLXoFcxy$hac8xn.VIkoyPjnzJj04H.');
+INSERT INTO `ms_token` VALUES (159, '$1$XH9umPed$0SlPt7euEQjE8MIKEC.xW.');
+INSERT INTO `ms_token` VALUES (160, '$1$QO0Tqqo7$cVC9WpB5gBnqGAYfCUqdV/');
+INSERT INTO `ms_token` VALUES (161, '$1$OcnNfmmv$r8UNTfBQatSdUba1eugrn0');
+INSERT INTO `ms_token` VALUES (162, '$1$Ev7so2e1$REZxuD2T2MijzbyXSOVzQ/');
+INSERT INTO `ms_token` VALUES (163, '$1$teA2aGvE$lt1eggZdKtU6itRN4Jpxq0');
+INSERT INTO `ms_token` VALUES (168, '$1$nKGsp/Bt$5/weNBvp4ae8qIbWSbUk2/');
+INSERT INTO `ms_token` VALUES (169, '$1$7i4haNe0$nx0xZngkBF0R0YqQy/hoZ.');
+
+-- ----------------------------
+-- Table structure for question_answer
+-- ----------------------------
+DROP TABLE IF EXISTS `question_answer`;
+CREATE TABLE `question_answer`  (
+  `id_option` int NOT NULL AUTO_INCREMENT,
+  `id_question` int NULL DEFAULT NULL,
+  `answer` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `option_image` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `option_created` datetime NULL DEFAULT NULL,
+  `option_updated` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
+  `option_hide` tinyint(1) NULL DEFAULT 0,
+  PRIMARY KEY (`id_option`) USING BTREE,
+  INDEX `id_question`(`id_question`) USING BTREE,
+  CONSTRAINT `question_answer_ibfk_1` FOREIGN KEY (`id_question`) REFERENCES `ms_question` (`id_question`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of question_answer
+-- ----------------------------
+INSERT INTO `question_answer` VALUES (30, 51, 'asdasdasdasd', NULL, '2023-09-02 22:55:06', '2023-09-02 22:55:06', 0);
+INSERT INTO `question_answer` VALUES (31, 53, 'Ini adalah jawaban', NULL, '2023-09-02 00:00:00', '2023-09-02 23:01:12', 0);
+
+-- ----------------------------
+-- Table structure for question_match
+-- ----------------------------
+DROP TABLE IF EXISTS `question_match`;
+CREATE TABLE `question_match`  (
+  `id_option` int NOT NULL AUTO_INCREMENT,
+  `id_question` int NULL DEFAULT NULL,
+  `option_` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `option_image` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `option_created` datetime NULL DEFAULT NULL,
+  `option_updated` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
+  `option_hide` tinyint(1) NULL DEFAULT 0,
+  PRIMARY KEY (`id_option`) USING BTREE,
+  INDEX `id_question`(`id_question`) USING BTREE,
+  CONSTRAINT `question_match_ibfk_1` FOREIGN KEY (`id_question`) REFERENCES `ms_question` (`id_question`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of question_match
+-- ----------------------------
+INSERT INTO `question_match` VALUES (39, 49, 'Bahasa inggrisnya biru', NULL, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match` VALUES (40, 49, 'Bahasa inggrisnya kuning', NULL, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match` VALUES (41, 49, 'Bahasa inggrisnya hijau', NULL, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match` VALUES (42, 49, 'Bahasa inggrisnya putih', NULL, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match` VALUES (43, 54, 'Bahasa inggrisnya biru', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match` VALUES (44, 54, 'Bahasa inggrisnya kuning', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match` VALUES (45, 54, 'Bahasa inggrisnya hijau', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match` VALUES (46, 54, 'Bahasa inggrisnya putih', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match` VALUES (47, 54, 'ini satu', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match` VALUES (48, 54, 'tiga', NULL, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+
+-- ----------------------------
+-- Table structure for question_match_answer
+-- ----------------------------
+DROP TABLE IF EXISTS `question_match_answer`;
+CREATE TABLE `question_match_answer`  (
+  `id_option` int NOT NULL AUTO_INCREMENT,
+  `id_match` int NULL DEFAULT NULL,
+  `answer_` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `option_image` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `option_true` tinyint(1) NULL DEFAULT 0,
+  `option_created` datetime NULL DEFAULT NULL,
+  `option_updated` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
+  `option_hide` tinyint(1) NULL DEFAULT 0,
+  PRIMARY KEY (`id_option`) USING BTREE,
+  INDEX `id_question`(`id_match`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of question_match_answer
+-- ----------------------------
+INSERT INTO `question_match_answer` VALUES (33, 39, 'Biru', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match_answer` VALUES (34, 40, 'Yellow', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match_answer` VALUES (35, 41, 'Green', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match_answer` VALUES (36, 42, 'White', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:51:24', 0);
+INSERT INTO `question_match_answer` VALUES (37, 43, 'Biru', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match_answer` VALUES (38, 44, 'Yellow', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match_answer` VALUES (39, 45, 'Green', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match_answer` VALUES (40, 46, 'White', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match_answer` VALUES (41, 47, 'sdusa', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
+INSERT INTO `question_match_answer` VALUES (42, 48, 'empat', NULL, 0, '2023-09-03 00:00:00', '2023-09-03 07:39:44', 0);
 
 -- ----------------------------
 -- Table structure for question_option
 -- ----------------------------
 DROP TABLE IF EXISTS `question_option`;
 CREATE TABLE `question_option`  (
-  `id_option` int(60) NOT NULL AUTO_INCREMENT,
-  `id_question` int(10) NULL DEFAULT NULL,
+  `id_option` int NOT NULL AUTO_INCREMENT,
+  `id_question` int NULL DEFAULT NULL,
   `option_` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `option_image` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `option_true` tinyint(1) NULL DEFAULT 0,
-  `option_created` datetime(0) NULL DEFAULT NULL,
-  `option_updated` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
+  `option_created` datetime NULL DEFAULT NULL,
+  `option_updated` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
   `option_hide` tinyint(1) NULL DEFAULT 0,
   PRIMARY KEY (`id_option`) USING BTREE,
   INDEX `id_question`(`id_question`) USING BTREE,
   CONSTRAINT `question_option_ibfk_1` FOREIGN KEY (`id_question`) REFERENCES `ms_question` (`id_question`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of question_option
+-- ----------------------------
+INSERT INTO `question_option` VALUES (30, 38, 'Jawaban 1', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0);
+INSERT INTO `question_option` VALUES (31, 39, 'Jawaban 2', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0);
+INSERT INTO `question_option` VALUES (32, 40, 'Jawaban 3', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0);
+INSERT INTO `question_option` VALUES (33, 41, 'Jawaban 4', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0);
+INSERT INTO `question_option` VALUES (34, 42, 'Jawaban 5', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:38:59', 0);
+INSERT INTO `question_option` VALUES (35, 43, 'Alpha Correct 1', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (36, 43, 'Beta Uncorrect 1', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (37, 43, 'Charlie Correct 1', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (38, 43, 'Delta Uncorrect 1', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (39, 43, 'Echo Uncorrect 1', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (40, 43, 'Feron Uncorrect 1', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (41, 44, 'Alpha Correct 2', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (42, 44, 'Beta Uncorrect 2', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (43, 44, 'Charlie Correct 2', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (44, 44, 'Delta Uncorrect 2', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (45, 44, 'Echo Uncorrect 2', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (46, 44, 'Feron Uncorrect 2', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (47, 45, 'Alpha Correct 3', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (48, 45, 'Beta Uncorrect 3', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (49, 45, 'Charlie Correct 3', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (50, 45, 'Delta Uncorrect 3', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (51, 45, 'Echo Uncorrect 3', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (52, 45, 'Feron Uncorrect 3', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (53, 46, 'Alpha Correct 4', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (54, 46, 'Beta Uncorrect 4', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (55, 46, 'Charlie Correct 4', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (56, 46, 'Delta Uncorrect 4', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (57, 46, 'Echo Uncorrect 4', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (58, 46, 'Feron Uncorrect 4', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (59, 47, 'Alpha Correct 5', NULL, 1, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (60, 47, 'Beta Uncorrect 5', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (61, 47, 'Charlie Correct 5', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (62, 47, 'Delta Uncorrect 5', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (63, 47, 'Echo Uncorrect 5', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
+INSERT INTO `question_option` VALUES (64, 47, 'Feron Uncorrect 5', NULL, 0, '2023-09-02 00:00:00', '2023-09-02 22:47:19', 0);
 
 -- ----------------------------
 -- Table structure for st_presence
 -- ----------------------------
 DROP TABLE IF EXISTS `st_presence`;
 CREATE TABLE `st_presence`  (
-  `idpresence` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `presence_log` timestamp(0) NULL DEFAULT NULL,
-  `nis` int(20) NULL DEFAULT NULL,
+  `idpresence` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `presence_log` timestamp NULL DEFAULT NULL,
+  `nis` int NULL DEFAULT NULL,
   `presence_type` enum('alpha','leave','attend','out','sick') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'attend',
-  `presence_out` timestamp(0) NULL DEFAULT NULL,
+  `presence_out` timestamp NULL DEFAULT NULL,
   `presence_res` enum('finger','mobile','website') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'finger',
-  `presence_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
-  `notif_sent` int(2) NOT NULL DEFAULT 0,
-  `notif_read` timestamp(0) NULL DEFAULT NULL,
-  `leave_approve` tinyint(4) NOT NULL DEFAULT 0,
+  `presence_time` timestamp NOT NULL DEFAULT current_timestamp ON UPDATE CURRENT_TIMESTAMP,
+  `notif_sent` int NOT NULL DEFAULT 0,
+  `notif_read` timestamp NULL DEFAULT NULL,
+  `leave_approve` tinyint NOT NULL DEFAULT 0,
   `leave_reason` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `leave_image` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`idpresence`) USING BTREE,
   INDEX `nis`(`nis`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of st_presence
@@ -639,15 +902,15 @@ INSERT INTO `st_presence` VALUES (9, '2018-02-05 13:07:04', 12, 'attend', NULL, 
 -- ----------------------------
 DROP TABLE IF EXISTS `teacher_class`;
 CREATE TABLE `teacher_class`  (
-  `id_teacher_class` int(10) NOT NULL AUTO_INCREMENT,
-  `id_teacher` int(10) NULL DEFAULT NULL,
-  `id_class` int(10) NULL DEFAULT NULL,
+  `id_teacher_class` int NOT NULL AUTO_INCREMENT,
+  `id_teacher` int NULL DEFAULT NULL,
+  `id_class` int NULL DEFAULT NULL,
   PRIMARY KEY (`id_teacher_class`) USING BTREE,
   INDEX `id_teacher`(`id_teacher`) USING BTREE,
   INDEX `id_class`(`id_class`) USING BTREE,
   CONSTRAINT `teacher_class_ibfk_1` FOREIGN KEY (`id_teacher`) REFERENCES `ms_teacher` (`id_teacher`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `teacher_class_ibfk_2` FOREIGN KEY (`id_class`) REFERENCES `ms_class` (`id_class`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of teacher_class
@@ -659,14 +922,18 @@ INSERT INTO `teacher_class` VALUES (1, 1, 1);
 -- ----------------------------
 DROP TABLE IF EXISTS `teacher_lesson`;
 CREATE TABLE `teacher_lesson`  (
-  `id_teacher_lesson` int(10) NOT NULL AUTO_INCREMENT,
-  `id_teacher` int(10) NULL DEFAULT NULL,
-  `id_lesson` int(10) NULL DEFAULT NULL,
+  `id_teacher_lesson` int NOT NULL AUTO_INCREMENT,
+  `id_teacher` int NULL DEFAULT NULL,
+  `id_lesson` int NULL DEFAULT NULL,
   PRIMARY KEY (`id_teacher_lesson`) USING BTREE,
   INDEX `id_teacher`(`id_teacher`) USING BTREE,
   INDEX `id_lesson`(`id_lesson`) USING BTREE,
   CONSTRAINT `teacher_lesson_ibfk_1` FOREIGN KEY (`id_teacher`) REFERENCES `ms_teacher` (`id_teacher`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `teacher_lesson_ibfk_2` FOREIGN KEY (`id_lesson`) REFERENCES `ms_lesson` (`id_lesson`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of teacher_lesson
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -79,31 +79,38 @@ class AssignmentModel extends CI_Model {
 	public function getQuestionSubtestLevel($id_sub, $level) {
 		$this->db->where('id_sub', $id_sub);
 		$this->db->where('question_level', $level);
+		$this->db->where('id_type', 5);
 		$this->db->where('question_hide', 0);
 		$this->db->order_by('RAND()'); // Mengurutkan data secara acak
 		$question = $this->db->get('ms_question')->row();
 
-		if ($question->id_type == 1 ||
-			$question->id_type == 2 ||
-			$question->id_type == 4) {
-			$this->db->where('id_question', $question->id_question);
-			$this->db->where('option_hide', 0);
-			$question->answer = $this->db->get('question_option')->result_object();
-		}else if ($question->id_type == 3){
-			$this->db->where('id_question', $question->id_question);
-			$this->db->where('option_hide', 0);
-			$question->answer = $this->db->get('question_answer')->result_object();
-		}else{
-			$this->db->where('id_question', $question->id_question);
-			$this->db->where('option_hide', 0);
-			$question->answer = $this->db->get('question_match')->result_object();
-
-			foreach ($question->answer as $key => $value) {
-				$this->db->where('id_match', $value->id_option);
+		if ($question) {
+			if ($question->id_type == 1 ||
+				$question->id_type == 2 ||
+				$question->id_type == 4) {
+				$this->db->where('id_question', $question->id_question);
 				$this->db->where('option_hide', 0);
-				$value->match = $this->db->get('question_match_answer')->result_object();
-			}
+				$question->answer = $this->db->get('question_option')->result_object();
+			}else if ($question->id_type == 3){
+				$this->db->where('id_question', $question->id_question);
+				$this->db->where('option_hide', 0);
+				$question->answer = $this->db->get('question_answer')->result_object();
+			}else{
+				$match = [];
+				$this->db->where('id_question', $question->id_question);
+				$this->db->where('option_hide', 0);
+				$question->answer = $this->db->get('question_match')->result_object();
+	
+				foreach ($question->answer as $key => $value) {
+					$this->db->where('id_match', $value->id_option);
+					$this->db->where('option_hide', 0);
+					$value->match = $this->db->get('question_match_answer')->row();
+					array_push($match, $value->match);
+				}
 
+				$question->match = $match;
+	
+			}
 		}
 
 		return $question;

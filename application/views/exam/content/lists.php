@@ -37,9 +37,51 @@
 								<?php endif; ?>
 							</td>
 	                        <td>
-	                        	<a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="fa fa-pencil"></i> Ujian</a>
+	                        	<a href="#password<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="fa fa-pencil"></i> Ujian</a>
 	                        </td>
 	                    </tr>
+						<!-- MODAL CHECK PASSWORD -->
+						<div class="modal fade" id="password<?= $row ?>">
+	                    	<div class="modal-dialog" style="width:30%">
+	                    		<div class="modal-content">
+	                    			<div class="modal-header">
+	                    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	                    				<h4 class="modal-title">Masukan Password Ujian <?= $value->assignment->assignment_name ?> ?</h4>
+	                    			</div>
+									<div class="modal-body">
+										<input type="text" class="form-control" name="password<?= $row ?>" required placeholder="Password">
+									</div>
+	                    			<div class="modal-footer">
+										<button id="checkPasswordBtn<?= $row ?>" class="btn btn-primary btn-block">Check Password</button>
+										<p id="password-error<?= $row ?>" style="color: red; display:none">Password salah. Silakan coba lagi.</p>
+	                    			</div>
+	                    		</div>
+	                    	</div>
+	                    </div>
+						<script>
+							$(document).ready(function () {
+								$('#password-error').hide();
+								// Handler saat tombol "Check Password" diklik
+								$('#checkPasswordBtn<?= $row ?>').click(function () {
+									var inputPassword = $('input[name="password<?= $row ?>"]').val(); // Dapatkan nilai password yang dimasukkan oleh pengguna
+									var expectedPassword = '<?= $value->password ?>'; // Gantilah dengan password yang seharusnya
+									console.log(inputPassword)
+									
+									// Periksa apakah password yang dimasukkan sesuai dengan yang diharapkan
+									if (inputPassword == expectedPassword) {
+										console.log('password Benar');
+										// Password benar, tampilkan modal selanjutnya di sini
+										$('#password-error').css('display', 'none');
+										$('#categories<?= $row ?>').modal('show');
+										$('#password<?= $row ?>').modal('hide');
+									} else {
+										console.log('password Salah');
+										// Password salah, tampilkan pesan kesalahan
+										$('#password-error<?= $row ?>').css('display', 'block');
+									}
+								});
+							});
+						</script>
 	                    <!-- MODAL -->
 	                    <div class="modal fade" id="categories<?= $row ?>">
 	                    	<div class="modal-dialog" style="width:50%">
@@ -132,6 +174,17 @@
         </div>
     </div>
 </div>
+
+<script>
+	$(document).ready(function () {
+		var passwordError = $('#password-error');
+		<?php if ($password == $value->password) { ?>
+			passwordError.hide(); // Sembunyikan pesan kesalahan jika password cocok
+		<?php } else { ?>
+			passwordError.show(); // Tampilkan pesan kesalahan jika password tidak cocok
+		<?php } ?>
+	});
+</script>
 
 <style>
 	/* Tambahkan warna latar belakang striped */

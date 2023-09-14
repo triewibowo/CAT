@@ -55,7 +55,7 @@
                         <div class="col-sm-4">
                             <h5 class="mt-2 float-right text-primary"><i class="feather feather-clock"></i>&nbsp; Durasi Tes <b>0 Menit</b></p>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label>Nama Tes</label>
                                 <input type="text" class="form-control" name="assignment_name" required >
@@ -80,7 +80,7 @@
                                 </div>
                             </div>/ Row -->
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <!-- <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -100,10 +100,16 @@
                                 <input type="text" class="form-control" name="assignment_author" required placeholder="Penulis Ujian">
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label>Tipe Ujian</label>
                                 <input type="text" class="form-control" name="assignment_type" required placeholder="ex: UTS / UAS">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Password Ujian</label>
+                                <input type="text" class="form-control" name="password" required placeholder="Password">
                             </div>
                         </div>
                         <!-- <div class="col-sm-6">

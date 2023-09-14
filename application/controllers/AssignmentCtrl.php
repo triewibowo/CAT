@@ -16,7 +16,8 @@ class AssignmentCtrl extends MY_Controller {
 			}
 			$classes 	= $this->input->post('id_class');	
 			$categories = $this->input->post('category');
-			$students 	= $this->master->getAllStudentByClass($classes);	
+			$students 	= $this->master->getAllStudentByClass($classes);
+			$password	= $this->input->post('password');
 			$duration	= 0;
 			$total_soal	= 0;
 			$data 		= $this->input->post();
@@ -24,6 +25,7 @@ class AssignmentCtrl extends MY_Controller {
 			unset($data['show_analytic']);
 			unset($data['id_class']);
 			unset($data['category']);
+			unset($data['password']);
 			if ($this->input->post('show_analytic')) {
 				$data['show_analytic'] = 1;
 			}
@@ -75,6 +77,7 @@ class AssignmentCtrl extends MY_Controller {
 					'id_student'	=> $student->id_student,
 					'duration'		=> $duration,
 					'total_soal'	=> $total_soal,
+					'password'		=> $password,
 					'status'		=> 0
 				];
 

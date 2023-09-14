@@ -56,7 +56,7 @@
 				<div class="col-sm-2"></div>
 				<div class="col-sm-8">
 					<div class="panel">
-						<div class="panel-body" style="padding: 1.5rem 5rem">
+						<div class="panel-body" style="padding: 1.5rem 5rem;background-color:#fbfbfb">
 							<!-- SOAL -->
 							<h3 style="margin-bottom:45px;" id="question-title"></h3>
 							<img src="image.jpg" id="image-question" alt="Image description" style="width:902px; height:350px; margin-bottom:45px;">
@@ -356,6 +356,43 @@
 
 				answerOption.append(input);
 				answerOptionsElement.append(answerOption);
+		}else if (question.id_type == 5){
+			const optionText = question;
+
+			for (let i = 0; i < optionText.answer.length; i++) 
+			{
+				const label = $('<label class="d-block">')
+				.text(optionText.answer[i].option_ + ' - ');
+
+				const select = $('<select style="width:50%; font-size:12px">')
+				.addClass('custom-select')
+				.attr('name', 'answer-match-' + optionText.id_question)
+				.append(
+					$('<option selected disabled style="font-size:12px">')
+					.text('Select answer...')
+				);
+
+				for (let j = 0; j < optionText.match.length; j++) {
+					const option = $('<option style="font-size:12px">')
+					.attr('value', optionText.match[j].id_option)
+					.text(optionText.match[j].answer_);
+
+					select.append(option);
+				}
+
+				select.on('change', () => {
+					const selectedValue = select.val(); // Mendapatkan nilai terpilih dari <select>
+					const answer = {
+						index: optionText.answer[i].id_option,
+						id: selectedValue,
+						indexLoop:i
+					};
+					checkAnswer(answer);
+				});
+
+				label.append(select);
+				answerOptionsElement.append(label);
+			}
 		}
 	}
 

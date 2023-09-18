@@ -821,113 +821,215 @@ class MainPage extends MY_Controller {
 	
 			// Ambil data hasil jawaban siswa untuk subtest ini dari database
 			$answers = $subtest->assign;
+
+			// Isi lembar Excel dengan data hasil jawaban siswa
+			$rowIndex = 2; // Mulai dari baris kedua
+			$rowIndexNilai = count($answers) + 15; // Mulai dari baris ke 14
+			$barisJumlah = count($answers) + 2;
+			$barisJumlahNilai = count($answers) + 14;
+			$worksheet->setCellValue('C' . $barisJumlah, "Jumlah Benar");
 	
 			// Tambahkan header
-			$worksheet->setCellValue('A1', 'No');
-			$worksheet->setCellValue('B1', 'Nama Siswa');
+			$worksheet->setCellValue('A1', 'NIS');
+			$worksheet->setCellValue('B1', 'No');
+			$worksheet->setCellValue('C1', 'Nama Siswa');
+
+			// Tambahkan header
+			$worksheet->setCellValue('A' . $barisJumlahNilai, 'NIS');
+			$worksheet->setCellValue('B' . $barisJumlahNilai, 'No');
+			$worksheet->setCellValue('C' . $barisJumlahNilai, 'Nama Siswa');
 	
 			// Mendapatkan jumlah soal untuk subtest ini
 			$totalQuestions = $subtest->qty_soal;
 	
 			// Menambahkan judul kolom untuk setiap soal
 			for ($i = 1; $i <= $totalQuestions; $i++) {
-				// Mengatur lebar kolom A dan B
-				$worksheet->getColumnDimension('A')->setWidth(10);
-				$worksheet->getColumnDimension('B')->setWidth(20);
+				// Mengatur lebar kolom A dan B dan C
+				$worksheet->getColumnDimension('A')->setWidth(15);
+				$worksheet->getColumnDimension('B')->setWidth(10);
+				$worksheet->getColumnDimension('C')->setWidth(20);
 	
 				// Mengatur teks pada kolom A dan B menjadi kiri
 				$worksheet->getStyle('A')->getAlignment()->setHorizontal('center');
-				$worksheet->getStyle('B')->getAlignment()->setHorizontal('left');
+				$worksheet->getStyle('B')->getAlignment()->setHorizontal('center');
+				$worksheet->getStyle('C')->getAlignment()->setHorizontal('left');
 	
 				// Mengatur judul kolom pada kolom C dan seterusnya
-				$worksheet->getColumnDimensionByColumn($i + 2)->setWidth(10); // Mengatur lebar kolom C dan seterusnya
-				$worksheet->getStyleByColumnAndRow($i + 2, 1)->getAlignment()->setHorizontal('center');
-				$worksheet->setCellValueByColumnAndRow($i + 2, 1, 'Soal ' . $i);
+				$worksheet->getColumnDimensionByColumn($i + 3)->setWidth(10); // Mengatur lebar kolom C dan seterusnya
+				$worksheet->getStyleByColumnAndRow($i + 3, 1)->getAlignment()->setHorizontal('center');
+				$worksheet->setCellValueByColumnAndRow($i + 3, 1, 'Soal ' . $i);
+
+				// Mengatur judul kolom pada kolom D dan seterusnya
+				$worksheet->getColumnDimensionByColumn($i + 3)->setWidth(10); // Mengatur lebar kolom C dan seterusnya
+				$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlahNilai)->getAlignment()->setHorizontal('center');
+				$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlahNilai, 'Soal ' . $i);
 			}
 	
-			// Isi lembar Excel dengan data hasil jawaban siswa
-			$rowIndex = 2; // Mulai dari baris kedua
-			$barisJumlah = count($answers) + 2;
-			$worksheet->setCellValue('B' . $barisJumlah, "Jumlah Benar");
 			foreach ($answers as $index => $answer) {
 				// Atur data hasil jawaban siswa ke sel-sel Excel
-				$worksheet->setCellValue('A' . $rowIndex, $index + 1);
-				$worksheet->setCellValue('B' . $rowIndex, $answer->student->student_name);
+				$worksheet->setCellValue('A' . $rowIndex, $answer->student->student_nis);
+				$worksheet->setCellValue('B' . $rowIndex, $index + 1);
+				$worksheet->setCellValue('C' . $rowIndex, $answer->student->student_name);
+
+				// Atur data hasil jawaban siswa ke sel-sel Excel
+				$worksheet->setCellValue('A' . $rowIndexNilai, $answer->student->student_nis);
+				$worksheet->setCellValue('B' . $rowIndexNilai, $index + 1);
+				$worksheet->setCellValue('C' . $rowIndexNilai, $answer->student->student_name);
 	
 				// Loop melalui jawaban siswa untuk setiap soal
 				for ($i = 0; $i < $totalQuestions; $i++) {
-					$worksheet->getStyleByColumnAndRow($i + 3, $rowIndex)->getAlignment()->setHorizontal('center');
+					$worksheet->getStyleByColumnAndRow($i + 4, $rowIndex)->getAlignment()->setHorizontal('center');
 					if (isset($answer->assign_answers[$i])) {
 						// Mengatur teks pada kolom C dan seterusnya menjadi tengah
-						$worksheet->setCellValueByColumnAndRow($i + 3, $rowIndex, $answer->assign_answers[$i]->is_true);
+						$worksheet->setCellValueByColumnAndRow($i + 4, $rowIndex, $answer->assign_answers[$i]->is_true);
 					} else {
-						$worksheet->setCellValueByColumnAndRow($i + 3, $rowIndex, 0);
+						$worksheet->setCellValueByColumnAndRow($i + 4, $rowIndex, 0);
 					}
-					
+
+					// Nilai
+					$worksheet->getStyleByColumnAndRow($i + 4, $rowIndexNilai)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $rowIndexNilai, "=IF($kolomSoal" . $rowIndex . "=1," . $kolomSoal . "$" . ($barisJumlah+6) . ",0)");
+					$worksheet->getStyleByColumnAndRow($i + 4, $rowIndexNilai)->getNumberFormat()->setFormatCode('0.00');
+
 					// Menggunakan COUNTIF untuk menghitung jumlah nilai 1 di kolom soal yang sesuai
 					// Ini jumlah per soal
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah)->getAlignment()->setHorizontal('center');
-					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlah, "=COUNTIF($kolomSoal" . '2:$' . "$kolomSoal" . ($barisJumlah - 1) . ", 1)");
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah, "=COUNTIF($kolomSoal" . '2:$' . "$kolomSoal" . ($barisJumlah - 1) . ", 1)");
 					
 					// Persentase
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah +1)->getAlignment()->setHorizontal('center');
-					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlah+1, "=$kolomSoal" . $barisJumlah . '/$' . "A" . '$' . ($barisJumlah - 1));
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah +1)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah+1, "=$kolomSoal" . $barisJumlah . '/$' . "B" . '$' . ($barisJumlah - 1));
 					// Mengatur sel ke format persentase
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah + 1)->getNumberFormat()->setFormatCode('0.00%');
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah + 1)->getNumberFormat()->setFormatCode('0.00%');
 
 					// Persentase Benar
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah +3)->getAlignment()->setHorizontal('center');
-					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$kolomSoalTerakhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlah + 3, "=$kolomSoal" . $barisJumlah . '/$' . $kolomSoalTerakhir . '$' . ($barisJumlah));
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah +3)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$kolomSoalTerakhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah + 3, "=$kolomSoal" . $barisJumlah . '/$' . $kolomSoalTerakhir . '$' . ($barisJumlah));
 					// Mengatur sel ke format persentase
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah + 3)->getNumberFormat()->setFormatCode('0.00%');
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah + 3)->getNumberFormat()->setFormatCode('0.00%');
 
 					// Persentase Salah
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah +4)->getAlignment()->setHorizontal('center');
-					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)// Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlah + 4, "=1-$kolomSoal" . ($barisJumlah + 3));
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah +4)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)// Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah + 4, "=1-$kolomSoal" . ($barisJumlah + 3));
 					// Mengatur sel ke format persentase
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah + 4)->getNumberFormat()->setFormatCode('0.00%');
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah + 4)->getNumberFormat()->setFormatCode('0.00%');
 
 					// Score IRT
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah +6)->getAlignment()->setHorizontal('center');
-					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)// Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-					$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlah + 6, "=$kolomSoal" . ($barisJumlah + 4) . "*1000/$kolomSoalAkhir" . ($barisJumlah + 4));
-					$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlah + 6)->getNumberFormat()->setFormatCode('0.00');
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah +6)->getAlignment()->setHorizontal('center');
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)// Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah + 6, "=$kolomSoal" . ($barisJumlah + 4) . "*1000/$kolomSoalAkhir" . ($barisJumlah + 4));
+					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah + 6)->getNumberFormat()->setFormatCode('0.00');
 				}
 				
 				// Ini jumlah per siswa
-				$worksheet->getStyleByColumnAndRow($totalQuestions + 3, $rowIndex)->getAlignment()->setHorizontal('center');
-				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 2); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-				$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, $rowIndex, "=COUNTIF(C" .$rowIndex . ':$' . "$kolomSoal$rowIndex,1)");
+				$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $rowIndex)->getAlignment()->setHorizontal('center');
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+				$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $rowIndex, "=COUNTIF(D" .$rowIndex . ':$' . "$kolomSoal$rowIndex,1)");
+				
+				// Ini jumlah nilai per siswa
+				$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $rowIndexNilai)->getAlignment()->setHorizontal('center');
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+				$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $rowIndexNilai, "=SUM(D" .$rowIndexNilai . ':$' . "$kolomSoal$rowIndexNilai)");
+				$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $rowIndexNilai)->getNumberFormat()->setFormatCode('0.00');
 				
 				$rowIndex++;
+				$rowIndexNilai++;
 			}
 			// TOTAL BENAR
-			$worksheet->getStyleByColumnAndRow($totalQuestions + 3, $barisJumlah)->getAlignment()->setHorizontal('center');
-			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-			$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, 1, "Total");
-			$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, $barisJumlah, "=SUM($kolomSoal" . '2:$' . "$kolomSoal" . ($barisJumlah - 1) . ")");
+			$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $barisJumlah)->getAlignment()->setHorizontal('center');
+			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, 1, "Total");
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, count($answers) + 14, "Total");
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $barisJumlah, "=SUM($kolomSoal" . '2:$' . "$kolomSoal" . ($barisJumlah - 1) . ")");
 
 			// TOTAL BENAR PERSENTASE
-			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 2); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-			$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, $barisJumlah + 3, '=SUM(C' . ($barisJumlah + 3) . ':' . $kolomSoal . ($barisJumlah + 3) . ')');
-			$worksheet->getStyleByColumnAndRow($totalQuestions + 3, $barisJumlah + 3)->getNumberFormat()->setFormatCode('0.00%');
+			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $barisJumlah + 3, '=SUM(D' . ($barisJumlah + 3) . ':' . $kolomSoal . ($barisJumlah + 3) . ')');
+			$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $barisJumlah + 3)->getNumberFormat()->setFormatCode('0.00%');
 			
 			// TOTAL SALAH PERSENTASE
-			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 2); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-			$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, $barisJumlah + 4, '=SUM(C' . ($barisJumlah + 4) . ':' . $kolomSoal . ($barisJumlah + 4) . ')');
-			$worksheet->getStyleByColumnAndRow($totalQuestions + 3, $barisJumlah + 4)->getNumberFormat()->setFormatCode('0.00%');
+			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $barisJumlah + 4, '=SUM(D' . ($barisJumlah + 4) . ':' . $kolomSoal . ($barisJumlah + 4) . ')');
+			$worksheet->getStyleByColumnAndRow($totalQuestions + 4, $barisJumlah + 4)->getNumberFormat()->setFormatCode('0.00%');
 			
 			// TOTAL IRT
-			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 2); // Konversi indeks kolom ke huruf (C, D, E, dll.)
-			$worksheet->setCellValueByColumnAndRow($totalQuestions + 3, $barisJumlah + 6, '=SUM(C' . ($barisJumlah + 6) . ':' . $kolomSoal . ($barisJumlah + 6) . ')');
+			$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+			$worksheet->setCellValueByColumnAndRow($totalQuestions + 4, $barisJumlah + 6, '=SUM(D' . ($barisJumlah + 6) . ':' . $kolomSoal . ($barisJumlah + 6) . ')');
 		}
-	
+
+		// REKAP
+		$worksheet = $spreadsheet->createSheet();
+		$worksheet->setTitle('Rekap');
+
+		// Tambahkan header
+		$worksheet->setCellValue('A1', 'NIS');
+		$worksheet->setCellValue('B1', 'No');
+		$worksheet->setCellValue('C1', 'Nama Siswa');
+
+		// Mengatur lebar kolom A dan B dan C
+		$worksheet->getColumnDimension('A')->setWidth(15);
+		$worksheet->getColumnDimension('B')->setWidth(10);
+		$worksheet->getColumnDimension('C')->setWidth(20);
+
+		// Mengatur teks pada kolom A dan B menjadi kiri
+		$worksheet->getStyle('A')->getAlignment()->setHorizontal('center');
+		$worksheet->getStyle('B')->getAlignment()->setHorizontal('center');
+		$worksheet->getStyle('C')->getAlignment()->setHorizontal('left');
+
+		$rowIndex = 2; // Mulai dari baris kedua
+		$rowIndexNilai = count($subtests[0]->assign) + 15; // Mulai dari baris ke 14
+		foreach ($subtests[0]->assign as $keyAss => $assignment) {
+			// Atur data hasil jawaban siswa ke sel-sel Excel
+			$worksheet->setCellValue('A' . $rowIndex, $assignment->student->student_nis);
+			$worksheet->setCellValue('B' . $rowIndex, $keyAss + 1);
+			$worksheet->setCellValue('C' . $rowIndex, $assignment->student->student_name);
+
+			// Menambahkan judul kolom untuk setiap soal
+			foreach ($subtests as $key => $subtest)  {
+
+				// Ambil data hasil jawaban siswa untuk subtest ini dari database
+				$answers = $subtest->assign;
+				$totalQuestions = $subtest->qty_soal;
+				// Isi lembar Excel dengan data hasil jawaban siswa
+
+				// nama subtest
+				$subtestName = $subtest->subtest->sub_name;
+				// print_r($subtestName);
+				// die();
+				// Mengatur lebar kolom A dan B dan C
+				$worksheet->getColumnDimension('A')->setWidth(15);
+				$worksheet->getColumnDimension('B')->setWidth(10);
+				$worksheet->getColumnDimension('C')->setWidth(20);
+
+				// Mengatur teks pada kolom A dan B menjadi kiri
+				$worksheet->getStyle('A')->getAlignment()->setHorizontal('center');
+				$worksheet->getStyle('B')->getAlignment()->setHorizontal('center');
+				$worksheet->getStyle('C')->getAlignment()->setHorizontal('left');
+
+				// Mengatur judul kolom pada kolom C dan seterusnya
+				$worksheet->getColumnDimensionByColumn($key + 4)->setWidth(20); // Mengatur lebar kolom C dan seterusnya
+				$worksheet->getStyleByColumnAndRow($key + 4, 1)->getAlignment()->setHorizontal('center');
+				$worksheet->setCellValueByColumnAndRow($key + 4, 1, $subtest->subtest->sub_name);
+
+				// Nilai
+				$worksheet->getStyleByColumnAndRow($key + 4, $rowIndex)->getAlignment()->setHorizontal('center');
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($key + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+				$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
+				$worksheet->setCellValueByColumnAndRow($key + 4, $rowIndex, "=VLOOKUP($" . "A" . $rowIndex . "," . "'$subtestName'!$" . "A$" . $rowIndexNilai . ":$" . $kolomSoalAkhir . "$" . $rowIndexNilai . "," . ($totalQuestions + 4) . ",FALSE)");
+				$worksheet->getStyleByColumnAndRow($key + 4, $rowIndex)->getNumberFormat()->setFormatCode('0.00');
+				
+			}
+			$rowIndex++;
+			$rowIndexNilai++;
+		}
+
 		// Mengatur header HTTP untuk file Excel yang akan diunduh
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment; filename="hasil_jawaban_siswa.xlsx"');

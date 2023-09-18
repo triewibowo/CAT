@@ -12,6 +12,7 @@
         
         <!-- CSS INCLUDE -->        
         <link rel="stylesheet" type="text/css" id="theme" href="<?= base_url('exam-assets/css/theme-default.css') ?>">
+        <!-- <link rel="stylesheet" type="text/css" id="theme" href="<?= base_url('exam-assets/bootstrap5/css/bootstrap.min.css') ?>"> -->
         <link href="<?= base_url('assets/mediaelement/mmp.min.css') ?>" rel="stylesheet" type="text/css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.1.3/mediaelementplayer.min.css" rel="stylesheet" type="text/css">
         <link href="<?= base_url('assets/sweetalert/swal.css') ?>" rel="stylesheet" type="text/css">
@@ -90,7 +91,7 @@
                         </div>
 
                     </div>
-                    <div class="x-content-footer" style="color:black;background-color:white">
+                    <!-- <div class="x-content-footer" style="color:black;background-color:white">
                         Copyright © <?= date('Y') ?>. All rights reserved.
 			<a target="_blank" href="https://alamkoding.blogspot.com">
 			Blog
@@ -99,7 +100,7 @@
 <a target="_blank" href="https://www.youtube.com/channel/UC5mdwFaMt42KXVH6Vi-e5iA">
 			Youtube
 			</a>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- END PAGE CONTENT WRAPPER -->                                
             </div>            
@@ -133,6 +134,8 @@
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\plugins\datatables\jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\plugins.js"></script>        
         <script type="text/javascript" src="<?= base_url('exam-assets') ?>/js\actions.js"></script>
+        <!-- <script type="text/javascript" src="<?= base_url('exam-assets') ?>/bootstrap5\js\bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="<?= base_url('exam-assets') ?>/bootstrap5\js\bootstrap.min.js"></script> -->
         <script src="<?= base_url() ?>/assets\js\bootstrap.min.js"></script>
         <script src="<?= base_url('assets/sweetalert/swal.min.js') ?>"></script>
         <script src="<?= base_url('assets/mediaelement/mmp.min.js') ?>"></script>

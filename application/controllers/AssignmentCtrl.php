@@ -14,7 +14,7 @@ class AssignmentCtrl extends MY_Controller {
 			if (!$this->input->post()) {
 				redirect('page/create');
 			}
-			$classes 	= $this->input->post('id_class');	
+			$classes 	= $this->input->post('id_class') ?? null;	
 			$categories = $this->input->post('category');
 			$students 	= $this->master->getAllStudentByClass($classes);
 			$password	= $this->input->post('password');
@@ -26,6 +26,9 @@ class AssignmentCtrl extends MY_Controller {
 			unset($data['id_class']);
 			unset($data['category']);
 			unset($data['password']);
+			if (isset($data['public'])) {
+				unset($data['public']);
+			}
 			if ($this->input->post('show_analytic')) {
 				$data['show_analytic'] = 1;
 			}

@@ -265,7 +265,7 @@ class MasterModel extends CI_Model {
 
     	return $students;
 	}
-	public function getAllStudentByClass($ids) {
+	public function getAllStudentByClass($ids = null) {
 		$this->db->order_by('student_name', 'asc');
 		$this->db->where_in('id_class', $ids);
 		return $this->db->get('ms_student')->result_object();

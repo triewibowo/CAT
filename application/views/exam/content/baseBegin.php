@@ -64,7 +64,7 @@
 							<div id="question-container" class="cat-question">
 							<div id="question" style="margin-bottom:35px;"></div>
 							<hr>
-							<div id="answer-options" class="cat-answer container"></div><br>
+							<div id="answer-options" class="cat-answer"></div><br>
 							<div class="center-button">
 								<button id="next-button" onclick="nextQuestion()"><span style="font-size:12px; font-weight:600">Next</span></button>
 							</div>
@@ -129,6 +129,7 @@
 	var duration;
 	var timer;
 	var totalSeconds;
+	var isTrue;
 	var examUpdate	= [];
 	var category 	= [];
 	var subtest		= [];
@@ -138,6 +139,7 @@
 	var answer_user = [];
 	let qty 		= 0;
 	let id_begin 	= <?php echo json_encode($dataAssignments->id_abegin); ?>;
+	let id_student 	= <?php echo json_encode($dataAssignments->id_student); ?>;
 
 	if (examUpdate.length == 0) {
 		exams = <?php echo json_encode($dataAssignments->assignment); ?>;
@@ -167,11 +169,12 @@
 			}
 		});
 		params = {
-			'subtest'	: subtest,
-			'id_sub' 	: subtest.id_subtest,
-			'level' 	: level,
-			'qty'		: qty,
-			'id_begin'	: id_begin
+			'subtest'		: subtest,
+			'id_sub' 		: subtest.id_subtest,
+			'level' 		: level,
+			'qty'			: qty,
+			'id_begin'		: id_begin,
+			'id_student'	: id_student
 		};
 		timer = setInterval(setTime, 1000);
 		totalSeconds = duration * 60;
@@ -203,13 +206,15 @@
 		qty += 1;
 		checkAnswer(answer_user);
 		params = {
-			'subtest'	: subtest,
-			'id_sub' 	: subtest.id_subtest,
-			'level' 	: level,
-			'qty'		: qty,
-			'id_begin'	: id_begin
+			'subtest'		: subtest,
+			'question'		: question.id_question,
+			'id_sub' 		: subtest.id_subtest,
+			'is_true' 		: isTrue,
+			'level' 		: level,
+			'qty'			: qty,
+			'id_begin'		: id_begin,
+			'id_student'	: id_student
 		};
-		console.log(params);
 		console.log(qty + "-" +subtest.qty_soal);
 		getQuestion();
 	}
@@ -272,81 +277,128 @@
 		answerOptionsElement.empty();
 
 		if (question.id_type == 2) {
-			for (let i = 0; i < question.answer.length; i++) 
-			{
-				const answerOption = $('<div class="form-check radio mb-3">');
-				const input = $('<input type="radio">')
-				.addClass('custom-radio form-check-input')
-				.attr('name', 'answer')
-				.attr('id', 'answer'+i)
-				.attr('value', i)
-				.on('change', () => inputAnswer(question.answer[i].id_option));
-				const label = $('<label class="form-check-label mb-0" style="padding-left:0px !important">')
-				.attr('for', 'answer'+i)
-				.text(question.answer[i].option_);
+			for (let i = 0; i < question.answer.length; i++) {
+				const answerOption = $('<div class="custom-radio">')
+					.addClass('form-check radio mb-3')
+					.attr('data-index', i)
+					.on('click', () => inputAnswer(question.answer[i].id_option));
+
+				const input = $('<input type="radio" style="margin-left: 2% !important; margin-top:2%">')
+					.addClass('')
+					.attr('name', 'answer')
+					.attr('id', 'answer' + i)
+					.attr('value', question.answer[i].id_option);
+
+				const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
+					.attr('for', 'answer' + i)
+					.text(question.answer[i].option_);
 
 				if (question.answer[i].option_image) {
 					const img = $('<img style="width:300px; height:190px; margin-left:3rem">')
 						.attr('src', question.answer[i].option_image)
 						.addClass('answer-image');
+					
 					answerOption.append(input).append(img).append(label);
 
 					// Mengaitkan label dengan input radio
 					label.on('click', () => input.prop('checked', true));
 					img.on('click', () => input.prop('checked', true));
-				}else{
+				} else {
 					answerOption.append(input).append(label);
 					label.on('click', () => input.prop('checked', true));
 				}
 
+				label.on('click', function() {
+					// Hapus kelas "active" dari semua label sebelumnya
+					$('label.btn').removeClass('active');
+					
+					// Tandai label yang dipilih sebagai "active"
+					$(this).addClass('active');
+
+					// Setel radio button yang sesuai sebagai "checked"
+					input.prop('checked', true);
+
+					// Panggil fungsi inputAnswer dengan nilai yang sesuai
+					inputAnswer(question.answer[i].id_option);
+				});
+
 				answerOptionsElement.append(answerOption);
 			}
-
     	}else if (question.id_type == 1){
 			for (let i = 0; i < 2; i++) {
-				const answerOption = $('<div class="form-check radio mb-3">');
-				const input = $('<input type="radio">')
-					.addClass('custom-radio form-check-input')
+				const answerOption = $('<div class="custom-radio">')
+					.addClass('form-check radio mb-3')
+					.attr('data-index', i)
+					.on('click', () => inputAnswer(i));
+
+				const input = $('<input type="radio" style="margin-left: 2% !important; margin-top:2%">')
+					.addClass('')
 					.attr('name', 'answer')
 					.attr('id', 'answer' + i)
 					.attr('value', i)
-					.on('change', () => inputAnswer(i)); // Gantilah 'inputAnswer' dengan fungsi yang sesuai
 
-				const label = $('<label class="form-check-label mb-0" style="padding-left:0px !important">')
+				const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
 					.attr('for', 'answer' + i)
 					.text(i === 1 ? 'Benar' : 'Salah'); // Mengganti opsi dengan 'Benar' dan 'Salah'
+
+				label.on('click', function() {
+					// Hapus kelas "active" dari semua label sebelumnya
+					$('label.btn').removeClass('active');
+					
+					// Tandai label yang dipilih sebagai "active"
+					$(this).addClass('active');
+
+					// Setel radio button yang sesuai sebagai "checked"
+					input.prop('checked', true);
+
+					// Panggil fungsi inputAnswer dengan nilai yang sesuai
+					inputAnswer(question.answer[i].id_option);
+				});
 
 				answerOption.append(input).append(label);
 
 				answerOptionsElement.append(answerOption);
 			}
 		}else if (question.id_type == 4){
-			for (let i = 0; i < question.answer.length; i++) 
-        	{
-				const answerOption = $('<div class="form-check mb-3">');
-				const input = $('<input type="checkbox">')
-					.addClass('form-check-input')
-					.addClass('custom-radio')
+			for (let i = 0; i < question.answer.length; i++) {
+    			const label = $('<label class="btn btn-default btn-block" style="text-align:left">');
+				
+				const input = $('<input type="checkbox" style="margin-right:2%">')
 					.attr('name', 'answer' + question.id_question)
-					.attr('id', 'answer' + i)
 					.attr('value', question.answer[i].id_option)
-					.on('change', () => inputAnswer(question.answer[i].id_option));
-				const label = $('<label class="form-check-label" style="margin-left: 10px; font-weight:400 !important">')
-					.attr('for', 'answer' + i)
-					.text(question.answer[i].option_);
+					.addClass('custom-checkbox'); // Tambahkan kelas "custom-checkbox" untuk gaya kustom checkbox
+				
+				const labelText = question.answer[i].option_;
 
 				if (question.answer[i].option_image) {
-					const img = $('<img style="width:300px; height:190px; margin-left:3rem">')
-						.attr('src', question.answers[i].option_image)
+					const img = $('<img style="width:300px; height:190px; margin-right:3rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
+						.attr('src', question.answer[i].option_image)
 						.addClass('answer-image');
-					answerOption.append(img).append(input).append(label);
+					
+					label.append(img).append(input).append(labelText); // Mengubah urutan elemen
 				} else {
-					answerOption.append(input).append(label);
+					label.append(input).append(labelText);
 				}
-					answerOptionsElement.append(answerOption);
-        	}
+
+				label.on('click', function() {
+					// Toggling checkbox ketika label diklik
+					input.prop('checked', !input.prop('checked'));
+
+					// Panggil fungsi inputAnswer dengan nilai yang sesuai
+					inputAnswer(question.answer[i].id_option);
+					
+					// Mengubah warna saat checkbox di klik
+					if (input.prop('checked')) {
+						label.addClass('active');
+					} else {
+						label.removeClass('active');
+					}
+				});
+
+				answerOptionsElement.append(label);
+			}
 		}else if (question.id_type == 3){
-			const answerOption = $('<div class="form-check mb-3 pl-0" style="width:30%">');
+			const answerOption = $('<div class="form-check mb-3 pl-0" style="width:100%">');
 			const input = $('<input type="text" style="font-size:13px;">')
 				.addClass('form-control')
 				.attr('name', 'answer-match-text' + question.id_question)
@@ -359,39 +411,44 @@
 		}else if (question.id_type == 5){
 			const optionText = question;
 
-			for (let i = 0; i < optionText.answer.length; i++) 
-			{
-				const label = $('<label class="d-block">')
-				.text(optionText.answer[i].option_ + ' - ');
+			for (let i = 0; i < optionText.answer.length; i++) {
+				const answerOption = $('<div class="row" style="margin-bottom:10px">');
+				
+				const label = $('<div class="col-sm-6">')
+					.append($('<label class="btn btn-default btn-block" style="text-align:left">')
+						.text(optionText.answer[i].option_));
 
-				const select = $('<select style="width:50%; font-size:12px">')
-				.addClass('custom-select')
-				.attr('name', 'answer-match-' + optionText.id_question)
-				.append(
-					$('<option selected disabled style="font-size:12px">')
-					.text('Select answer...')
-				);
+				const select = $('<div class="col-sm-6">')
+					.append($('<select style="width:100%; font-size:12px">')
+						.addClass('form-control value-select')
+						.attr('name', 'answer-match-' + optionText.answer[i].id_option)
+						.append(
+							$('<option selected disabled style="font-size:12px">')
+							.text('Select answer...')
+						)
+					);
 
 				for (let j = 0; j < optionText.match.length; j++) {
 					const option = $('<option style="font-size:12px">')
-					.attr('value', optionText.match[j].id_option)
-					.text(optionText.match[j].answer_);
+						.attr('value', optionText.match[j].id_match)
+						.text(optionText.match[j].answer_);
 
-					select.append(option);
+					select.find('select').append(option);
 				}
 
-				select.on('change', () => {
-					const selectedValue = select.val(); // Mendapatkan nilai terpilih dari <select>
+				select.find('select').on('change', () => {
+					const selectedValue = select.find('select').val();
 					const answer = {
-						index: optionText.answer[i].id_option,
-						id: selectedValue,
-						indexLoop:i
+						answer: optionText.answer[i],
+						matchAnswer: optionText.match.find(item => item.id_match == selectedValue),
+						indexLoop: i
 					};
-					checkAnswer(answer);
+					inputAnswer(answer);
 				});
 
-				label.append(select);
-				answerOptionsElement.append(label);
+				answerOption.append(label);
+				answerOption.append(select);
+				answerOptionsElement.append(answerOption);
 			}
 		}
 	}
@@ -415,6 +472,19 @@
 		}else if (question.id_type == 3){
 			let user_input = $(`input[name="answer-match-text${question.id_question}"]`).val(); // Mendapatkan nilai input teks
 			answer_user = user_input;
+		}else{
+			// Cari indeks di mana id cocok dalam array
+			const index = answer_user.findIndex(item => item.answer.id_option == id.answer.id_option);
+
+			// Periksa jika id cocok ditemukan
+			if (index !== -1) {
+				console.log(index)
+				// Hapus objek yang cocok dari array
+				answer_user.splice(index, 1);
+			}
+			answer_user.push(id);
+
+			console.log(answer_user);
 		}
 	}
 
@@ -424,11 +494,13 @@
 			if (check_answer.option_true == 1) {
 				if (level < 5) {
 					level += 1;
+					isTrue = 1;
 				}
 				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
+					isTrue = 0;
 				}
 				console.log("salah")
 			}
@@ -438,11 +510,13 @@
 			if (check_answer == input) {
 				if (level < 5) {
 					level += 1;
+					isTrue = 1;
 				}
 				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
+					isTrue = 0;
 				}
 				console.log("salah")
 			}
@@ -462,11 +536,13 @@
 			if (hasilValidasi) {
 				if (level < 5) {
 					level += 1;
+					isTrue = 1;
 				}
 				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
+					isTrue = 0;
 				}
 				console.log("salah")
 			}
@@ -477,11 +553,34 @@
 			if (answer_user == check_answer) {
 				if (level < 5) {
 					level += 1;
+					isTrue = 1;
 				}
 				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
+					isTrue = 0;
+				}
+				console.log("salah")
+			}
+		}else{
+			var isFalse = false;
+			input.forEach(element => {
+				if (element.answer.match.id_match != element.matchAnswer.id_match) {
+					isFalse = true;
+				}
+			});
+
+			if (!isFalse) {
+				if (level < 5) {
+					level += 1;
+					isTrue = 1;
+				}
+				console.log("benar")
+			}else{
+				if (level > 1) {
+					level -= 1;
+					isTrue = 0;
 				}
 				console.log("salah")
 			}
@@ -504,24 +603,18 @@
 <script src="<?= base_url('assets/fancy/jquery.fancybox.min.js') ?>" type="text/javascript"></script>
 <style>
 	.cat-question{
-		font-size: 14px;
-		font-weight: 500;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	.cat-answer{
 		font-size: 13px;
 	}
 
-	.custom-radio {
-		/* Ubah ukuran komponen radio */
-		transform: scale(1.1);
-		margin-right: 0.5rem;
-		/* Tambahkan gaya lain yang diinginkan */
-	}
-
 	#next-button{
+		margin-top: 3%;
 		height: 32px;
-		width: 130px;
+		width: 100%;
 		left: 198px;
 		top: 505px;
 		border-radius: 6px;
@@ -529,11 +622,34 @@
 		color: white;
 	}
 
-	.center-button {
-		display: flex;
-		justify-content: center; /* Ini akan menjadikan konten di tengah secara horizontal */
-		align-items: center; /* Ini akan menjadikan konten di tengah secara vertikal */
-		height: 100%; /* Sesuaikan dengan tinggi yang Anda inginkan */
+	.btn.active {
+		background-color: #13C3E3; /* Gantilah dengan warna yang Anda inginkan saat aktif */
+		color: #fff; /* Warna teks saat aktif */
 	}
+
+	.draggable-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .draggable-item {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .droppable-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .droppable-item {
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px 0;
+        }
 
 </style>

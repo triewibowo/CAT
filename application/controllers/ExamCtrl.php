@@ -271,6 +271,20 @@ class ExamCtrl extends CI_Controller {
 				$subtest = 2;
 			}
 
+			if(isset($data['is_true'])){
+				$param = [
+					'id_assign_begin' 		=> $data['id_begin'],
+					'id_assign_category' 	=> $data['subtest']['id_category'],
+					'id_assign_subtest' 	=> $data['id_sub'],
+					'id_question' 			=> $data['question'],
+					'is_true' 				=> $data['is_true'],
+					'id_student' 			=> $data['id_student'],
+					'created_at'			=> date('Y-m-d')
+				];
+
+				$this->assignment->insertAssignmentQuestionAnswer($param);
+			}
+
 			$soal = $this->assignment->getQuestionSubtestLevel($data['id_sub'], $data['level']);
 
 			$response = [

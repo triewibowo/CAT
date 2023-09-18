@@ -68,6 +68,7 @@
                             <td>
                                 <a title="Buat Soal" href="<?= site_url('page/list_question/'.$value->id_assignment) ?>" class="btn btn-success btn-sm"><i class="feather feather-layers"></i></a>
                                 <a title="Ubah Data Ujian" href="<?= site_url('page/edit/'.$value->id_assignment) ?>" class="btn btn-primary btn-sm"><i class="feather feather-edit"></i></a>
+                                <a title="Export Report IRT" href="<?= site_url('page/exportReportIrt/'.$value->id_assignment) ?>" class="btn btn-info btn-sm"><i class="feather feather-download"></i></a>
                                 <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
                             </td>
                         </tr>

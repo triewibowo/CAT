@@ -827,7 +827,16 @@ class MainPage extends MY_Controller {
 			$rowIndexNilai = count($answers) + 15; // Mulai dari baris ke 14
 			$barisJumlah = count($answers) + 2;
 			$barisJumlahNilai = count($answers) + 14;
-			$worksheet->setCellValue('C' . $barisJumlah, "Jumlah Benar");
+			$worksheet->setCellValue('A' . $barisJumlah, "Jumlah Benar");
+			$worksheet->setCellValue('A' . ($barisJumlah + 1), "Nilai Minimum");
+			$worksheet->setCellValue('A' . ($barisJumlah + 2), "Nilai Maksimum");
+			$worksheet->setCellValue('A' . ($barisJumlah + 4), "% Minimum");
+			$worksheet->setCellValue('A' . ($barisJumlah + 5), "% Maksimum");
+			$worksheet->setCellValue('C' . ($barisJumlah + 3), "% Benar");
+			$worksheet->setCellValue('C' . ($barisJumlah + 4), "% Salah");
+			$worksheet->setCellValue('C' . ($barisJumlah + 6), "Nilai IRT");
+			$worksheet->setCellValue('C' . ($barisJumlah + 8), "Nilai Minimum");
+			$worksheet->setCellValue('C' . ($barisJumlah + 9), "Nilai Maksimum");
 	
 			// Tambahkan header
 			$worksheet->setCellValue('A1', 'NIS');
@@ -845,12 +854,26 @@ class MainPage extends MY_Controller {
 			// Menambahkan judul kolom untuk setiap soal
 			for ($i = 1; $i <= $totalQuestions; $i++) {
 				// Mengatur lebar kolom A dan B dan C
-				$worksheet->getColumnDimension('A')->setWidth(15);
+				$worksheet->getColumnDimension('A')->setWidth(20);
 				$worksheet->getColumnDimension('B')->setWidth(10);
-				$worksheet->getColumnDimension('C')->setWidth(20);
+				$worksheet->getColumnDimension('C')->setWidth(25);
+
+				$worksheet->getStyle("A1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("A1")->getFill()->getStartColor()->setARGB('FFFF00');
+				$worksheet->getStyle("B1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("B1")->getFill()->getStartColor()->setARGB('FFFF00');
+				$worksheet->getStyle("C1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C1")->getFill()->getStartColor()->setARGB('FFFF00');
+
+				$worksheet->getStyle("A" . ($rowIndexNilai - 1))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("A" . ($rowIndexNilai - 1))->getFill()->getStartColor()->setARGB('FFFF00');
+				$worksheet->getStyle("B" . ($rowIndexNilai - 1))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("B" . ($rowIndexNilai - 1))->getFill()->getStartColor()->setARGB('FFFF00');
+				$worksheet->getStyle("C" . ($rowIndexNilai - 1))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C" . ($rowIndexNilai - 1))->getFill()->getStartColor()->setARGB('FFFF00');
 	
 				// Mengatur teks pada kolom A dan B menjadi kiri
-				$worksheet->getStyle('A')->getAlignment()->setHorizontal('center');
+				$worksheet->getStyle('A')->getAlignment()->setHorizontal('left');
 				$worksheet->getStyle('B')->getAlignment()->setHorizontal('center');
 				$worksheet->getStyle('C')->getAlignment()->setHorizontal('left');
 	
@@ -863,6 +886,37 @@ class MainPage extends MY_Controller {
 				$worksheet->getColumnDimensionByColumn($i + 3)->setWidth(10); // Mengatur lebar kolom C dan seterusnya
 				$worksheet->getStyleByColumnAndRow($i + 3, $barisJumlahNilai)->getAlignment()->setHorizontal('center');
 				$worksheet->setCellValueByColumnAndRow($i + 3, $barisJumlahNilai, 'Soal ' . $i);
+
+				// MEWARNAI ROW DAN KOLOM
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3);
+				$worksheet->getStyle($kolomSoal . "1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle($kolomSoal . "1")->getFill()->getStartColor()->setARGB('FFFF00');
+
+				$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+				$worksheet->getStyle($kolomSoalAkhir . "1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle($kolomSoalAkhir . "1")->getFill()->getStartColor()->setARGB('FFFF00');
+
+				// MEWARNAI ROW DAN KOLOM NILAI SISWA
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 3);
+				$worksheet->getStyle($kolomSoal . ($rowIndexNilai - 1))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle($kolomSoal . ($rowIndexNilai - 1))->getFill()->getStartColor()->setARGB('FFFF00');
+
+				$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+				$worksheet->getStyle($kolomSoalAkhir . ($rowIndexNilai - 1))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle($kolomSoalAkhir . ($rowIndexNilai - 1))->getFill()->getStartColor()->setARGB('FFFF00');
+
+				// MEWARNAI JUDUL JUMLAH
+				$worksheet->getStyle("C" . ($barisJumlah))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C" . ($barisJumlah))->getFill()->getStartColor()->setARGB('C4D79B');
+				
+				// MEWARNAI JUDUL %BENAR
+				$worksheet->getStyle("C" . ($barisJumlah + 3))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C" . ($barisJumlah + 3))->getFill()->getStartColor()->setARGB('FFFF00');
+				
+				// MEWARNAI JUDUL NILAI IRT
+				$worksheet->getStyle("C" . ($barisJumlah + 6))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C" . ($barisJumlah + 6))->getFill()->getStartColor()->setARGB('8DB4E2');
+
 			}
 	
 			foreach ($answers as $index => $answer) {
@@ -875,7 +929,7 @@ class MainPage extends MY_Controller {
 				$worksheet->setCellValue('A' . $rowIndexNilai, $answer->student->student_nis);
 				$worksheet->setCellValue('B' . $rowIndexNilai, $index + 1);
 				$worksheet->setCellValue('C' . $rowIndexNilai, $answer->student->student_name);
-	
+
 				// Loop melalui jawaban siswa untuk setiap soal
 				for ($i = 0; $i < $totalQuestions; $i++) {
 					$worksheet->getStyleByColumnAndRow($i + 4, $rowIndex)->getAlignment()->setHorizontal('center');
@@ -884,6 +938,72 @@ class MainPage extends MY_Controller {
 						$worksheet->setCellValueByColumnAndRow($i + 4, $rowIndex, $answer->assign_answers[$i]->is_true);
 					} else {
 						$worksheet->setCellValueByColumnAndRow($i + 4, $rowIndex, 0);
+					}
+
+					if ($rowIndex % 2 != 0) {
+						// STRIPPED COLOR
+						$worksheet->getStyle("A" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("A" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+						$worksheet->getStyle("B" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("B" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+						$worksheet->getStyle("C" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("C" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+
+						// MEWARNAI ROW DAN KOLOM
+						$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4);
+						$worksheet->getStyle($kolomSoal . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle($kolomSoal . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+
+						$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+						$worksheet->getStyle($kolomSoalAkhir . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle($kolomSoalAkhir . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+
+					}
+
+					// MEWARNAI JUMLAH NILAI
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah))->getFill()->getStartColor()->setARGB('C4D79B');
+
+					$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah))->getFill()->getStartColor()->setARGB('C4D79B');
+					
+					// MEWARNAI %BENAR
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah + 3))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah + 3))->getFill()->getStartColor()->setARGB('FFFF00');
+
+					$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah + 3))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah + 3))->getFill()->getStartColor()->setARGB('FFFF00');
+					
+					// MEWARNAI Nilai IRT
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah + 6))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoal . ($barisJumlah + 6))->getFill()->getStartColor()->setARGB('8DB4E2');
+
+					$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah + 6))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoalAkhir . ($barisJumlah + 6))->getFill()->getStartColor()->setARGB('8DB4E2');
+
+					if ($rowIndexNilai % 2 != 0) {
+						// STRIPPED COLOR
+						$worksheet->getStyle("A" . $rowIndexNilai)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("A" . $rowIndexNilai)->getFill()->getStartColor()->setARGB('D3D3D3');
+						$worksheet->getStyle("B" . $rowIndexNilai)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("B" . $rowIndexNilai)->getFill()->getStartColor()->setARGB('D3D3D3');
+						$worksheet->getStyle("C" . $rowIndexNilai)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle("C" . $rowIndexNilai)->getFill()->getStartColor()->setARGB('D3D3D3');
+
+						// MEWARNAI ROW DAN KOLOM
+						$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4);
+						$worksheet->getStyle($kolomSoal . $rowIndexNilai)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle($kolomSoal . $rowIndexNilai)->getFill()->getStartColor()->setARGB('D3D3D3');
+
+						$kolomSoalAkhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 4);
+						$worksheet->getStyle($kolomSoalAkhir . $rowIndexNilai)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+						$worksheet->getStyle($kolomSoalAkhir . $rowIndexNilai)->getFill()->getStartColor()->setARGB('D3D3D3');
 					}
 
 					// Nilai
@@ -898,6 +1018,24 @@ class MainPage extends MY_Controller {
 					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
 					$worksheet->setCellValueByColumnAndRow($i + 4, $barisJumlah, "=COUNTIF($kolomSoal" . '2:$' . "$kolomSoal" . ($barisJumlah - 1) . ", 1)");
 					
+					// Jumlah Nilai Minimum
+					$kolomSoalTerakhir = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($totalQuestions + 3);
+					$worksheet->setCellValue('B' . ($barisJumlah + 1), "=MIN(D" . ($barisJumlah) . ":" . $kolomSoalTerakhir . ($barisJumlah) . ")");
+					// Jumlah Nilai Maksimum
+					$worksheet->setCellValue('B' . ($barisJumlah + 2), "=MAX(D" . ($barisJumlah) . ":" . $kolomSoalTerakhir . ($barisJumlah) . ")");
+					//  Jumlah % Minimum
+					$worksheet->setCellValue('B' . ($barisJumlah + 4), "=MIN(D" . ($barisJumlah + 1) . ":" . $kolomSoalTerakhir . ($barisJumlah + 1) . ")");
+					$worksheet->getStyle('B' . ($barisJumlah + 4))->getNumberFormat()->setFormatCode('0.00%');
+					//  Jumlah % Maksimum
+					$worksheet->setCellValue('B' . ($barisJumlah + 5), "=MAX(D" . ($barisJumlah + 1) . ":" . $kolomSoalTerakhir . ($barisJumlah + 1) . ")");
+					$worksheet->getStyle('B' . ($barisJumlah + 5))->getNumberFormat()->setFormatCode('0.00%');
+					//  Jumlah Nilai Minimum IRT
+					$worksheet->setCellValue('D' . ($barisJumlah + 8), "=MIN(D" . ($barisJumlah + 6) . ":" . $kolomSoalTerakhir . ($barisJumlah + 6) . ")");
+					$worksheet->getStyle('D' . ($barisJumlah + 8))->getNumberFormat()->setFormatCode('0.00');
+					//  Jumlah Nilai Minimum IRT
+					$worksheet->setCellValue('D' . ($barisJumlah + 9), "=MAX(D" . ($barisJumlah + 6) . ":" . $kolomSoalTerakhir . ($barisJumlah + 6) . ")");
+					$worksheet->getStyle('D' . ($barisJumlah + 9))->getNumberFormat()->setFormatCode('0.00');
+
 					// Persentase
 					$worksheet->getStyleByColumnAndRow($i + 4, $barisJumlah +1)->getAlignment()->setHorizontal('center');
 					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 4); // Konversi indeks kolom ke huruf (C, D, E, dll.)
@@ -973,6 +1111,13 @@ class MainPage extends MY_Controller {
 		$worksheet->setCellValue('B1', 'No');
 		$worksheet->setCellValue('C1', 'Nama Siswa');
 
+		$worksheet->getStyle("A1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+		$worksheet->getStyle("A1")->getFill()->getStartColor()->setARGB('FFFF00');
+		$worksheet->getStyle("B1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+		$worksheet->getStyle("B1")->getFill()->getStartColor()->setARGB('FFFF00');
+		$worksheet->getStyle("C1")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+		$worksheet->getStyle("C1")->getFill()->getStartColor()->setARGB('FFFF00');
+
 		// Mengatur lebar kolom A dan B dan C
 		$worksheet->getColumnDimension('A')->setWidth(15);
 		$worksheet->getColumnDimension('B')->setWidth(10);
@@ -991,6 +1136,16 @@ class MainPage extends MY_Controller {
 			$worksheet->setCellValue('B' . $rowIndex, $keyAss + 1);
 			$worksheet->setCellValue('C' . $rowIndex, $assignment->student->student_name);
 
+			if ($rowIndex % 2 != 0) {
+				// STRIPPED COLOR
+				$worksheet->getStyle("A" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("A" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+				$worksheet->getStyle("B" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("B" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+				$worksheet->getStyle("C" . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle("C" . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+			}
+
 			// Menambahkan judul kolom untuk setiap soal
 			foreach ($subtests as $key => $subtest)  {
 
@@ -1001,17 +1156,27 @@ class MainPage extends MY_Controller {
 
 				// nama subtest
 				$subtestName = $subtest->subtest->sub_name;
-				// print_r($subtestName);
-				// die();
 				// Mengatur lebar kolom A dan B dan C
 				$worksheet->getColumnDimension('A')->setWidth(15);
 				$worksheet->getColumnDimension('B')->setWidth(10);
 				$worksheet->getColumnDimension('C')->setWidth(20);
 
+				// MEWARNAI JUDUL SUBTEST
+				$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($key + 4);
+				$worksheet->getStyle($kolomSoal . 1)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+				$worksheet->getStyle($kolomSoal . 1)->getFill()->getStartColor()->setARGB('FFFF00');
+
 				// Mengatur teks pada kolom A dan B menjadi kiri
 				$worksheet->getStyle('A')->getAlignment()->setHorizontal('center');
 				$worksheet->getStyle('B')->getAlignment()->setHorizontal('center');
 				$worksheet->getStyle('C')->getAlignment()->setHorizontal('left');
+
+				if ($rowIndex % 2 != 0) {
+					// MEWARNAI ROW DAN KOLOM
+					$kolomSoal = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($key + 4);
+					$worksheet->getStyle($kolomSoal . $rowIndex)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+					$worksheet->getStyle($kolomSoal . $rowIndex)->getFill()->getStartColor()->setARGB('D3D3D3');
+				}
 
 				// Mengatur judul kolom pada kolom C dan seterusnya
 				$worksheet->getColumnDimensionByColumn($key + 4)->setWidth(20); // Mengatur lebar kolom C dan seterusnya

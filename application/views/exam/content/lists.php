@@ -17,6 +17,7 @@
                         <th>Tipe Ujian</th>
                         <th>Lama Ujian</th>
                         <th>Penulis</th>
+                        <th>Password</th>
                         <th>Status</th>
                         <th style="width:5%"></th>
                     </tr>
@@ -29,6 +30,7 @@
 	                        <td><?= $value->assignment->assignment_type ?></td>
 	                        <td><?= $value->duration ?> Menit</td>
 	                        <td><?= $value->assignment->assignment_author ?></td>
+	                        <td><?= $value->password ?></td>
 							<td>
 								<?php if ($value->status == 0): ?>
 									<span class="badge bg-warning">Baru</span>

@@ -67,8 +67,6 @@ class ExamCtrl extends CI_Controller {
 		$id = (int) $this->session->globalStudent->id_student;
 
 		$this->dataParse['dataAssignments'] = $this->assignment->getExamByAssignmentBegin($id_begin, $id);
-		// print_r(json_encode($this->dataParse['dataAssignments']));
-		// die();
 		$this->dataParse['title'] = 'Mulai Ujian';
 		$this->dataParse['content'] = 'exam/content/baseBegin';
 		$this->load->view('MainExam',$this->dataParse);
@@ -248,44 +246,64 @@ class ExamCtrl extends CI_Controller {
 	public function getQuestion(){
 		$data = json_decode($this->input->post('question'), true);
 		$id = (int) $this->session->globalStudent->id_student;
-		$subtest = 1;
+		$id_sub = $data['subtest']['id_subtest'];
+		$id_begin_cat = $data['subtest']['id_begin_cat'];
+		$id_begin = $data['subtest']['id_begin'];
+		$subtest = [];
+		$subtest_status = 1;
 		try{
+
+			// Update total soal subtest ke proses
+			$d = [
+				'id' 			=> $data['subtest']['id'],
+				'total_soal' 	=> $data['qty'],
+			];
+			$subtest = $this->assignment->updateAssignmentBeginSubtest($d);
 
 			// Update status subtest ke proses
 			if($data['subtest']['status'] == 0){
 				$d = [
-					'id_detail' => $data['subtest']['id_detail'],
+					'id' => $data['subtest']['id'],
 					'status' 	=> 1,
 				];
-				$this->assignment->updateAssignmentDetailSubtest($d);
-				$subtest = 1;
+				$this->assignment->updateAssignmentBeginSubtest($d);
+				$subtest_status = 1;
 			}
 
+			
 			// Update status subtest ke selesai
-			if($data['subtest']['status'] == 1 && $data['subtest']['qty_soal'] <= $data['qty']){
+			if($data['subtest']['status'] == 1 && (int) $data['subtest']['qty_soal'] <= $data['qty']){
 				$d = [
-					'id_detail' => $data['subtest']['id_detail'],
+					'id' => $data['subtest']['id'],
 					'status' 	=> 2,
 				];
-				$this->assignment->updateAssignmentDetailSubtest($d);
-				$subtest = 2;
+				$this->assignment->updateAssignmentBeginSubtest($d);
+				$subtest_status = 2;
 			}
 
+			// Masukan Jawab Benar/Salah Siswa
 			if(isset($data['is_true'])){
 				$param = [
-					'id_assign_begin' 		=> $data['id_begin'],
-					'id_assign_category' 	=> $data['subtest']['id_category'],
-					'id_assign_subtest' 	=> $data['id_sub'],
-					'id_question' 			=> $data['question'],
-					'is_true' 				=> $data['is_true'],
-					'id_student' 			=> $data['id_student'],
-					'created_at'			=> date('Y-m-d')
+					'id_assign_begin' 			=> $data['id_begin'],
+					'id_assign_begin_category' 	=> $id_begin_cat,
+					'id_assign_begin_subtest' 	=> $data['subtest']['id'],
+					'id_question' 				=> $data['question'],
+					'is_true' 					=> $data['is_true'],
+					'id_student' 				=> $data['id_student'],
+					'created_at'				=> date('Y-m-d')
 				];
 
 				$this->assignment->insertAssignmentQuestionAnswer($param);
 			}
 
-			$soal = $this->assignment->getQuestionSubtestLevel($data['id_sub'], $data['level']);
+			// check status category
+			$this->updateStatusAssignmentBeginCategory($id_begin_cat);
+
+			// check status assignment begin per student
+			$this->updateStatusAssignmentBegin($id_begin);
+
+			// Ambil Soal yang sesuai subtest dan level
+			$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level']);
 
 			$response = [
 				'status' => 'success',
@@ -293,7 +311,9 @@ class ExamCtrl extends CI_Controller {
 				'data' => $soal,
 				'subtest' => $subtest,
 				'exams' => $this->assignment->getExamByAssignmentBegin($data['id_begin'], $id),
-				'subtest_status' => $subtest == 2 ? true : false
+				'subtest_status' => $subtest_status == 2 ? true : false,
+				'qty_subtest' => (int) $data['subtest']['qty_soal'],
+				'qty' => $data['qty'],
 			];
 			// Mengirim respons JSON
 			$this->output
@@ -313,6 +333,66 @@ class ExamCtrl extends CI_Controller {
 			$this->output
 				->set_content_type('application/json')
 				->set_output(json_encode($response));
+		}
+	}
+
+	public function updateStatusAssignmentBeginCategory($id_begin_cat){
+		$subtests_db = $this->assignment->getAllAssignmentBeginSubtest($id_begin_cat);
+		if ($subtests_db) {
+			$is_done = true; // Menginisialisasi $is_done ke true di awal
+
+			foreach ($subtests_db as $sub) {
+				if ($sub->status != 2) {
+					$is_done = false;
+					break; // Keluar dari loop jika status bukan 2
+				}
+			}
+
+			if ($is_done) {
+				// Update status kategori menjadi 2
+				$d = [
+					'id_acat' => $id_begin_cat,
+					'status' => 2,
+				];
+				$this->assignment->updateAssignmentBeginCategory($d);
+			} else {
+				// Ada setidaknya satu elemen dengan status bukan 2, jadi status kategori tetap 1
+				$d = [
+					'id_acat' => $id_begin_cat,
+					'status' => 1,
+				];
+				$this->assignment->updateAssignmentBeginCategory($d);
+			}
+		}
+	}
+
+	public function updateStatusAssignmentBegin($id_begin){
+		$categories_db = $this->assignment->getAllAssignmentBeginCategory($id_begin);
+		if ($categories_db) {
+			$is_done = true; // Menginisialisasi $is_done ke true di awal
+
+			foreach ($categories_db as $cat) {
+				if ($cat->status != 2) {
+					$is_done = false;
+					break; // Keluar dari loop jika status bukan 2
+				}
+			}
+
+			if ($is_done) {
+				// Update status kategori menjadi 2
+				$d = [
+					'id_abegin' => $id_begin,
+					'status' => 2,
+				];
+				$this->assignment->updateAssignmentBegin($d);
+			} else {
+				// Ada setidaknya satu elemen dengan status bukan 2, jadi status kategori tetap 1
+				$d = [
+					'id_abegin' => $id_begin,
+					'status' => 1,
+				];
+				$this->assignment->updateAssignmentBegin($d);
+			}
 		}
 	}
 }

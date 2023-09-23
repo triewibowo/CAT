@@ -66,7 +66,6 @@ class AssignmentCtrl extends MY_Controller {
 						'qty_soal'		=> $cat['question_qty'],
 						'timer'			=> $cat['timer'],
 						'status'		=> 0,
-						'total_soal'	=> 0,
 					];
 
 					$this->assignment->insertAssignmentDetailSubtest($sub);
@@ -84,14 +83,45 @@ class AssignmentCtrl extends MY_Controller {
 					'status'		=> 0
 				];
 
-				$this->assignment->insertBegin($input_student);
+				$id_begin = $this->assignment->insertBegin($input_student);
+
+				foreach ($categories as $key => $category) {
+					$categ = [
+						'id_begin'		=> $id_begin,
+						'id_category'	=> $category['id'],
+						'status'		=> 0,
+					];
+
+					$id_begin_cat = $this->assignment->insertAssignmentBeginCategory($categ);
+
+					// ASSIGNMENT SUBTEST
+					foreach ($category['sub'] as $k => $cat) {
+
+						$sub = [
+							'id_begin'		=> $id_begin,
+							'id_begin_cat'	=> $id_begin_cat,
+							'id_subtest'	=> $cat['id'],
+							'qty_soal'		=> $cat['question_qty'],
+							'timer'			=> $cat['timer'],
+							'status'		=> 0,
+							'status'		=> 0,
+							'total_soal'	=> 0,
+						];
+
+						$this->assignment->insertAssignmentBeginSubtest($sub);
+					}
+				}
 			}
 
 			// CLASS //
+			if ($classes == null) {
+				$classes = $this->master->getAllClass();
+			}
+
 			foreach ($classes as $key => $class) {
 				$input_class = [
 					'id_assignment'	=> $idAssignment,
-					'id_class'		=> $class
+					'id_class'		=> $class->id_class
 				];
 
 				$this->assignment->insertAssignmentClass($input_class);

@@ -98,7 +98,7 @@
 		<div class="modal-dialog " style="width:35%">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
 					<h4 class="modal-title">Selamat mengerjakan...</h4>
 				</div>
 				<div class="modal-body">
@@ -118,10 +118,54 @@
 		</div>
 	</div>
 
+	<!-- MODAL CATEGORY -->
+	<div class="modal fade" id="continue">
+		<div class="modal-dialog " style="width:35%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+					<h4 class="modal-title">Lanjut ke subtes selanjutnya!</h4>
+				</div>
+				<div class="modal-body">
+					<p>Perhatikan langkah dibawah ini!</p>
+					<ul>
+						<li>Siapkan perangkat anda dengan baik</li>
+						<li>Soal tidak dapat diulang dan dilewati</li>
+						<li>Pastikan untuk mengerjakan tepat waktu</li>
+						<li>Bila waktu habis maka soal akan dilanjutkan ke Sub Tes selanjutnya, dst</li>
+					</ul>
+					<small>Jawablah dengan keyakinan anda sendiri</small>
+				</div>
+				<div class="modal-footer">
+					<button id="continue" class="btn btn-primary btn-flat btn-block"><i class="fa fa-check-square"></i> Lanjutkan!</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- MODAL SELESAI -->
+	<div class="modal fade" id="done_exam">
+		<div class="modal-dialog " style="width:35%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+					<h4 class="modal-title">Selamat!</h4>
+				</div>
+				<div class="modal-body">
+					<p>Kamu telah selesai mengerjakan Ujian ini!</p>
+				</div>
+				<div class="modal-footer">
+					<a href="<?= site_url('exam/lists/') ?>" class="btn btn-primary btn-block"><i class="fa fa-check-square"></i> Ok!</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 <!-- JAVASCRIPT -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		console.log('start');
+		$('#image-question').hide();
+		rollSubtest();
         $('#start').modal('show');
     });
 	
@@ -130,22 +174,17 @@
 	var timer;
 	var totalSeconds;
 	var isTrue;
-	var examUpdate	= [];
-	var category 	= [];
-	var subtest		= [];
-	var question	= [];
-	var params		= [];
-	var level 		= 3;
-	var answer_user = [];
-	let qty 		= 0;
-	let id_begin 	= <?php echo json_encode($dataAssignments->id_abegin); ?>;
-	let id_student 	= <?php echo json_encode($dataAssignments->id_student); ?>;
-
-	if (examUpdate.length == 0) {
-		exams = <?php echo json_encode($dataAssignments->assignment); ?>;
-	}else{
-		exams = examUpdate;
-	}
+	var ready_category 	= [];
+	var ready_subtest	= [];
+	var ready_question	= [];
+	var params			= [];
+	var level 			= 3;
+	var answer_user 	= [];
+	let qty 			= 0;
+	let begin_status 	= <?php echo json_encode($dataAssignments->status); ?>;
+	let id_begin 		= <?php echo json_encode($dataAssignments->id_abegin); ?>;
+	let id_student 		= <?php echo json_encode($dataAssignments->id_student); ?>;
+	var	exams 			= <?php echo json_encode($dataAssignments->assignment); ?>;
 
 	var progressBar = $(".progress-bar");
   	progressBar.attr("aria-valuemax", exams.total_soal);
@@ -154,32 +193,52 @@
 	var progressValue = $(".progress-bar-value");
     progressValue.text(60 + "%");
 	progressBar.attr("aria-valuenow", 60);
+
+	$('#start').on('click', function() {
+        // set interval for every second
+		getQuestion();
+        $('#start').modal('hide');
+    });
+
+	$('#continue').on('click', function() {
+        // set interval for every second
+		getQuestion();
+        $('#continue').modal('hide');
+    });
 	
 	function rollSubtest(){
-		exams.categories.forEach(exam => {
-			if(exam.status != 2 && category.length <= 0){
-				category = exam;
-				exam.subtests.forEach(sub => {
-					console.log(sub);
-					if(sub.status != 2 && subtest.length == 0){
-						subtest = sub;
-						duration = parseInt(sub.timer);
+		console.log(begin_status)
+		if (begin_status != 2) {
+			exams.categories.forEach(exam_category => {
+				if(exam_category.status != 2){
+					if(ready_category.length == 0){
+						ready_category = exam_category;
+						exam_category.subtests.forEach(sub => {
+							if(sub.status != 2){
+								if (ready_subtest.length == 0) {
+									ready_subtest = sub;
+									qty = parseInt(sub.total_soal);
+									duration = parseInt(sub.timer);
+								}
+							}
+						});
 					}
-				});
-			}
-		});
-		params = {
-			'subtest'		: subtest,
-			'id_sub' 		: subtest.id_subtest,
-			'level' 		: level,
-			'qty'			: qty,
-			'id_begin'		: id_begin,
-			'id_student'	: id_student
-		};
-		timer = setInterval(setTime, 1000);
-		totalSeconds = duration * 60;
-		var title_ujian = document.getElementById("title-ujian");
-		title_ujian.innerHTML = "Ujian : " + category.category.cat_name + ' - ' + subtest.subtest.sub_name;
+				}
+			});
+			params = {
+				'subtest'		: ready_subtest,
+				'level' 		: level,
+				'qty'			: qty,
+				'id_begin'		: id_begin,
+				'id_student'	: id_student
+			};
+			timer = setInterval(setTime, 1000);
+			totalSeconds = duration * 60;
+			var title_ujian = document.getElementById("title-ujian");
+			title_ujian.innerHTML = "Ujian : " + ready_category.category.cat_name + ' - ' + ready_subtest.subtest.sub_name;
+		}else{
+			$('#done_exam').modal('show');
+		}
 	}
 
 	function pad(val) {
@@ -203,19 +262,20 @@
     }
 
 	function nextQuestion(){
+		console.log(qty)
 		qty += 1;
+		console.log(qty)
 		checkAnswer(answer_user);
 		params = {
-			'subtest'		: subtest,
-			'question'		: question.id_question,
-			'id_sub' 		: subtest.id_subtest,
+			'subtest'		: ready_subtest,
+			'question'		: ready_question.id_question,
 			'is_true' 		: isTrue,
 			'level' 		: level,
 			'qty'			: qty,
 			'id_begin'		: id_begin,
-			'id_student'	: id_student
+			'id_student'	: id_student,
+			'id_category'	: ready_category.id_category
 		};
-		console.log(qty + "-" +subtest.qty_soal);
 		getQuestion();
 	}
 
@@ -229,12 +289,25 @@
 			},
 			dataType: 'json',
 			success: function(response) {
-				question = response.data;
-				examUpdate = response.exams;
-				subtest.status = response.subtest;
-				console.log(exams);
+				ready_question 			= response.data;
+				exams 					= response.exams.assignment;
+				id_begin 				= response.exams.id_abegin;
+				id_student 				= response.exams.id_student;
+				qty						= parseInt(response.subtest.total_soal);
+				ready_subtest.status   	= parseInt(response.subtest.status);
+				begin_status			= response.exams.status;
 				if(response.subtest_status == true){
-					location.reload();
+					params = [];
+					ready_category 	= [];
+					ready_subtest	= [];
+					ready_question	= [];
+					answer_user		= [];
+					qty				= 0;
+					rollSubtest();
+					if (begin_status != 2) {
+						console.log('tain anjing')
+						$('#continue').modal('show');
+					}
 				}else{
 					showQuestion();
 				}
@@ -248,13 +321,6 @@
 		});
 	}
 
-	$('#start').on('click', function() {
-        // set interval for every second
-		rollSubtest();
-		getQuestion();
-        $('#start').modal('hide');
-    });
-
 	// SOAL DAN JAWABAN
 	function showQuestion(){
 		// Mendapatkan elemen dari HTML
@@ -262,235 +328,247 @@
 		const answerOptionsElement = $('#answer-options');
 		const previousButtonElement = $('#previous-button');
 		const nextButtonElement = $('#next-button');
-	
-		$('#answer-options').show();
-		questionElement.text(question.question_);
-	
-		if (question.question_image) {
-		    $('#image-question').show();
-		    $('#image-question').attr('src', question.question_image);
+
+		if (ready_question == null) {
+			$('#answer-options').show();
+			questionElement.text("Tidak ada soal...");
 		}else{
-		    $('#image-question').hide();
-		}
-	
-		// Menampilkan opsi jawaban
-		answerOptionsElement.empty();
-
-		if (question.id_type == 2) {
-			for (let i = 0; i < question.answer.length; i++) {
-				const answerOption = $('<div class="custom-radio">')
-					.addClass('form-check radio mb-3')
-					.attr('data-index', i)
-					.on('click', () => inputAnswer(question.answer[i].id_option));
-
-				const input = $('<input type="radio" style="margin-left: 2% !important; margin-top:2%">')
-					.addClass('')
-					.attr('name', 'answer')
-					.attr('id', 'answer' + i)
-					.attr('value', question.answer[i].id_option);
-
-				const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
-					.attr('for', 'answer' + i)
-					.text(question.answer[i].option_);
-
-				if (question.answer[i].option_image) {
-					const img = $('<img style="width:300px; height:190px; margin-left:3rem">')
-						.attr('src', question.answer[i].option_image)
-						.addClass('answer-image');
-					
-					answerOption.append(input).append(img).append(label);
-
-					// Mengaitkan label dengan input radio
-					label.on('click', () => input.prop('checked', true));
-					img.on('click', () => input.prop('checked', true));
-				} else {
-					answerOption.append(input).append(label);
-					label.on('click', () => input.prop('checked', true));
-				}
-
-				label.on('click', function() {
-					// Hapus kelas "active" dari semua label sebelumnya
-					$('label.btn').removeClass('active');
-					
-					// Tandai label yang dipilih sebagai "active"
-					$(this).addClass('active');
-
-					// Setel radio button yang sesuai sebagai "checked"
-					input.prop('checked', true);
-
-					// Panggil fungsi inputAnswer dengan nilai yang sesuai
-					inputAnswer(question.answer[i].id_option);
-				});
-
-				answerOptionsElement.append(answerOption);
+			$('#answer-options').show();
+			questionElement.text(((qty == 0) ? '1' : (qty + 1)) + '. ' + ready_question.question_);
+		
+			if (ready_question.question_image) {
+				$('#image-question').show();
+				$('#image-question').attr('src', ready_question.question_image);
+			}else{
+				$('#image-question').hide();
 			}
-    	}else if (question.id_type == 1){
-			for (let i = 0; i < 2; i++) {
-				const answerOption = $('<div class="custom-radio">')
-					.addClass('form-check radio mb-3')
-					.attr('data-index', i)
-					.on('click', () => inputAnswer(i));
+		
+			// Menampilkan opsi jawaban
+			answerOptionsElement.empty();
 
-				const input = $('<input type="radio" style="margin-left: 2% !important; margin-top:2%">')
-					.addClass('')
-					.attr('name', 'answer')
-					.attr('id', 'answer' + i)
-					.attr('value', i)
+			if (ready_question.id_type == 2) {
+				for (let i = 0; i < ready_question.answer.length; i++) {
+					const answerOption = $('<div class="custom-radio">')
+						.addClass('form-check radio mb-3')
+						.attr('data-index', i)
+						.on('click', () => inputAnswer(ready_question.answer[i].id_option));
 
-				const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
-					.attr('for', 'answer' + i)
-					.text(i === 1 ? 'Benar' : 'Salah'); // Mengganti opsi dengan 'Benar' dan 'Salah'
+					const input = $('<input type="radio" style="margin-left: 2% !important; margin-top:2%">')
+						.addClass('')
+						.attr('name', 'answer')
+						.attr('id', 'answer' + i)
+						.attr('value', ready_question.answer[i].id_option);
 
-				label.on('click', function() {
-					// Hapus kelas "active" dari semua label sebelumnya
-					$('label.btn').removeClass('active');
-					
-					// Tandai label yang dipilih sebagai "active"
-					$(this).addClass('active');
+					const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
+						.attr('for', 'answer' + i)
+						.text(ready_question.answer[i].option_);
 
-					// Setel radio button yang sesuai sebagai "checked"
-					input.prop('checked', true);
+					if (ready_question.answer[i].option_image) {
+						const img = $('<img style="width:300px; height:190px; margin-left:3rem">')
+							.attr('src', ready_question.answer[i].option_image)
+							.addClass('answer-image');
+						
+						answerOption.append(input).append(img).append(label);
 
-					// Panggil fungsi inputAnswer dengan nilai yang sesuai
-					inputAnswer(question.answer[i].id_option);
-				});
-
-				answerOption.append(input).append(label);
-
-				answerOptionsElement.append(answerOption);
-			}
-		}else if (question.id_type == 4){
-			for (let i = 0; i < question.answer.length; i++) {
-    			const label = $('<label class="btn btn-default btn-block" style="text-align:left">');
-				
-				const input = $('<input type="checkbox" style="margin-right:2%">')
-					.attr('name', 'answer' + question.id_question)
-					.attr('value', question.answer[i].id_option)
-					.addClass('custom-checkbox'); // Tambahkan kelas "custom-checkbox" untuk gaya kustom checkbox
-				
-				const labelText = question.answer[i].option_;
-
-				if (question.answer[i].option_image) {
-					const img = $('<img style="width:300px; height:190px; margin-right:3rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
-						.attr('src', question.answer[i].option_image)
-						.addClass('answer-image');
-					
-					label.append(img).append(input).append(labelText); // Mengubah urutan elemen
-				} else {
-					label.append(input).append(labelText);
-				}
-
-				label.on('click', function() {
-					// Toggling checkbox ketika label diklik
-					input.prop('checked', !input.prop('checked'));
-
-					// Panggil fungsi inputAnswer dengan nilai yang sesuai
-					inputAnswer(question.answer[i].id_option);
-					
-					// Mengubah warna saat checkbox di klik
-					if (input.prop('checked')) {
-						label.addClass('active');
+						// Mengaitkan label dengan input radio
+						label.on('click', () => input.prop('checked', true));
+						img.on('click', () => input.prop('checked', true));
 					} else {
-						label.removeClass('active');
+						answerOption.append(input).append(label);
+						label.on('click', () => input.prop('checked', true));
 					}
-				});
 
-				answerOptionsElement.append(label);
-			}
-		}else if (question.id_type == 3){
-			const answerOption = $('<div class="form-check mb-3 pl-0" style="width:100%">');
-			const input = $('<input type="text" style="font-size:13px;">')
-				.addClass('form-control')
-				.attr('name', 'answer-match-text' + question.id_question)
-				.attr('placeholder', 'Jawaban')
-				.attr('id', 'answer')
-				.on('input', () => inputAnswer(question.answer[0].answer)); // Gunakan 'input' event untuk memantau perubahan nilai input
+					label.on('click', function() {
+						// Hapus kelas "active" dari semua label sebelumnya
+						$('label.btn').removeClass('active');
+						
+						// Tandai label yang dipilih sebagai "active"
+						$(this).addClass('active');
 
-				answerOption.append(input);
-				answerOptionsElement.append(answerOption);
-		}else if (question.id_type == 5){
-			const optionText = question;
+						// Setel radio button yang sesuai sebagai "checked"
+						input.prop('checked', true);
 
-			for (let i = 0; i < optionText.answer.length; i++) {
-				const answerOption = $('<div class="row" style="margin-bottom:10px">');
-				
-				const label = $('<div class="col-sm-6">')
-					.append($('<label class="btn btn-default btn-block" style="text-align:left">')
-						.text(optionText.answer[i].option_));
+						// Panggil fungsi inputAnswer dengan nilai yang sesuai
+						inputAnswer(ready_question.answer[i].id_option);
+					});
 
-				const select = $('<div class="col-sm-6">')
-					.append($('<select style="width:100%; font-size:12px">')
-						.addClass('form-control value-select')
-						.attr('name', 'answer-match-' + optionText.answer[i].id_option)
-						.append(
-							$('<option selected disabled style="font-size:12px">')
-							.text('Select answer...')
-						)
-					);
-
-				for (let j = 0; j < optionText.match.length; j++) {
-					const option = $('<option style="font-size:12px">')
-						.attr('value', optionText.match[j].id_match)
-						.text(optionText.match[j].answer_);
-
-					select.find('select').append(option);
+					answerOptionsElement.append(answerOption);
 				}
+			}else if (ready_question.id_type == 1){
+				for (let i = 0; i < 2; i++) {
+					const answerOption = $('<div class="custom-radio form-check radio mb-3">')
+						.attr('data-index', i)
+						.on('click', () => inputAnswer(i));
 
-				select.find('select').on('change', () => {
-					const selectedValue = select.find('select').val();
-					const answer = {
-						answer: optionText.answer[i],
-						matchAnswer: optionText.match.find(item => item.id_match == selectedValue),
-						indexLoop: i
-					};
-					inputAnswer(answer);
-				});
+					const input = $('<input type="radio">')
+						.addClass('form-check-input')
+						.attr('name', 'answer')
+						.attr('id', 'answer' + i)
+						.attr('value', i)
+						.css('margin-left', '2%')
+						.css('margin-top', '2%');
 
-				answerOption.append(label);
-				answerOption.append(select);
-				answerOptionsElement.append(answerOption);
+					const label = $('<label class="btn btn-default btn-block mb-0">')
+						.attr('for', 'answer' + i)
+						.css('padding-left', '40px')
+						.css('text-align', 'left')
+						.text(i === 1 ? 'Benar' : 'Salah');
+
+					label.on('click', function () {
+						// Hapus kelas "active" dari semua label sebelumnya
+						$('label.btn').removeClass('active');
+
+						// Tandai label yang dipilih sebagai "active"
+						$(this).addClass('active');
+
+						// Setel radio button yang sesuai sebagai "checked"
+						input.prop('checked', true);
+
+						// Panggil fungsi inputAnswer dengan nilai yang sesuai
+						if (ready_question.answer[i]) {
+							inputAnswer(ready_question.answer[i].id_option);
+						}else{
+							inputAnswer(null);
+						}
+					});
+
+					answerOption.append(input).append(label);
+
+					answerOptionsElement.append(answerOption);
+				}
+			}else if (ready_question.id_type == 4){
+				for (let i = 0; i < ready_question.answer.length; i++) {
+					const label = $('<label class="btn btn-default btn-block" style="text-align:left">');
+					
+					const input = $('<input type="checkbox" style="margin-right:2%">')
+						.attr('name', 'answer' + ready_question.id_question)
+						.attr('value', ready_question.answer[i].id_option)
+						.addClass('custom-checkbox'); // Tambahkan kelas "custom-checkbox" untuk gaya kustom checkbox
+					
+					const labelText = ready_question.answer[i].option_;
+
+					if (ready_question.answer[i].option_image) {
+						const img = $('<img style="width:300px; height:190px; margin-right:3rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
+							.attr('src', ready_question.answer[i].option_image)
+							.addClass('answer-image');
+						
+						label.append(img).append(input).append(labelText); // Mengubah urutan elemen
+					} else {
+						label.append(input).append(labelText);
+					}
+
+					label.on('click', function() {
+						// Toggling checkbox ketika label diklik
+						input.prop('checked', !input.prop('checked'));
+
+						// Panggil fungsi inputAnswer dengan nilai yang sesuai
+						inputAnswer(ready_question.answer[i].id_option);
+						
+						// Mengubah warna saat checkbox di klik
+						if (input.prop('checked')) {
+							label.addClass('active');
+						} else {
+							label.removeClass('active');
+						}
+					});
+
+					answerOptionsElement.append(label);
+				}
+			}else if (ready_question.id_type == 3){
+				const answerOption = $('<div class="form-check mb-3 pl-0" style="width:100%">');
+				const input = $('<input type="text" style="font-size:13px;">')
+					.addClass('form-control')
+					.attr('name', 'answer-match-text' + ready_question.id_question)
+					.attr('placeholder', 'Jawaban')
+					.attr('id', 'answer')
+					.on('input', () => inputAnswer(ready_question.answer[0].answer)); // Gunakan 'input' event untuk memantau perubahan nilai input
+
+					answerOption.append(input);
+					answerOptionsElement.append(answerOption);
+			}else if (ready_question.id_type == 5){
+				const optionText = ready_question;
+
+				for (let i = 0; i < optionText.answer.length; i++) {
+					const answerOption = $('<div class="row" style="margin-bottom:10px">');
+					
+					const label = $('<div class="col-sm-6">')
+						.append($('<label class="btn btn-default btn-block" style="text-align:left">')
+							.text(optionText.answer[i].option_));
+
+					const select = $('<div class="col-sm-6">')
+						.append($('<select style="width:100%; font-size:12px">')
+							.addClass('form-control value-select')
+							.attr('name', 'answer-match-' + optionText.answer[i].id_option)
+							.append(
+								$('<option selected disabled style="font-size:12px">')
+								.text('Select answer...')
+							)
+						);
+
+					for (let j = 0; j < optionText.match.length; j++) {
+						const option = $('<option style="font-size:12px">')
+							.attr('value', optionText.match[j].id_match)
+							.text(optionText.match[j].answer_);
+
+						select.find('select').append(option);
+					}
+
+					select.find('select').on('change', () => {
+						const selectedValue = select.find('select').val();
+						const answer = {
+							answer: optionText.answer[i],
+							matchAnswer: optionText.match.find(item => item.id_match == selectedValue),
+							indexLoop: i
+						};
+						inputAnswer(answer);
+					});
+
+					answerOption.append(label);
+					answerOption.append(select);
+					answerOptionsElement.append(answerOption);
+				}
 			}
 		}
 	}
 
 	function inputAnswer(id){
-		if (question.id_type == 1 || question.id_type == 2) {
+		if (ready_question.id_type == 1 || ready_question.id_type == 2) {
 			answer_user = id;
 		}
-		else if (question.id_type == 4) {
+		else if (ready_question.id_type == 4) {
 			const selectedAnswers = [];
 
 			// Dapatkan semua input yang dicentang
-			const checkboxes = $(`input[name="answer${question.id_question}"]:checked`);
+			const checkboxes = $(`input[name="answer${ready_question.id_question}"]:checked`);
 			checkboxes.each(function () {
-				let answer = question.answer.find(answer => answer.id_option == $(this).val());
+				let answer = ready_question.answer.find(answer => answer.id_option == $(this).val());
 				selectedAnswers.push(answer);
 			});
 
 			answer_user = selectedAnswers;
 
-		}else if (question.id_type == 3){
-			let user_input = $(`input[name="answer-match-text${question.id_question}"]`).val(); // Mendapatkan nilai input teks
+		}else if (ready_question.id_type == 3){
+			let user_input = $(`input[name="answer-match-text${ready_question.id_question}"]`).val(); // Mendapatkan nilai input teks
 			answer_user = user_input;
 		}else{
+			var index = -1;
+			answer_user.push(id);
 			// Cari indeks di mana id cocok dalam array
-			const index = answer_user.findIndex(item => item.answer.id_option == id.answer.id_option);
+			if (answer_user.length > 0) {
+			   index = answer_user.findIndex(item => item.answer.id_option == id.answer.id_option);
+			}
 
 			// Periksa jika id cocok ditemukan
 			if (index !== -1) {
-				console.log(index)
 				// Hapus objek yang cocok dari array
 				answer_user.splice(index, 1);
 			}
-			answer_user.push(id);
-
-			console.log(answer_user);
 		}
 	}
 
 	function checkAnswer(input){
-		if (question.id_type == 2) {
-			let check_answer = question.answer.find(answer => answer.id_option == input);
+		if (ready_question.id_type == 2) {
+			let check_answer = ready_question.answer.find(answer => answer.id_option == input);
 			if (check_answer.option_true == 1) {
 				if (level < 5) {
 					level += 1;
@@ -505,8 +583,8 @@
 				console.log("salah")
 			}
 		}
-		else if (question.id_type == 1) {
-			let check_answer = question.answer[0].option_true;
+		else if (ready_question.id_type == 1) {
+			let check_answer = ready_question.answer[0].option_true;
 			if (check_answer == input) {
 				if (level < 5) {
 					level += 1;
@@ -521,11 +599,11 @@
 				console.log("salah")
 			}
 		}
-		else if (question.id_type == 4) {
+		else if (ready_question.id_type == 4) {
 			const selectedAnswers = [];
 			var answer_true = [];
 
-			question.answer.forEach(element => {
+			ready_question.answer.forEach(element => {
 				if (element.option_true == 1) {
 					answer_true.push(element)
 				}
@@ -547,8 +625,8 @@
 				console.log("salah")
 			}
 
-		}else if (question.id_type == 3){// Mendapatkan nilai input teks
-			let check_answer = question.answer[0].answer;
+		}else if (ready_question.id_type == 3){// Mendapatkan nilai input teks
+			let check_answer = ready_question.answer[0].answer;
 
 			if (answer_user == check_answer) {
 				if (level < 5) {

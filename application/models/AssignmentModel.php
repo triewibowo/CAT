@@ -9,8 +9,32 @@ class AssignmentModel extends CI_Model {
 		if ($this->session->userdata('level') != 'admin') {
 			$this->db->where('ms_assignment.id_', $this->session->userdata('id_'));
 		}
-		$this->db->join('ms_lesson', 'ms_assignment.id_lesson = ms_lesson.id_lesson', 'left');
-		return $this->db->get('ms_assignment')->result_object();
+		// $this->db->join('ms_lesson', 'ms_assignment.id_lesson = ms_lesson.id_lesson', 'left');
+		$assignments = $this->db->get('ms_assignment')->result_object();
+
+		foreach ($assignments as $key => $assignment) {
+			$this->db->where("id_assignment", $assignment->id_assignment);
+			$assignment->categories = $this->db->get('assignment_categories')->result_object();
+
+			foreach ($assignment->categories as $k => $category) {
+				$this->db->where('id_cat', $category->id_category);
+				$category->category = $this->db->get('ms_subtest_categories')->row();
+
+				$this->db->where('id_assignment', $assignment->id_assignment);
+				$this->db->where('id_category', $category->id_acat);
+				$subtests = $this->db->get('assignment_detail_subtest')->result_object();
+				$category->subtests = $subtests;
+
+				foreach ($category->subtests as $ks => $sub) {
+					$this->db->where('id_sub', $sub->id_subtest);
+					$sub->subtest = $this->db->get('ms_question_subtest')->row();
+				}
+
+			}
+
+		}
+
+		return $assignments;
 	}
 	public function getAllAssignmentStudent() {
 		$this->db->order_by('ms_assignment.id_assignment', 'desc');

@@ -5,11 +5,16 @@
     .switchery-small {
         
     }
+    .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 </style>
 <!-- Page Title Area -->
 <div class="row page-title clearfix" style="margin-top:-10px">
     <div class="page-title-left">
-        <h6 class="page-title-heading mr-0 mr-r-5">List Ujian <a href="<?= site_url('page/create') ?>" class="btn btn-info btn-circle btn-sm"><i class="feather feather-plus"></i></a></h6>
+        <h6 class="page-title-heading mr-0 mr-r-5">List Laporan Ujian</h6>
         <p class="page-title-description mr-0 d-none d-md-inline-block"></p>
     </div>
     <!-- /.page-title-left -->
@@ -31,7 +36,6 @@
                     <tr>
                         <th>#</th>
                         <th>Pelajaran - Tipe</th>
-                        <th>Total Soal</th>
                         <th>Penulis</th>
                         <th>Dibuat</th>
                         <th style="width:15%">Aksi</th>
@@ -42,31 +46,58 @@
                         <tr>
                             <td><?= $row + 1 ?></td>
                             <td><?= $value->assignment_name.' - '.$value->assignment_type ?></td>
-                            <td><?= $value->totalQuestion ?> Soal</td>
                             <td><?= $value->assignment_author ?></td>
                             <td><?= $value->assignment_created ?></td>
                             <td>
-                                <a title="Buat Soal" href="<?= site_url('page/list_question/'.$value->id_assignment) ?>" class="btn btn-success btn-sm"><i class="feather feather-layers"></i></a>
-                                <a title="Ubah Data Ujian" href="<?= site_url('page/edit/'.$value->id_assignment) ?>" class="btn btn-primary btn-sm"><i class="feather feather-edit"></i></a>
-                                <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
+                                <a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="feather feather-layers"></i></a>
                             </td>
                         </tr>
-                        <!-- MODAL DELETE -->
-                        <div class="modal modal-danger fade" id="delete<?= $row ?>">
-                            <div class="modal-dialog modal-md">
+                        <div class="modal modal-primary fade" id="categories<?= $row ?>">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header text-inverse">
+                                    <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title">Anda yakin ingin menghapus data ini?</h4>
+                                        <h4 class="modal-title text-light">Daftar Kategori <?= $value->assignment_name.' - '.$value->assignment_type ?></h4>
                                     </div>
-                                    <div class="modal-footer" style="padding:10px">
-                                        <a href="<?= site_url('AssignmentCtrl/deleteAssignment/'.$value->id_assignment) ?>" class="btn btn-outline-danger btn-block"><i class="feather feather-check-square"></i> Ya, Hapus data ini!</a>
+                                    <div class="modal-body">
+                                        <div class="row" style="margin-bottom:15px">
+                                            <div class="col-sm-12" align=center>
+                                                <small>Pilih kategori untuk export laporan IRT</small>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                        <ul class="list-group list-group-flush">
+                                            <?php foreach ($value->categories as $r => $category): ?>
+                                                <div class="row">
+                                                    <div class="col-sm-11">
+                                                        <li class="list-group-item row" data-toggle="collapse" data-target="#collapseExample<?= $category->id_acat ?>" aria-expanded="false" aria-controls="collapseExample">
+                                                            <div class="col-sm-11">
+                                                                <div style="font-weight: 900;"><?= $category->category->cat_name ?></div>
+                                                            </div>
+                                                        </li>
+                                                        <div class="collapse" id="collapseExample<?= $category->id_acat ?>">
+                                                            <?php foreach ($category->subtests as $key => $sub): ?>
+                                                            <li class="list-group-item striped-li row">
+                                                                <div class="col-sm-9" style="margin-left: 20px;">
+                                                                    <div><?= $sub->subtest->sub_name ?></div>
+                                                                </div>
+                                                            </li>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1" style="text-align: right; padding-top: 0.8rem;">
+                                                        <a title="Export Report IRT" href="<?= site_url('page/exportReportIrt/'.$value->id_assignment.'/'.$category->id_acat) ?>" class="btn btn-info btn-sm" style="float: right;"><i class="feather feather-download"></i></a>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>            
                     <?php endforeach ?>
-                                       
+                    <!-- MODAL -->
                 </tbody>
             </table>
         </div>
@@ -75,6 +106,7 @@
     <!-- /.widget-bg -->
 </div>
 </div>
+
 
 <script type="text/javascript">
     $(function(){

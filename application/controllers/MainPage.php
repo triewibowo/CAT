@@ -395,6 +395,15 @@ class MainPage extends MY_Controller {
 		$this->parseData['title'] = 'List Ujian ';
 		$this->load->view('MainView',$this->parseData);
 	}
+	public function report_irt() {
+		$dataAssignment = $this->assignment->getAllAssignment();
+		// print_r(json_encode($dataAssignment));
+		// die();
+		$this->parseData['dataAssignment'] = $dataAssignment;
+		$this->parseData['content'] = 'content/assignment/report_irt';
+		$this->parseData['title'] = 'List Laporan Ujian ';
+		$this->load->view('MainView',$this->parseData);
+	}
 	public function bank() {
 		$dataQuestion = [];
 		// foreach ($this->assignment->getAllQuestion() as $row => $value) {
@@ -794,19 +803,21 @@ class MainPage extends MY_Controller {
 
 	}
 
-	public function exportReportIrt($id){
+	public function exportReportIrt($id, $id_category){
 		$assignment = $this->assignment->getExamByAssignmentBeginReport($id);
 
-		// print_r(json_encode($assignment->assignment->categories));
+		// print_r(json_encode($assignment->assignment));
 		// die();
 
 		foreach ($assignment->assignment->categories as $key => $value) {
-			$this->setExportIrt($value);
+			if ($value->id_acat == $id_category) {
+				$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+				$this->setExportIrt($spreadsheet, $value, $assignment->assignment->assignment_name);
+			}
 		}
 	}
 
-	public function setExportIrt($data) {
-		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+	public function setExportIrt($spreadsheet, $data, $assignment_name) {
 	
 		// Buat objek Writer untuk format XLSX
 		$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
@@ -1197,7 +1208,7 @@ class MainPage extends MY_Controller {
 
 		// Mengatur header HTTP untuk file Excel yang akan diunduh
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment; filename="hasil_jawaban_siswa.xlsx"');
+		header('Content-Disposition: attachment; filename="Laporan ' . $assignment_name . '-' . $data->category->cat_name . '.xlsx"');
 	
 		// Simpan file Excel ke output browser
 		$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);

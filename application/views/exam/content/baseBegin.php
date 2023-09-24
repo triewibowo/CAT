@@ -258,6 +258,18 @@
         minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
         if(totalSeconds == 0){
             clearInterval(timer);
+			params = {
+				'subtest'		: ready_subtest,
+				'question'		: ready_question.id_question,
+				'is_true' 		: isTrue,
+				'time_off' 		: true,
+				'qty'			: qty,
+				'duration'		: totalSeconds / 60,
+				'id_begin'		: id_begin,
+				'id_student'	: id_student,
+				'id_category'	: ready_category.id_category
+			};
+			getQuestion();
         }
     }
 
@@ -272,6 +284,7 @@
 			'is_true' 		: isTrue,
 			'level' 		: level,
 			'qty'			: qty,
+			'duration'		: totalSeconds / 60,
 			'id_begin'		: id_begin,
 			'id_student'	: id_student,
 			'id_category'	: ready_category.id_category

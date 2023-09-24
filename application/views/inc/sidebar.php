@@ -43,8 +43,9 @@
             </li>
             <li class="menu-item-has-children"><a href="javascript:void(0);"><i class="list-icon feather feather-file-text"></i> <span class="hide-menu">Laporan</span></a>
                 <ul class="list-unstyled sub-menu">
-                    <li><a href="<?= site_url('page/results') ?>">Hasil Ujian</a></li>
-                    <li><a href="<?= site_url('page/analytics') ?>">Analysis Ujian</a></li>
+                    <!-- <li><a href="<?= site_url('page/results') ?>">Hasil Ujian</a></li> -->
+                    <!-- <li><a href="<?= site_url('page/analytics') ?>">Analysis Ujian</a></li> -->
+                    <li><a href="<?= site_url('page/report_irt') ?>">IRT</a></li>
                 </ul>
             </li>
             <li class=""><a href="<?= site_url('page/logs') ?>"><i class="list-icon feather feather-file"></i> <span class="hide-menu">Log Aktifitas</span></a></li>

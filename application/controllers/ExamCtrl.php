@@ -251,12 +251,14 @@ class ExamCtrl extends CI_Controller {
 		$id_begin = $data['subtest']['id_begin'];
 		$subtest = [];
 		$subtest_status = 1;
+		$soal = [];
 		try{
 
 			// Update total soal subtest ke proses
 			$d = [
 				'id' 			=> $data['subtest']['id'],
 				'total_soal' 	=> $data['qty'],
+				'timer' 		=> isset($data['duration']) ? $data['duration'] : $data['subtest']['timer'],
 			];
 			$subtest = $this->assignment->updateAssignmentBeginSubtest($d);
 
@@ -272,7 +274,7 @@ class ExamCtrl extends CI_Controller {
 
 			
 			// Update status subtest ke selesai
-			if($data['subtest']['status'] == 1 && (int) $data['subtest']['qty_soal'] <= $data['qty']){
+			if($data['subtest']['status'] == 1 && (int) $data['subtest']['qty_soal'] <= $data['qty'] || isset($data['time_off']) && $data['time_off']){
 				$d = [
 					'id' => $data['subtest']['id'],
 					'status' 	=> 2,
@@ -295,15 +297,16 @@ class ExamCtrl extends CI_Controller {
 
 				$this->assignment->insertAssignmentQuestionAnswer($param);
 			}
-
 			// check status category
 			$this->updateStatusAssignmentBeginCategory($id_begin_cat);
 
 			// check status assignment begin per student
 			$this->updateStatusAssignmentBegin($id_begin);
 
-			// Ambil Soal yang sesuai subtest dan level
-			$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level']);
+			if (isset($data['level'])) {
+				// Ambil Soal yang sesuai subtest dan level
+				$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level']);
+			}
 
 			$response = [
 				'status' => 'success',

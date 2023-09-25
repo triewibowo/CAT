@@ -11,16 +11,16 @@
                 <!-- <a href="#classes" data-toggle="modal" class="btn btn-success btn-sm"><i class="feather feather-home"></i>&nbsp; Subtes</a> -->
             </div>
             <div class="col-sm-3">
-                <label class="d-flex flex-md-row flex-column align-items-center cursor-pointer">
+                <!-- <label class="d-flex flex-md-row flex-column align-items-center cursor-pointer">
                     <input type="checkbox" name="show_report" class="js-switch" data-color="#8253eb" data-size="small">
                     <span class="text-muted mr-l-20 d-inline-block">Tampilkan Hasil</span>
-                </label>
+                </label> -->
             </div>
             <div class="col-sm-3">
-                <label class="d-flex flex-md-row flex-column align-items-center cursor-pointer">
+                <!-- <label class="d-flex flex-md-row flex-column align-items-center cursor-pointer">
                     <input type="checkbox" name="show_analytic" class="js-switch" data-color="#8253eb" data-size="small">
                     <span class="text-muted mr-l-20 d-inline-block">Analisis Soal</span>
-                </label>
+                </label> -->
             </div>
             <div class="col-sm-3">
                 <label class="d-flex flex-md-row flex-column align-items-center cursor-pointer">

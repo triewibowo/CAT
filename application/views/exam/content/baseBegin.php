@@ -58,11 +58,10 @@
 					<div class="panel">
 						<div class="panel-body" style="padding: 1.5rem 5rem;background-color:#fbfbfb">
 							<!-- SOAL -->
-							<h3 style="margin-bottom:45px;" id="question-title"></h3>
-							<img src="image.jpg" id="image-question" alt="Image description" style="width:902px; height:350px; margin-bottom:45px;">
+							<img src="image.jpg" id="image-question" alt="Image description" style="height:350px; margin-bottom:45px;">
 							<!-- <p style="font-size:12px; margin-bottom:10px" class="container mb-0">Read the sentence carefully then choose the most correct answer.</p> -->
 							<div id="question-container" class="cat-question">
-							<div id="question" style="margin-bottom:35px;"></div>
+							<div id="question" style="margin-bottom:15px;"></div>
 							<hr>
 							<div id="answer-options" class="cat-answer"></div><br>
 							<div class="center-button">
@@ -186,23 +185,17 @@
 	let id_student 		= <?php echo json_encode($dataAssignments->id_student); ?>;
 	var	exams 			= <?php echo json_encode($dataAssignments->assignment); ?>;
 
-	var progressBar = $(".progress-bar");
-  	progressBar.attr("aria-valuemax", exams.total_soal);
-	progressBar.css("width", 60 + "%");
-
-	var progressValue = $(".progress-bar-value");
-    progressValue.text(60 + "%");
-	progressBar.attr("aria-valuenow", 60);
-
 	$('#start').on('click', function() {
         // set interval for every second
 		getQuestion();
+		updateProgress();
         $('#start').modal('hide');
     });
 
 	$('#continue').on('click', function() {
         // set interval for every second
 		getQuestion();
+		updateProgress();
         $('#continue').modal('hide');
     });
 	
@@ -290,6 +283,27 @@
 			'id_category'	: ready_category.id_category
 		};
 		getQuestion();
+		updateProgress();
+	}
+
+	function updateProgress(){
+		var persentase	= (qty / ready_subtest.qty_soal) * 100;
+		var progressBar = $(".progress-bar");
+		progressBar.attr("aria-valuemax", ready_subtest.qty_soal);
+		progressBar.css("width", persentase + "%");
+
+		var progressValue = $(".progress-bar-value");
+		progressValue.text(persentase + "%");
+		progressBar.attr("aria-valuenow", persentase);
+	}
+
+	function resetProgress(){
+		progressBar.attr("aria-valuemax", 0);
+		progressBar.css("width", 0 + "%");
+
+		var progressValue = $(".progress-bar-value");
+		progressValue.text(0 + "%");
+		progressBar.attr("aria-valuenow", 0);
 	}
 
 	function getQuestion(status) {
@@ -318,7 +332,6 @@
 					qty				= 0;
 					rollSubtest();
 					if (begin_status != 2) {
-						console.log('tain anjing')
 						$('#continue').modal('show');
 					}
 				}else{
@@ -347,11 +360,11 @@
 			questionElement.text("Tidak ada soal...");
 		}else{
 			$('#answer-options').show();
-			questionElement.text(((qty == 0) ? '1' : (qty + 1)) + '. ' + ready_question.question_);
+			questionElement.html(((qty == 0) ? '1' : (qty + 1)) + '. ' + ready_question.question_);
 		
 			if (ready_question.question_image) {
 				$('#image-question').show();
-				$('#image-question').attr('src', ready_question.question_image);
+				$('#image-question').attr('src', '<?php echo base_url() ?>' + "assets/images/assignments/" + ready_question.question_image);
 			}else{
 				$('#image-question').hide();
 			}
@@ -374,11 +387,11 @@
 
 					const label = $('<label class="btn btn-default btn-block mb-0" style="padding-left:40px !important; text-align:left">')
 						.attr('for', 'answer' + i)
-						.text(ready_question.answer[i].option_);
+						.html(ready_question.answer[i].option_);
 
 					if (ready_question.answer[i].option_image) {
-						const img = $('<img style="width:300px; height:190px; margin-left:3rem">')
-							.attr('src', ready_question.answer[i].option_image)
+						const img = $('<img style="height:190px; margin-bottom:1rem">')
+							.attr('src', '<?php echo base_url() ?>' + "assets/images/assignments/" + ready_question.answer[i].option_image)
 							.addClass('answer-image');
 						
 						answerOption.append(input).append(img).append(label);
@@ -461,8 +474,8 @@
 					const labelText = ready_question.answer[i].option_;
 
 					if (ready_question.answer[i].option_image) {
-						const img = $('<img style="width:300px; height:190px; margin-right:3rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
-							.attr('src', ready_question.answer[i].option_image)
+						const img = $('<img style="height:190px; margin-botttom:1rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
+							.attr('src', '<?php echo base_url() ?>' + "assets/images/assignments/" + ready_question.answer[i].option_image)
 							.addClass('answer-image');
 						
 						label.append(img).append(input).append(labelText); // Mengubah urutan elemen
@@ -506,7 +519,7 @@
 					
 					const label = $('<div class="col-sm-6">')
 						.append($('<label class="btn btn-default btn-block" style="text-align:left">')
-							.text(optionText.answer[i].option_));
+							.html(optionText.answer[i].option_));
 
 					const select = $('<div class="col-sm-6">')
 						.append($('<select style="width:100%; font-size:12px">')
@@ -521,7 +534,7 @@
 					for (let j = 0; j < optionText.match.length; j++) {
 						const option = $('<option style="font-size:12px">')
 							.attr('value', optionText.match[j].id_match)
-							.text(optionText.match[j].answer_);
+							.html(optionText.match[j].answer_);
 
 						select.find('select').append(option);
 					}

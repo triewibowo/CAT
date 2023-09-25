@@ -208,7 +208,7 @@ class MainPage extends MY_Controller {
 		$this->parseData['title'] = 'Buat Ujian ';
 		$this->load->view('MainView',$this->parseData);
 	}
-	public function edit($id_assignment = NULL) {
+	public function edit_old($id_assignment = NULL) {
 		if (!$id_assignment) {
 			redirect('page/assignments');
 		}
@@ -227,6 +227,19 @@ class MainPage extends MY_Controller {
 		$this->parseData['dataAssignment'] = $dataAssignment;
 		$this->parseData['dataLessons'] = $dataLessons;
 		$this->parseData['dataClasses'] = $dataClasses;
+		$this->parseData['content'] = 'content/assignment/edit';
+		$this->parseData['title'] = 'Ubah Ujian ';
+		$this->load->view('MainView',$this->parseData);
+	}
+	public function edit($id_assignment = NULL) {
+		if (!$id_assignment) {
+			redirect('page/assignments');
+		}
+		$dataAssignment = $this->assignment->getAssignmentById($id_assignment);
+		if (!$dataAssignment) {
+			redirect('page/assignments');
+		}
+		$this->parseData['dataAssignment'] = $dataAssignment;
 		$this->parseData['content'] = 'content/assignment/edit';
 		$this->parseData['title'] = 'Ubah Ujian ';
 		$this->load->view('MainView',$this->parseData);

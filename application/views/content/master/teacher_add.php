@@ -20,9 +20,9 @@
 <div class="row page-title clearfix" style="margin-top:-10px">
     <div class="page-title-left">
         <!-- <h6 class="page-title-heading mr-0 mr-r-5">Tambah Guru</h6> -->
-        <a href="#classes" data-toggle="modal" class="btn btn-success btn-sm"><i class="feather feather-home"></i>&nbsp; Pilih Kelas</a>
+        <a href="#classes" data-toggle="modal" class="btn btn-primary btn-sm"><i class="feather feather-home"></i>&nbsp; Pilih Kelas</a>
         <a href="#lessons" data-toggle="modal" class="btn btn-warning btn-sm"><i class="feather feather-edit"></i>&nbsp; Pilih Pelajaran</a>
-        <a href="#save" data-toggle="modal" class="btn btn-info btn-sm"><i class="feather feather-check-square"></i>&nbsp; Simpan</a>
+        <a href="#save" data-toggle="modal" class="btn btn-success btn-sm"><i class="feather feather-check-square"></i>&nbsp; Simpan</a>
         <p class="page-title-description mr-0 d-none d-md-inline-block"></p>
     </div>
     <!-- /.page-title-left -->

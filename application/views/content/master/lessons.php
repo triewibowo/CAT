@@ -1,7 +1,7 @@
 <!-- Page Title Area -->
 <div class="row page-title clearfix" style="margin-top:-10px">
     <div class="page-title-left">
-        <h6 class="page-title-heading mr-0 mr-r-5">Data Pelajaran <a href="#add" data-toggle="modal" class="btn btn-info btn-circle btn-sm"><i class="feather feather-plus"></i></a></h6>
+        <h6 class="page-title-heading mr-0 mr-r-5">Data Pelajaran</h6>
         <p class="page-title-description mr-0 d-none d-md-inline-block"></p>
     </div>
     <!-- /.page-title-left -->
@@ -16,9 +16,14 @@
  <div class="widget-holder widget-full-height col-md-12">
     <div class="widget-bg">
         <div class="widget-body">
-
+            <div class="row mb-3">
+                <div class="col-sm"></div>
+                <div class="col-sm-2">
+                    <a href="#add" data-toggle="modal" class="btn btn-success float-right btn-sm"><i class="feather feather-plus"></i> Create</a>
+                </div>
+            </div>
             <table class="table table-striped table-responsive" data-toggle="datatables">
-                <thead>
+                <thead class="bg-primary-gradient">
                     <tr>
                         <th style="width:7%">#</th>
                         <th>Nama Pelajaran</th>
@@ -68,7 +73,7 @@
                                             </div>
                                     </div>
                                     <div class="modal-footer" style="padding:10px">
-                                        <button type="submit" class="btn btn-outline-info btn-block"><i class="feather feather-check-square"></i> Simpan!</button>
+                                        <button type="submit" class="btn btn-outline-primary btn-block"><i class="feather feather-check-square"></i> Simpan!</button>
                                     </div>
                                     </form>
                                 </div>
@@ -85,7 +90,7 @@
 </div>
 </div>
 <!-- MODAL -->
-<div class="modal modal-info fade" id="add">
+<div class="modal modal-success fade" id="add">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header text-inverse">
@@ -100,7 +105,7 @@
                     </div>
             </div>
             <div class="modal-footer" style="padding:10px">
-                <button type="submit" onclick="return confirm('Anda yakin ?')" class="btn btn-outline-info btn-block"><i class="feather feather-check-square"></i> Simpan!</button>
+                <button type="submit" onclick="return confirm('Anda yakin ?')" class="btn btn-outline-success btn-block"><i class="feather feather-check-square"></i> Simpan!</button>
             </div>
             </form>
         </div>

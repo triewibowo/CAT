@@ -17,7 +17,7 @@
     <div class="widget-bg">
         <div class="widget-body">
 			<table class="table table-striped table-responsive" data-toggle="datatables">
-                <thead>
+                <thead class="bg-primary-gradient">
                     <tr>
                         <th style="width:7%">#</th>
                         <th>Nama</th>

@@ -2,16 +2,19 @@
     #navForSideBar::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         background-color: #F5F5F5;
+        display: none;
     }
 
     #navForSideBar::-webkit-scrollbar {
         width: 6px;
         background-color: #F5F5F5;
+        display: none;
     }
 
     #navForSideBar::-webkit-scrollbar-thumb {
         background-color: #000000;
         border: 2px solid #555555;
+        display: none;
     }
 </style>
 <aside class="site-sidebar scrollbar-enabled" data-suppress-scroll-x="true">
@@ -36,7 +39,7 @@
             </li>
             <li class="menu-item-has-children"><a href="javascript:void(0);"><i class="list-icon feather feather-edit"></i> <span class="hide-menu">Ujian</span></a>
                 <ul class="list-unstyled sub-menu">
-                    <li><a href="<?= site_url('page/create') ?>">Buat Ujian</a></li>
+                    <!-- <li><a href="<?= site_url('page/create') ?>">Buat Ujian</a></li> -->
                     <li><a href="<?= site_url('page/assignments') ?>">List Ujian</a></li>
                     <li><a href="<?= site_url('page/bank') ?>">Bank Soal</a></li>
                 </ul>

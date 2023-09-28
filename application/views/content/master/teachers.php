@@ -1,7 +1,7 @@
 <!-- Page Title Area -->
 <div class="row page-title clearfix" style="margin-top:-10px">
     <div class="page-title-left">
-        <h6 class="page-title-heading mr-0 mr-r-5">Data Guru <a href="<?= site_url('page/teacher_add') ?>" class="btn btn-info btn-circle btn-sm"><i class="feather feather-plus"></i></a></h6>
+        <h6 class="page-title-heading mr-0 mr-r-5">Data Guru</h6>
         <p class="page-title-description mr-0 d-none d-md-inline-block"></p>
     </div>
     <!-- /.page-title-left -->
@@ -16,7 +16,12 @@
     <div class="widget-holder widget-full-height col-md-12">
         <div class="widget-bg">
             <div class="widget-body">
-
+                <div class="row mb-3">
+                    <div class="col-sm"></div>
+                    <div class="col-sm-2">
+                        <a href="<?= site_url('page/teacher_add') ?>" class="btn btn-success float-right btn-sm"><i class="feather feather-plus"></i> Create</a>
+                    </div>
+                </div>
                 <table class="table table-stripped table-responsive" data-toggle="datatables">
                     <thead>
                         <tr>

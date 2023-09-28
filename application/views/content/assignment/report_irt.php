@@ -30,9 +30,14 @@
  <div class="widget-holder widget-full-height col-md-12">
     <div class="widget-bg">
         <div class="widget-body">
-
+            <!-- <div class="row mb-3">
+                <div class="col-sm"></div>
+                <div class="col-sm-2">
+                    <a href="#add" data-toggle="modal" class="btn btn-success float-right btn-sm"><i class="feather feather-plus"></i> Create</a>
+                </div>
+            </div> -->
             <table class="table table-striped table-responsive" data-toggle="datatables">
-                <thead>
+                <thead class="bg-primary-gradient">
                     <tr>
                         <th>#</th>
                         <th>Pelajaran - Tipe</th>

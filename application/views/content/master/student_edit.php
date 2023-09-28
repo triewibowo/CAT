@@ -19,7 +19,7 @@
 <!-- Page Title Area -->
 <div class="row page-title clearfix" style="margin-top:-10px">
     <div class="page-title-left">
-        <a href="#save" data-toggle="modal" class="btn btn-info btn-sm"><i class="feather feather-check-square"></i>&nbsp; Simpan</a>
+        <a href="#save" data-toggle="modal" class="btn btn-success btn-sm"><i class="feather feather-check-square"></i>&nbsp; Simpan</a>
         <p class="page-title-description mr-0 d-none d-md-inline-block"></p>
     </div>
     <!-- /.page-title-left -->

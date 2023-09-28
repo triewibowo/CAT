@@ -1,7 +1,7 @@
-<nav class="navbar">
+<nav class="navbar soft-shadow">
 <!-- Logo Area -->
 <div class="navbar-header">
-    <a href="<?= site_url() ?>" class="navbar-brand" style="color:black">
+    <a href="<?= site_url() ?>" class="navbar-brand" style="color:white; background:linear-gradient(to right, #1d3461, #16294e)">
         <span class="logo-expand">UjianOnline2</span>
         <span class="logo-collapse">v0.1</span>
     </a>
@@ -18,7 +18,7 @@
 <div class="spacer"></div>
 <!-- User Image with Dropdown -->
 <ul class="nav navbar-nav">
-    <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle ripple" data-toggle="dropdown"><span class="avatar thumb-xs2"><img src="<?= base_url() ?>/assets/images/icon-user.png" class="rounded-circle" alt=""> <span style="margin-right:20px"><?= $this->session->userdata('fullName'); ?></span> <i class="feather feather-chevron-down list-icon"></i></span></a>
+    <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle ripple" data-toggle="dropdown"><span class="avatar thumb-xs3"><img src="<?= base_url() ?>/assets/images/icon-user.png" class="rounded-circle mr-5" alt=""> <span style="margin-right:20px"><?= $this->session->userdata('fullName'); ?></span> <i class="feather feather-chevron-down list-icon"></i></span></a>
         <div class="dropdown-menu dropdown-left dropdown-card dropdown-card-profile animated flipInY">
             <div class="card">
                 <ul class="list-unstyled card-body" style="padding:5px">

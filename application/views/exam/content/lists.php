@@ -4,46 +4,44 @@
 	}
 </style>
 <div class="panel panel-info">
-    <div class="panel-heading">
-        <h3 class="panel-title">List Ujian</h3>
-    </div>
+	<div class="page-header">
+		<div class="jumbotron">
+			<!-- <div class="jumbotron" style="background-image: url('<?php echo base_url() ?>assets/images/student.jpg'); background-size: cover;"> -->
+			<div style="padding-left:2em; padding-right:2em">
+				<h1>Bersiaplah untuk Mencapai <br>Keberhasilan!</h1>
+				<p>Percayalah pada kemampuan Anda. Jangan biarkan ujian mengintimidasi Anda. <br>Anda memiliki semua yang diperlukan untuk meraih kesuksesan</p>
+			</div>
+		</div>
+	</div>
     <div class="panel-body">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover datatable table-condensed">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Ujian</th>
-                        <th>Tipe Ujian</th>
-                        <th>Lama Ujian</th>
-                        <th>Penulis</th>
-                        <th>Password</th>
-                        <th>Status</th>
-                        <th style="width:5%"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                	<?php foreach ($dataAssignments as $row => $value): ?>
-	                    <tr>
-	                        <td><?= $row + 1 ?></td>
-	                        <td><?= $value->assignment->assignment_name ?></td>
-	                        <td><?= $value->assignment->assignment_type ?></td>
-	                        <td><?= $value->duration ?> Menit</td>
-	                        <td><?= $value->assignment->assignment_author ?></td>
-	                        <td><?= $value->password ?></td>
-							<td>
-								<?php if ($value->status == 0): ?>
-									<span class="badge bg-warning">Baru</span>
-								<?php elseif ($value->status == 1): ?>
-									<span class="badge bg-primary">Lanjutkan</span>
-								<?php endif; ?>
-							</td>
-	                        <td>
-	                        	<a href="#password<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="fa fa-pencil"></i> Ujian</a>
-	                        </td>
-	                    </tr>
-						<!-- MODAL CHECK PASSWORD -->
-						<div class="modal fade" id="password<?= $row ?>">
+	<div class="row">
+		<?php foreach ($dataAssignments as $row => $value): ?>
+			<div class="col-sm-6 col-md-3">
+				<div class="thumbnail">
+				<?php if ($value->status == 0): ?>
+					<img src="<?php echo base_url() ?>assets/images/new-exam.jpg" alt="...">
+				<?php elseif ($value->status == 1): ?>
+					<img src="<?php echo base_url() ?>assets/images/continue-exam.jpg" alt="...">
+				<?php elseif ($value->status == 2): ?>
+					<img src="<?php echo base_url() ?>assets/images/new-exam.jpg" alt="...">
+				<?php endif; ?>
+				<div class="caption">
+					<div class="row">
+						<div class="col-sm-6" style="padding-left:0">
+							<p style="margin:0"><?= $value->duration ?> Menit</p><br>
+						</div>
+						<div class="col-sm-6">
+							<p align=right style="margin:0"><?= $value->assignment->assignment_author ?></p>
+						</div>
+					</div>
+					<h3><?= $value->assignment->assignment_name ?></h3>
+					<p><?= $value->assignment->assignment_type ?></p>
+					<p><a href="#password<?= $row ?>" data-toggle="modal" class="btn btn-primary btn-block"><i class="fa fa-pencil"></i> Ujian</a></p>
+				</div>
+				</div>
+			</div>
+			<!-- MODAL CHECK PASSWORD -->
+			<div class="modal fade" id="password<?= $row ?>">
 	                    	<div class="modal-dialog" style="width:30%">
 	                    		<div class="modal-content">
 	                    			<div class="modal-header">
@@ -52,6 +50,7 @@
 	                    			</div>
 									<div class="modal-body">
 										<input type="text" class="form-control" name="password<?= $row ?>" required placeholder="Password">
+										<small>Password : </small><small><?= $value->password ?></small>
 									</div>
 	                    			<div class="modal-footer">
 										<button id="checkPasswordBtn<?= $row ?>" class="btn btn-primary btn-block">Check Password</button>
@@ -170,10 +169,8 @@
 	                    		</div>
 	                    	</div>
 	                    </div>
-                	<?php endforeach ?>
-                </tbody>
-            </table>
-        </div>
+		<?php endforeach; ?>
+	</div>
     </div>
 </div>
 

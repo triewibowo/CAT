@@ -2,7 +2,8 @@
 <!-- Logo Area -->
 <div class="navbar-header">
     <a href="<?= site_url() ?>" class="navbar-brand" style="color:white; background:linear-gradient(to right, #1d3461, #16294e)">
-        <span class="logo-expand">UjianOnline2</span>
+        <span class="logo-expand">CAT
+</span>
         <span class="logo-collapse">v0.1</span>
     </a>
 </div>

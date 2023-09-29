@@ -448,6 +448,7 @@ class AssignmentModel extends CI_Model {
 
 	public function getExamByStudent($id_student) {
 		$this->db->where('id_student', $id_student);
+		$this->db->where('status <>', 2);
 		$students = $this->db->get('assignment_begin')->result_object();
 
 		foreach ($students as $index => $student) {

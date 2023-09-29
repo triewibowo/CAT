@@ -290,10 +290,10 @@
 		var persentase	= (qty / ready_subtest.qty_soal) * 100;
 		var progressBar = $(".progress-bar");
 		progressBar.attr("aria-valuemax", ready_subtest.qty_soal);
-		progressBar.css("width", persentase + "%");
+		progressBar.css("width", Math.ceil(persentase) + "%");
 
 		var progressValue = $(".progress-bar-value");
-		progressValue.text(persentase + "%");
+		progressValue.text(Math.ceil(persentase) + "%");
 		progressBar.attr("aria-valuenow", persentase);
 	}
 

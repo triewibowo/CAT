@@ -25,51 +25,57 @@
                 <center><strong><?= $this->session->flashdata('title'); ?></strong> <?= $this->session->flashdata('text'); ?></center>
             </div>
         <?php endif ?>
-        <div class="login-container login-v2">
-            
-            <div class="login-box animated fadeInDown">
-                <div class="login-body">
-                    <div class="login-title"><strong>Login Siswa</strong>, Ujian Online.</div>
-                    <form action="<?= site_url('Auth/exam') ?>" class="form-horizontal" method="post">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <span class="fa fa-user"></span>
-                                </div>
-                                <input type="number" class="form-control" placeholder="NIS" name="student_nis" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <span class="fa fa-lock"></span>
-                                </div>                                
-                                <input type="password" class="form-control" placeholder="Password" required name="student_password">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <button class="btn btn-primary btn-lg btn-block">Login</button>
-                        </div>
-                    </div>
-                    </form>
+        <div class="login-container">
+            <div class="row">
+                <div class="col-sm-6" style="padding-top:50px">
+                    <img src="<?php echo base_url() ?>assets/images/bg-login.png" alt="..." style="height:45em">
                 </div>
-                <div class="login-footer">
-				<div class="text-center">
-					<p>
-					&copy; <?=date('Y')?> - All Right Reserved.
-					</p>
-					<span class="text-white">Alam Koding</small>
-					<div class="d-block small">
-						<a target="_blank" href="https://alamkoding.blogspot.com">Blog</a>
-						&bull;
-						<a target="_blank" href="https://www.youtube.com/channel/UC5mdwFaMt42KXVH6Vi-e5iA">Youtube</a>
-					</div>
-				</div>
+                <div class="col-sm-6" style="padding-top:250px">
+                    <div class="login-box animated fadeInDown">
+                        <div class="login-body" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <div class="login-title" align=center><strong>Login Siswa</strong>, CAT.</div>
+                                <form action="<?= site_url('Auth/exam') ?>" class="form-horizontal" method="post">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <span class="fa fa-user"></span>
+                                            </div>
+                                            <input type="number" class="form-control" placeholder="NIS" name="student_nis" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <span class="fa fa-lock"></span>
+                                            </div>                                
+                                            <input type="password" class="form-control" placeholder="Password" required name="student_password">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary btn-lg btn-block">Login</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="login-footer">
+                            <div class="text-center">
+                                <p>
+                                &copy; <?=date('Y')?> - All Right Reserved.
+                                </p>
+                                <!-- <span class="text-white">Alam Koding</small>
+                                <div class="d-block small">
+                                    <a target="_blank" href="https://alamkoding.blogspot.com">Blog</a>
+                                    &bull;
+                                    <a target="_blank" href="https://www.youtube.com/channel/UC5mdwFaMt42KXVH6Vi-e5iA">Youtube</a>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             

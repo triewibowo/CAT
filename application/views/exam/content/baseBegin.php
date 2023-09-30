@@ -101,6 +101,9 @@
 					<h4 class="modal-title">Selamat mengerjakan...</h4>
 				</div>
 				<div class="modal-body">
+					<div align=center>
+						<img src="<?php echo base_url() ?>assets/images/welcome-exam.png" alt="..." style="height:20rem;">
+					</div>
 					<p>Perhatikan langkah dibawah ini!</p>
 					<ul>
 						<li>Siapkan perangkat anda dengan baik</li>
@@ -126,6 +129,9 @@
 					<h4 class="modal-title">Lanjut ke subtes selanjutnya!</h4>
 				</div>
 				<div class="modal-body">
+					<div align=center>
+						<img src="<?php echo base_url() ?>assets/images/continue-exam.png" alt="..." style="height:20rem;">
+					</div>
 					<p>Perhatikan langkah dibawah ini!</p>
 					<ul>
 						<li>Siapkan perangkat anda dengan baik</li>
@@ -151,6 +157,9 @@
 					<h4 class="modal-title">Selamat!</h4>
 				</div>
 				<div class="modal-body">
+					<div align=center>
+						<img src="<?php echo base_url() ?>assets/images/done-exam.png" alt="..." style="height:20rem;">
+					</div>
 					<p>Kamu telah selesai mengerjakan Ujian ini!</p>
 				</div>
 				<div class="modal-footer">

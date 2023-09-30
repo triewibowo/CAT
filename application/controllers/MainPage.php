@@ -421,8 +421,18 @@ class MainPage extends MY_Controller {
 	}
 	public function report_irt() {
 		$dataAssignment = $this->assignment->getAllAssignment();
-		// print_r(json_encode($dataAssignment));
-		// die();
+
+		foreach ($dataAssignment as $key => $value) {
+    		$value->max = count($value->assigns); // Perbarui properti max_percent pada objek $value
+
+			foreach ($value->assigns as $k => $v) {
+				if ($v->status == 2) {
+					$value->value =+ 1; // Perbarui properti value_percent pada objek $v
+				}
+			}
+			$value->percent = round(($value->value / count($value->assigns)) * 100, 1); // Perbarui properti value_percent pada objek $v
+			
+		}
 		$this->parseData['dataAssignment'] = $dataAssignment;
 		$this->parseData['content'] = 'content/assignment/report_irt';
 		$this->parseData['title'] = 'List Laporan Ujian ';

@@ -16,6 +16,9 @@ class AssignmentModel extends CI_Model {
 			$this->db->where("id_assignment", $assignment->id_assignment);
 			$assignment->categories = $this->db->get('assignment_categories')->result_object();
 
+			$this->db->where("id_assignment", $assignment->id_assignment);
+			$assignment->assigns = $this->db->get('assignment_begin')->result_object();
+
 			foreach ($assignment->categories as $k => $category) {
 				$this->db->where('id_cat', $category->id_category);
 				$category->category = $this->db->get('ms_subtest_categories')->row();
@@ -448,7 +451,9 @@ class AssignmentModel extends CI_Model {
 
 	public function getExamByStudent($id_student) {
 		$this->db->where('id_student', $id_student);
+		$this->db->where('assignment_active', 1);
 		$this->db->where('status <>', 2);
+		$this->db->join('ms_assignment', 'assignment_begin.id_assignment = ms_assignment.id_assignment', 'left');
 		$students = $this->db->get('assignment_begin')->result_object();
 
 		foreach ($students as $index => $student) {

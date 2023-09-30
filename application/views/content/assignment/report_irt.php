@@ -42,8 +42,9 @@
                         <th>#</th>
                         <th>Pelajaran - Tipe</th>
                         <th>Penulis</th>
-                        <th>Dibuat</th>
-                        <th style="width:15%">Aksi</th>
+                        <th style="text-align:center">Dibuat</th>
+                        <th style="text-align:center">Progres</th>
+                        <th style="width:15%; text-align:center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +54,19 @@
                             <td><?= $value->assignment_name.' - '.$value->assignment_type ?></td>
                             <td><?= $value->assignment_author ?></td>
                             <td><?= $value->assignment_created ?></td>
-                            <td>
+                            <td align=center>
+                                <?php if ($value->assignment_active == 1): ?>
+                                    <span class="badge bg-success">Aktif</span>
+                                <?php else: ?>
+                                    <span class="badge bg-danger">Tidak Aktif</span>
+                                <?php endif; ?>
+                                <div class="progress" style="height:10px">
+                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="<?php echo $value->percent ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value->percent ?>%">
+                                    <?php echo $value->percent ?>%
+                                    </div>
+                                </div>
+                            </td>
+                            <td align=center>
                                 <a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="feather feather-layers"></i></a>
                             </td>
                         </tr>

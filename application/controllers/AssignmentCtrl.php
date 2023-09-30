@@ -517,6 +517,22 @@ class AssignmentCtrl extends MY_Controller {
 		$this->message('Sukses!','Data ujian berhasil dihapus :)','success');
 		redirect('page/assignments');
 	}
+	public function deleteQuestion($id_question = NULL) {
+		if (!$id_question) {
+			redirect('page/bank');
+		}
+		$dataQuestion = $this->assignment->getQuestionById($id_question);
+		if (!$dataQuestion) {
+			redirect('page/bank');
+		}
+		$data = [
+			'id_question' => $id_question,
+			'question_hide' => 1
+		];
+		$this->assignment->updateQuestion($data);
+		$this->message('Sukses!','Data ujian berhasil dihapus :)','success');
+		redirect('page/bank');
+	}
 	public function nonAktiveAssignment($id_assignment = NULL) {
 		if (!$id_assignment) {
 			redirect('page/assignments');
@@ -531,6 +547,22 @@ class AssignmentCtrl extends MY_Controller {
 		];
 		$this->assignment->updateAssignment($data);
 		$this->message('Sukses!','Data ujian berhasil dinonaktifkan :)','success');
+		redirect('page/assignments');
+	}
+	public function aktiveAssignment($id_assignment = NULL) {
+		if (!$id_assignment) {
+			redirect('page/assignments');
+		}
+		$dataAssignment = $this->assignment->getAssignmentById($id_assignment);
+		if (!$dataAssignment) {
+			redirect('page/assignments');
+		}
+		$data = [
+			'id_assignment' => $id_assignment,
+			'assignment_active' => 1
+		];
+		$this->assignment->updateAssignment($data);
+		$this->message('Sukses!','Data ujian berhasil diaktifkan :)','success');
 		redirect('page/assignments');
 	}
 

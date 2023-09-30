@@ -30,9 +30,9 @@
                         <th style="width:10%">Pelajaran</th>
                         <th>Pertanyaan</th>
                         <th style="width:15%">Subtes</th>
-                        <th style="width:10%">Jenis</th>
-                        <th style="width:10%">Dibuat</th>
-                        <th style="width:10%">Aksi</th>
+                        <th style="width:10%; text-align:center">Jenis</th>
+                        <th style="width:10%; text-align:center">Dibuat</th>
+                        <th style="width:10%; text-align:center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,12 +42,29 @@
                             <td><?= ($value->lesson) ? $value->lesson->lesson_name : '' ?></td>
                             <td><?= $value->question_ ?></td>
                             <td><?= ($value->subtest) ? $value->subtest->sub_name : '' ?></td>
-                            <td><?= ($value->type) ? $value->type->type_name : '' ?></td>
-                            <td><?= date('d-M-Y', strtotime($value->question_created)) ?></td>
-                            <td>
-                                <!-- <a title="Detail Soal" href="<?= site_url('page/detail_question/'.$value->id_assignment.'/'.$value->id_question.'/true') ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a> -->
+                            <td align=center><?= ($value->type) ? $value->type->type_name : '' ?></td>
+                            <td align=center><?= date('d-M-Y', strtotime($value->question_created)) ?></td>
+                            <!-- <td>
+                                <a title="Detail Soal" href="<?= site_url('page/detail_question/'.$value->id_assignment.'/'.$value->id_question.'/true') ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a>
+                            </td> -->
+                            <td align=center>
+                                <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
                             </td>
                         </tr>
+                        <!-- MODAL DELETE -->
+                        <div class="modal modal-danger fade" id="delete<?= $row ?>">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header text-inverse">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title">Anda yakin ingin menghapus data ini?</h4>
+                                    </div>
+                                    <div class="modal-footer" style="padding:10px">
+                                        <a href="<?= site_url('AssignmentCtrl/deleteQuestion/'.$value->id_question) ?>" class="btn btn-outline-danger btn-block"><i class="feather feather-check-square"></i> Ya, Hapus data ini!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <?php endforeach ?>
                                        
                 </tbody>

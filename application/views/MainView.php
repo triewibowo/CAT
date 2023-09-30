@@ -22,6 +22,7 @@
     <script src="<?= base_url('assets/downloaded/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/tinymce/js/jquery.tinymce.min.js') ?>"></script>
     <script src="<?= base_url('assets/tinymce/js/tinymce.min.js') ?>"></script>
+    <script src="<?= base_url('assets/chartjs/dist/chart.umd.js') ?>"></script>
     <style type="text/css">
         .imagePreview {
             width: 100%;

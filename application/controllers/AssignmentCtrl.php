@@ -38,6 +38,7 @@ class AssignmentCtrl extends MY_Controller {
 			$data['id_'] = $this->session->userdata('id_');
 			$data['author_'] = $this->session->userdata('level');
 			$data['assignment_created'] = date('Y-m-d H:i:s');
+			$data['assignment_active'] = 1;
 			$dirName = date('s').'-'.substr(sha1($data['id_']), 4,7).'-'.$data['id_'];
 			if (!is_dir('assets/images/assignments/'.$dirName)) {
 				mkdir('./assets/images/assignments/' . $dirName, 0777, TRUE);
@@ -514,6 +515,22 @@ class AssignmentCtrl extends MY_Controller {
 		];
 		$this->assignment->updateAssignment($data);
 		$this->message('Sukses!','Data ujian berhasil dihapus :)','success');
+		redirect('page/assignments');
+	}
+	public function nonAktiveAssignment($id_assignment = NULL) {
+		if (!$id_assignment) {
+			redirect('page/assignments');
+		}
+		$dataAssignment = $this->assignment->getAssignmentById($id_assignment);
+		if (!$dataAssignment) {
+			redirect('page/assignments');
+		}
+		$data = [
+			'id_assignment' => $id_assignment,
+			'assignment_active' => 0
+		];
+		$this->assignment->updateAssignment($data);
+		$this->message('Sukses!','Data ujian berhasil dinonaktifkan :)','success');
 		redirect('page/assignments');
 	}
 

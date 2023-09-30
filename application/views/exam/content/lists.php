@@ -17,7 +17,7 @@
 		</div>
 	</div>
     <div class="panel-body">
-	<div class="login-title" align=left style="font-size: large;"><strong>Daftar</strong> Ujian Siswa.</div>
+	<div class="login-title" align=left style="font-size: large; margin-bottom:1em; margin-left:.5em"><strong>Daftar</strong> Ujian Siswa.</div>
 	<div class="row">
 		<?php if(count($dataAssignments) > 0): ?>
 			<?php foreach ($dataAssignments as $row => $value): ?>

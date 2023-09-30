@@ -39,6 +39,7 @@
                         <th>Pelajaran - Tipe</th>
                         <th>Total Soal</th>
                         <th>Penulis</th>
+                        <th>Aktive</th>
                         <th>Dibuat</th>
                         <th style="width:15%">Aksi</th>
                     </tr>
@@ -50,10 +51,16 @@
                             <td><?= $value->assignment_name.' - '.$value->assignment_type ?></td>
                             <td><?= $value->totalQuestion ?> Soal</td>
                             <td><?= $value->assignment_author ?></td>
+                            <?php if ($value->assignment_active == 1): ?>
+                                <td><span class="badge bg-success">Aktif</span></td>
+                            <?php else: ?>
+                                <td><span class="badge bg-danger">Tidak Aktif</span></td>
+                            <?php endif; ?>
                             <td><?= $value->assignment_created ?></td>
                             <td>
                                 <!-- <a title="Buat Soal" href="<?= site_url('page/list_question/'.$value->id_assignment) ?>" class="btn btn-success btn-sm"><i class="feather feather-layers"></i></a> -->
-                                <a title="Ubah Data Ujian" href="<?= site_url('page/edit/'.$value->id_assignment) ?>" class="btn btn-primary btn-sm"><i class="feather feather-edit"></i></a>
+                                <!-- <a title="Ubah Data Ujian" href="<?= site_url('page/edit/'.$value->id_assignment) ?>" class="btn btn-primary btn-sm"><i class="feather feather-edit"></i></a> -->
+                                <a title="Menon-aktifkan Ujian" href="#nonactive<?= $row ?>" data-toggle="modal" class="btn btn-primary btn-sm"><i class="feather feather-check-circle"></i></a>
                                 <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
                             </td>
                         </tr>
@@ -67,6 +74,20 @@
                                     </div>
                                     <div class="modal-footer" style="padding:10px">
                                         <a href="<?= site_url('AssignmentCtrl/deleteAssignment/'.$value->id_assignment) ?>" class="btn btn-outline-danger btn-block"><i class="feather feather-check-square"></i> Ya, Hapus data ini!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- MODAL AKTIF -->
+                        <div class="modal modal-primary fade" id="nonactive<?= $row ?>">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header text-inverse">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title">Anda yakin ingin menon-aktifkan data ini?</h4>
+                                    </div>
+                                    <div class="modal-footer" style="padding:10px">
+                                        <a href="<?= site_url('AssignmentCtrl/nonAktiveAssignment/'.$value->id_assignment) ?>" class="btn btn-outline-primary btn-block"><i class="feather feather-check-square"></i> Ya, Non Aktifkan data ini!</a>
                                     </div>
                                 </div>
                             </div>

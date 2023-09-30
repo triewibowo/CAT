@@ -12,40 +12,51 @@ class MainPage extends MY_Controller {
 
 	public function index() {
 		$totalStudent = 0;
-		if ($this->session->userdata('level') == 'admin' OR $this->session->userdata('level') == 'staff') {
-			$totalStudent = count($this->master->getAllStudent());
-			$totalResult = $this->assignment->getAllResult();
-		} else {
-			foreach ($this->master->getClassByTeacher($this->session->userdata('id_')) as $row => $value) {
-				foreach ($this->master->getStudentByClass($value->id_class) as $r => $v) {
-					$totalStudent++;
-				}
-			}
-			$totalResult = [];
-			foreach ($this->assignment->getAssignmentByTeacher($this->session->userdata('id_')) as $r_ => $v_) {
-				foreach ($this->assignment->getResultByAssignment($v_->id_assignment) as $__r => $__v) {
-					array_push($totalResult, $__v);
-				}
-			}
+		$totalExam = 0;
+		$totalExamActive = 0;
+		$totalQuestion = 0;
+		// if ($this->session->userdata('level') == 'admin' OR $this->session->userdata('level') == 'staff') {
+		// 	$totalStudent = count($this->master->getAllStudent());
+		// 	$totalResult = $this->assignment->getAllResult();
+		// } else {
+		// 	foreach ($this->master->getClassByTeacher($this->session->userdata('id_')) as $row => $value) {
+		// 		foreach ($this->master->getStudentByClass($value->id_class) as $r => $v) {
+		// 			$totalStudent++;
+		// 		}
+		// 	}
+		// 	$totalResult = [];
+		// 	foreach ($this->assignment->getAssignmentByTeacher($this->session->userdata('id_')) as $r_ => $v_) {
+		// 		foreach ($this->assignment->getResultByAssignment($v_->id_assignment) as $__r => $__v) {
+		// 			array_push($totalResult, $__v);
+		// 		}
+		// 	}
+		// }
+		// $totalGraduated = 0;
+		// foreach ($totalResult as $row => $value) {
+		// 	if ($value->result_status == 'lulus') {
+		// 		$totalGraduated++;
+		// 	}
+		// }
+
+		foreach ($this->master->getStudents() as $r => $v) {
+			$totalStudent++;
 		}
-		$totalGraduated = 0;
-		foreach ($totalResult as $row => $value) {
-			if ($value->result_status == 'lulus') {
-				$totalGraduated++;
+
+		foreach ($this->assignment->getAllAssignment() as $r => $v) {
+			if ($v->assignment_active == 1) {
+				$totalExamActive++;
 			}
+			$totalExam++;
 		}
-		$this->parseData['totalResult'] = count($totalResult);
-		$this->parseData['totalGraduated'] = $totalGraduated;
-		$this->parseData['activeAssignment'] = count($this->assignment->getActiveAssignment());
-		$this->parseData['totalAssignment'] = count($this->assignment->getAllAssignment());
+
+		foreach ($this->assignment->getAllQuestion() as $r => $v) {
+			$totalQuestion++;
+		}
+
 		$this->parseData['totalStudent'] = $totalStudent;
-		// END //
-		if ($this->session->userdata('level') == 'guru') {
-			$dataClass = $this->master->getClassByTeacher($this->session->userdata('id_'));
-		} else {
-			$dataClass = $this->master->getAllClass();
-		}
-		$this->parseData['dataClass'] = $dataClass;
+		$this->parseData['totalExam'] = $totalExam;
+		$this->parseData['totalExamActive'] = $totalExamActive;
+		$this->parseData['totalQuestion'] = $totalQuestion;
 		$this->parseData['content'] = 'content/dashboard';
 		$this->parseData['title'] = 'Home ';
 		$this->load->view('MainView',$this->parseData);

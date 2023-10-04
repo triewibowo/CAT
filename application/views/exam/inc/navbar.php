@@ -4,14 +4,14 @@
             <h3 style="margin-top:30px; color:white">COMPUTER APTITUDE TEST</h3>
         </center>
     </div>
-    <!-- <ul>
+    <ul>
         <li class="">
             <a href="<?= site_url('exam/lists') ?>">List Ujian</a>
         </li>
         <li class="">
             <a href="<?= site_url('exam/history') ?>">Riwayat Ujian</a>
         </li>                
-    </ul> -->
+    </ul>
     
     <div class="x-features">
         <div class="x-features-nav-open">

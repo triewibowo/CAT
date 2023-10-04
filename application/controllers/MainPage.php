@@ -424,10 +424,10 @@ class MainPage extends MY_Controller {
 
 		foreach ($dataAssignment as $key => $value) {
     		$value->max = count($value->assigns); // Perbarui properti max_percent pada objek $value
-
+			$value->value = 0;
 			foreach ($value->assigns as $k => $v) {
 				if ($v->status == 2) {
-					$value->value =+ 1; // Perbarui properti value_percent pada objek $v
+					$value->value++; // Perbarui properti value_percent pada objek $v
 				}
 			}
 			$value->percent = round(($value->value / count($value->assigns)) * 100, 1); // Perbarui properti value_percent pada objek $v

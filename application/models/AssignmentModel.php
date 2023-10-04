@@ -484,6 +484,47 @@ class AssignmentModel extends CI_Model {
     	return $students;
 	}
 
+	public function getExamByStudentHistory($id_student) {
+		$this->db->where('id_student', $id_student);
+		$this->db->where('assignment_active', 1);
+		$this->db->where('status', 2);
+		$this->db->join('ms_assignment', 'assignment_begin.id_assignment = ms_assignment.id_assignment', 'left');
+		$students = $this->db->get('assignment_begin')->result_object();
+
+		foreach ($students as $index => $student) {
+			$this->db->where('id_assignment', $student->id_assignment);
+			$student->assignment = $this->db->get('ms_assignment')->row();
+	
+			$this->db->where('id_begin', $student->id_abegin);
+			$categories = $this->db->get('assignment_begin_categories')->result_object();
+
+			$student->assignment->categories = $categories;
+
+			foreach ($categories as $key => $category) {
+				$this->db->where('id_cat', $category->id_category);
+				$category->category = $this->db->get('ms_subtest_categories')->row();
+
+				$this->db->where('id_begin', $student->id_abegin);
+				$this->db->where('id_begin_cat', $category->id_acat);
+				$subtests = $this->db->get('assignment_begin_subtest')->result_object();
+				$category->subtests = $subtests;
+
+				foreach ($subtests as $k => $subtest) {
+					$this->db->where('id_sub', $subtest->id_subtest);
+					$subtest->subtest = $this->db->get('ms_question_subtest')->row();
+
+					$this->db->where('id_assign_begin', $student->id_abegin);
+					$this->db->where('id_student', $id_student);
+					$this->db->where('id_assign_begin_category', $category->id_acat);
+					$this->db->where('id_assign_begin_subtest', $subtest->id);
+					$student->assign_answers = $this->db->get('assignment_question_answers')->result_object();
+				}
+			}
+		}
+
+    	return $students;
+	}
+
 	public function updateAssignmentBegin($data) {
 		$this->db->where('id_abegin', $data['id_abegin']);
 		$result = $this->db->update('assignment_begin', $data);

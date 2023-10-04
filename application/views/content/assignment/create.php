@@ -53,7 +53,7 @@
                         <a href="#classes" data-toggle="modal" class="btn btn-outline-success btn-block group_siswa"><i class="feather feather-users"></i>&nbsp; Pilih Group Siswa</a>
                         </div>
                         <div class="col-sm-4">
-                            <h5 class="mt-2 float-right text-primary"><i class="feather feather-clock"></i>&nbsp; Durasi Tes <b>0 Menit</b></p>
+                            <!-- <h5 class="mt-2 float-right text-primary"><i class="feather feather-clock"></i>&nbsp; Durasi Tes <b>0 Menit</b></p> -->
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">

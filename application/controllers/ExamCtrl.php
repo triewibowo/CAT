@@ -57,8 +57,6 @@ class ExamCtrl extends CI_Controller {
 		// }
 
 		$this->dataParse['dataAssignments'] = $this->assignment->getExamByStudent($id);
-		// print_r(json_encode($this->dataParse['dataAssignments']));
-		// die();
 		$this->dataParse['title'] = 'List Ujian';
 		$this->dataParse['content'] = 'exam/content/lists';
 		$this->load->view('MainExam',$this->dataParse);
@@ -175,20 +173,45 @@ class ExamCtrl extends CI_Controller {
 		}
 	}
 	public function history() {
-		$dataAssignments = [];
-		foreach ($this->assignment->getResultByStudent($this->session->userdata('globalStudent')->id_student) as $row => $value) {
-			$assignment = $this->assignment->getAssignmentById($value->id_assignment);
-			$assignment->resultCreated = $value->result_created;
-			array_push($dataAssignments,$assignment);
+		$id = (int) $this->session->globalStudent->id_student;
+		$dataAssignment = $this->assignment->getExamByStudentHistory($id);
+
+		foreach ($dataAssignment as $key => $value) {
+    		$value->total_questions = count($value->assign_answers); // Perbarui properti max_percent pada objek $value
+			$value->total_correct = 0;
+			$value->total_false = 0;
+			foreach ($value->assign_answers as $k => $v) {
+				if ($v->is_true == '1') {
+					$value->total_correct++; // Perbarui properti value_percent pada objek $v
+				}
+				if($v->is_true == '0'){
+					$value->total_false++; // Perbarui properti value_percent pada objek $v
+				}
+			}
+			$value->points = round(($value->total_correct / count($value->assign_answers)) * 100, 1); // Perbarui properti value_percent pada objek $v
 		}
-		foreach ($dataAssignments as $r => $v) {
-			$dataAssignments[$r]->totalQuestion = count($this->assignment->getQuestionByAssignment($v->id_assignment));
-		}
-		$this->dataParse['dataAssignments'] = $dataAssignments;
-		$this->dataParse['title'] = 'Riwayat Ujian - Boy Science Club';
+		// print_r(json_encode($dataAssignment));
+		// die();
+		$this->dataParse['dataAssignment'] = $dataAssignment;
+		$this->dataParse['title'] = 'Riwayat Ujian';
 		$this->dataParse['content'] = 'exam/content/history';
 		$this->load->view('MainExam',$this->dataParse);
 	}
+	// public function history() {
+	// 	$dataAssignments = [];
+	// 	foreach ($this->assignment->getResultByStudent($this->session->userdata('globalStudent')->id_student) as $row => $value) {
+	// 		$assignment = $this->assignment->getAssignmentById($value->id_assignment);
+	// 		$assignment->resultCreated = $value->result_created;
+	// 		array_push($dataAssignments,$assignment);
+	// 	}
+	// 	foreach ($dataAssignments as $r => $v) {
+	// 		$dataAssignments[$r]->totalQuestion = count($this->assignment->getQuestionByAssignment($v->id_assignment));
+	// 	}
+	// 	$this->dataParse['dataAssignments'] = $dataAssignments;
+	// 	$this->dataParse['title'] = 'Riwayat Ujian - Boy Science Club';
+	// 	$this->dataParse['content'] = 'exam/content/history';
+	// 	$this->load->view('MainExam',$this->dataParse);
+	// }
 	public function report($id_assignment = NULL) {
 		if (!$id_assignment) {
 			redirect('exam');

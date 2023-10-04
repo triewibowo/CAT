@@ -70,7 +70,7 @@
                         </div>        
                     </div>
                 </div>
-                <!-- <div class="row" style="margin-top: 1em;">
+                <div class="row" style="margin-top: 1em;">
                     <div class="col-sm-6">
                         <div class="card-dashboard">
                             <h5>Judul Card</h5>
@@ -83,7 +83,7 @@
                             <canvas id="myChart2" width="200" height="200"></canvas>
                         </div>
                     </div>
-                </div> -->
+                </div>
                 <!-- / Row -->
                 
             </div><!-- / BODY -->

@@ -4,17 +4,46 @@
 	}
 </style>
 <div class="panel panel-info">
-	<div class="page-header" style="margin-top: 0 !important;">
-		<div class="jumbotron bg-primary row">
-			<div class="col-sm-6" style="padding-left:2em; padding-right:2em">
-				<h1 style="color:white">Bersiaplah untuk Mencapai <br>Keberhasilan!</h1>
-				<p style="color:white">Percayalah pada kemampuan Anda. Jangan biarkan ujian mengintimidasi Anda. <br>Anda memiliki semua yang diperlukan untuk meraih kesuksesan.</p>
+	<div class="page-header">
+		<div class="row">
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="mini-stat clearfix bg-facebook rounded">
+					<span class="mini-stat-icon"><i class="fa fa-users"></i></span>
+					<div class="mini-stat-info">
+						<span class="subtitle">17</span>
+						Total Siswa
+					</div>
+				</div>
 			</div>
-			<div class="col-sm-2"></div>
-			<div class="col-sm-4">
-				<img src="<?php echo base_url() ?>assets/images/books.png" alt="..." style="height:28em">
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="mini-stat clearfix bg-twitter rounded">
+					<span class="mini-stat-icon"><i class="fa fa-info"></i></span>
+					<div class="mini-stat-info">
+						<span class="subtitle">15</span>
+						Total Soal
+					</div>
+				</div>
 			</div>
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="mini-stat clearfix bg-googleplus rounded">
+					<span class="mini-stat-icon"><i class="fa fa-edit"></i></span>
+					<div class="mini-stat-info">
+						<span class="subtitle">23</span>
+						Total Ujian
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+				<div class="mini-stat clearfix bg-bitbucket rounded">
+					<span class="mini-stat-icon"><i class="fa fa-check"></i></span>
+					<div class="mini-stat-info">
+						<span class="subtitle">12</span>
+						Total Ujian Aktif
+					</div>
+				</div>
+			</div>        
 		</div>
+	</div>
 	</div>
     <div class="panel-body">
 	<div class="login-title" align=left style="font-size: large; margin-bottom:1em; margin-left:.5em"><strong>Daftar</strong> Ujian Siswa.</div>
@@ -225,4 +254,87 @@
 		font-size: 12px; /* Atur ukuran font sesuai kebutuhan */
 		color: #ffffff; /* Warna teks pada badge */
 	}
+
+	.rounded {
+        -webkit-border-radius: 3px !important;
+        -moz-border-radius: 3px !important;
+        border-radius: 3px !important;
+    }
+
+    .mini-stat {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .mini-stat-icon {
+        width: 60px;
+        height: 60px;
+        display: inline-block;
+        line-height: 60px;
+        text-align: center;
+        font-size: 30px;
+        background: none repeat scroll 0% 0% #EEE;
+        border-radius: 100%;
+        float: left;
+        margin-right: 10px;
+        color: #337ab7;
+    }
+
+    .mini-stat-info {
+        font-size: 12px;
+        padding-top: 2px;
+    }
+
+    .subtitle {
+        color: white;
+    }
+
+    .mini-stat-info span {
+        display: block;
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        margin-top: 7px;
+    }
+
+    /* ================ colors =====================*/
+    .bg-facebook {
+        background-color: #3b5998 !important;
+        border: 1px solid #3b5998;
+        color: white;
+    }
+
+    .fg-facebook {
+        color: #3b5998 !important;
+    }
+
+    .bg-twitter {
+        background-color: #00a0d1 !important;
+        border: 1px solid #00a0d1;
+        color: white;
+    }
+
+    .fg-twitter {
+        color: #00a0d1 !important;
+    }
+
+    .bg-googleplus {
+        background-color: #db4a39 !important;
+        border: 1px solid #db4a39;
+        color: white;
+    }
+
+    .fg-googleplus {
+        color: #db4a39 !important;
+    }
+
+    .bg-bitbucket {
+        background-color: #205081 !important;
+        border: 1px solid #205081;
+        color: white;
+    }
+
+    .fg-bitbucket {
+        color: #205081 !important;
+    }
 </style>

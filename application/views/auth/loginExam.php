@@ -28,7 +28,7 @@
         <div class="login-container">
             <div class="row">
                 <div class="col-sm-6" style="padding-top:50px">
-                    <img src="<?php echo base_url() ?>assets/images/bg-login.png" alt="..." style="height:45em">
+                    <img src="<?php echo base_url() ?>assets/images/student.png" alt="..." style="height:45em">
                 </div>
                 <div class="col-sm-6" style="padding-top:250px">
                     <div class="login-box animated fadeInDown">

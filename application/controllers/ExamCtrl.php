@@ -273,6 +273,7 @@ class ExamCtrl extends CI_Controller {
 		$id_begin_cat = $data['subtest']['id_begin_cat'];
 		$id_begin = $data['subtest']['id_begin'];
 		$subtest = [];
+		$assign_question_id = null;
 		$subtest_status = 1;
 		$soal = [];
 		try{
@@ -318,13 +319,17 @@ class ExamCtrl extends CI_Controller {
 					'created_at'				=> date('Y-m-d')
 				];
 
-				$this->assignment->insertAssignmentQuestionAnswer($param);
+				$assign_question_id = $this->assignment->insertAssignmentQuestionAnswer($param);
 			}
 			// check status category
 			$this->updateStatusAssignmentBeginCategory($id_begin_cat);
 
 			// check status assignment begin per student
 			$this->updateStatusAssignmentBegin($id_begin);
+
+			if (isset($data['question_type'])) {
+				$this->insertAnswer($assign_question_id,$data);
+			}
 
 			if (isset($data['level'])) {
 				// Ambil Soal yang sesuai subtest dan level
@@ -359,6 +364,53 @@ class ExamCtrl extends CI_Controller {
 			$this->output
 				->set_content_type('application/json')
 				->set_output(json_encode($response));
+		}
+	}
+
+	public function insertAnswer($assign_question_id,$data){
+		if (
+			$data['question_type'] == 2 
+		) {
+			$params = [
+				'assignment_question_id' => $assign_question_id,
+				'answer_id' => $data['answer'],
+			];
+
+			$this->assignment->insertAssignmentAnswerSingle($params);
+		}else if ($data['question_type'] == 4){
+			foreach ($data['answer'] as $key => $value) {
+				$params = [
+					'assignment_question_id' => $assign_question_id,
+					'answer_id' => $value['id_option'],
+				];
+
+				$this->assignment->insertAssignmentAnswerSingle($params);
+			}
+		}else if ($data['question_type'] == 3){
+			$params = [
+				'assignment_question_id' => $assign_question_id,
+				'answer_text' => $data['answer'],
+			];
+
+			$this->assignment->insertAssignmentAnswerText($params);
+		}else if ($data['question_type'] == 1){
+			$params = [
+				'assignment_question_id' => $assign_question_id,
+				'answer_id' => $data['answer'],
+			];
+
+			$this->assignment->insertAssignmentAnswerSingle($params);
+		}
+		else if ($data['question_type'] == 5){
+			foreach ($data['answer'] as $key => $value) {
+				$params = [
+					'assignment_question_id' => $assign_question_id,
+					'answer_match_id' => $value['answer']['id_option'],
+					'answer_match_option_id' => $value['matchAnswer']['id_option'],
+				];
+
+				$this->assignment->insertAssignmentAnswerMatch($params);
+			}
 		}
 	}
 

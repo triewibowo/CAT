@@ -55,7 +55,7 @@
                         <div class="col-sm-4">
                             <!-- <h5 class="mt-2 float-right text-primary"><i class="feather feather-clock"></i>&nbsp; Durasi Tes <b>0 Menit</b></p> -->
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Nama Tes</label>
                                 <input type="text" class="form-control" name="assignment_name" required >
@@ -80,7 +80,7 @@
                                 </div>
                             </div>/ Row -->
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <!-- <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -100,18 +100,18 @@
                                 <input type="text" class="form-control" name="assignment_author" required placeholder="Penulis Ujian">
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Tipe Ujian</label>
                                 <input type="text" class="form-control" name="assignment_type" required placeholder="ex: UTS / UAS">
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <!-- <div class="col-sm-3">
                             <div class="form-group">
                                 <label>Password Ujian</label>
                                 <input type="text" class="form-control" name="password" required placeholder="Password">
                             </div>
-                        </div>
+                        </div> -->
                         <!-- <div class="col-sm-6">
                             <p id="selectedClasses"></p>
                         </div> -->
@@ -168,13 +168,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($dataCategories as $category): ?>
+                                            <?php foreach ($dataCategories as $key => $category): ?>
                                                 <tr>
                                                     <td>
                                                         <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>">
                                                     </td>
                                                     <td colspan=4>
                                                         <label><?= $category->cat_name ?></label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;">
                                                     </td>
                                                 </tr>
                                                 <?php foreach ($category->subtest as $kc => $subcategory): ?>
@@ -184,14 +187,17 @@
                                                             <td>
                                                                 <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>">
                                                             </td>
-                                                            <td width="50%">
+                                                            <td width="45%">
                                                                 <small><?= $subcategory->sub_name ?></small>
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:30px;">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:30px;">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;">
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
@@ -232,10 +238,13 @@
         $('.category-checkbox').change(function () {
             var categoryId = $(this).data('id');
             var subcategoryRows = $('.subcategory.subcategory-' + categoryId);
+            var inputFields = $(this).closest('tr').find('input[type="number"]');
 
             if ($(this).is(':checked')) {
+                inputFields.prop('disabled', false);
                 subcategoryRows.show();
             } else {
+                inputFields.prop('disabled', true);
                 subcategoryRows.hide();
             }
         });

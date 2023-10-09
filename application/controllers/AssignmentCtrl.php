@@ -80,7 +80,7 @@ class AssignmentCtrl extends MY_Controller {
 					'id_student'	=> $student->id_student,
 					'duration'		=> $duration,
 					'total_soal'	=> $total_soal,
-					'password'		=> $password,
+					'password'		=> mt_rand(1000000, 9999999),
 					'status'		=> 0
 				];
 
@@ -91,6 +91,7 @@ class AssignmentCtrl extends MY_Controller {
 						'id_begin'		=> $id_begin,
 						'id_category'	=> $category['id'],
 						'status'		=> 0,
+						'order'		=> $category['order'],
 					];
 
 					$id_begin_cat = $this->assignment->insertAssignmentBeginCategory($categ);
@@ -107,6 +108,7 @@ class AssignmentCtrl extends MY_Controller {
 							'status'		=> 0,
 							'status'		=> 0,
 							'total_soal'	=> 0,
+							'order'			=> $cat['order'],
 						];
 
 						$this->assignment->insertAssignmentBeginSubtest($sub);

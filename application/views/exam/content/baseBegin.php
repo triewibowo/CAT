@@ -278,11 +278,12 @@
 	function nextQuestion(){
 		console.log(qty)
 		qty += 1;
-		console.log(qty)
 		checkAnswer(answer_user);
 		params = {
 			'subtest'		: ready_subtest,
 			'question'		: ready_question.id_question,
+			'question_type'	: ready_question.id_type,
+			'answer'		: answer_user,
 			'is_true' 		: isTrue,
 			'level' 		: level,
 			'qty'			: qty,
@@ -332,6 +333,7 @@
 				qty						= parseInt(response.subtest.total_soal);
 				ready_subtest.status   	= parseInt(response.subtest.status);
 				begin_status			= response.exams.status;
+				answer_user				= [];
 				if(response.subtest_status == true){
 					params = [];
 					ready_category 	= [];
@@ -550,7 +552,7 @@
 
 					select.find('select').on('change', () => {
 						const selectedValue = select.find('select').val();
-						const answer = {
+						var answer = {
 							answer: optionText.answer[i],
 							matchAnswer: optionText.match.find(item => item.id_match == selectedValue),
 							indexLoop: i
@@ -586,8 +588,12 @@
 			let user_input = $(`input[name="answer-match-text${ready_question.id_question}"]`).val(); // Mendapatkan nilai input teks
 			answer_user = user_input;
 		}else{
+			var data = id;
+			setTimeout(() => {
+				answer_user.push(data);
+			}, 500);
+			console.log(answer_user);
 			var index = -1;
-			answer_user.push(id);
 			// Cari indeks di mana id cocok dalam array
 			if (answer_user.length > 0) {
 			   index = answer_user.findIndex(item => item.answer.id_option == id.answer.id_option);

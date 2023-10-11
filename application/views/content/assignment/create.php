@@ -171,13 +171,13 @@
                                             <?php foreach ($dataCategories as $key => $category): ?>
                                                 <tr>
                                                     <td>
-                                                        <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>">
+                                                        <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>" onchange="categoryView(this)">
                                                     </td>
                                                     <td colspan=4>
                                                         <label><?= $category->cat_name ?></label>
                                                     </td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;">
+                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)">
                                                     </td>
                                                 </tr>
                                                 <?php foreach ($category->subtest as $kc => $subcategory): ?>
@@ -185,19 +185,19 @@
                                                         <tr class="subcategory subcategory-<?= $category->id_cat ?>" style="display: none;">
                                                             <td></td>
                                                             <td>
-                                                                <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>">
+                                                                <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>" onchange="categoryView(this)">
                                                             </td>
                                                             <td width="45%">
                                                                 <small><?= $subcategory->sub_name ?></small>
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;" onchange="categoryView(this)">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;" onchange="categoryView(this)">
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
@@ -241,11 +241,21 @@
             var inputFields = $(this).closest('tr').find('input[type="number"]');
 
             if ($(this).is(':checked')) {
-                inputFields.prop('disabled', false);
                 subcategoryRows.show();
             } else {
-                inputFields.prop('disabled', true);
                 subcategoryRows.hide();
+            }
+        });
+
+        // Ketika checkbox subcategory diubah
+        $('.category-checkbox').change(function() {
+            var isChecked = $(this).is(':checked');
+            var inputFields = $(this).closest('tr').find('input[type="number"]');
+            console.log(isChecked)
+            if (isChecked) {
+                inputFields.prop('disabled', false);
+            } else {
+                inputFields.prop('disabled', true);
             }
         });
 
@@ -286,7 +296,30 @@
             // Menampilkan kelas yang dipilih dalam elemen <p>
             $('#selectedClasses').text(selectedClasses.join(', '));
         });
+
     });
+
+    function categoryView(data) {
+        // Dapatkan nilai checkbox yang berubah
+        // var category = [];
+        // var categoryValue = '';
+        // var map = data.name;
+
+        // var inputString = "category[3][id]";
+        // var parts = inputString.split('[');
+        // if (parts.length >= 2) {
+        //     categoryValue = parts[0] + '[' + parts[1];
+        // } else {
+        //     console.log("Tidak dapat memisahkan string.");
+        // }
+
+        // var idValue = map.split("[")[2].split("]")[0];
+
+        // var value = data.value
+        
+        // eval(categoryValue + " =" + );
+        // console.log(category);
+    }
 </script>
 
 <style>

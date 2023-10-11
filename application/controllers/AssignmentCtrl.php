@@ -625,7 +625,7 @@ class AssignmentCtrl extends MY_Controller {
 			$spreadsheet = IOFactory::load($file_path);
 			$worksheet = $spreadsheet->getActiveSheet();
 			$data = $worksheet->toArray(null, true, true, true);
-	
+			
 			// Anda perlu menyesuaikan bagian ini sesuai dengan struktur Excel Anda dan database Anda
 			$keys = array_keys($data[13]);
 	

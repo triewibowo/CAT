@@ -107,6 +107,46 @@ class AssignmentModel extends CI_Model {
 		$this->db->where('question_hide', 0);
 		return $this->db->get('ms_question')->row_object();
 	}
+	public function getQuestionByIdWithAnswer($id_question) {
+		$this->db->where('id_question', $id_question);
+		$this->db->where('question_hide', 0);
+		$question = $this->db->get('ms_question')->row_object();
+
+		if ($question->id_type == 1) {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_option')->row_object();
+			$question->answer = $answer;
+		} else if ($question->id_type == 2) {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_option')->result_object();
+			$question->answer = $answer;
+		} else if ($question->id_type == 3) {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_answer')->row_object();
+			$question->answer = $answer;
+		} else if ($question->id_type == 4) {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_option')->result_object();
+			$question->answer = $answer;
+		} else {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_match')->result_object();
+
+			foreach ($answer as $key => $ans) {
+				$this->db->where('id_match', $ans->id_option);
+				$this->db->where('option_hide', 0);
+				$ans->option = $this->db->get('question_match_answer')->row_object();
+			}
+			$question->answer = $answer;
+		}
+
+		return $question;
+	}
 	public function getQuestionSubtestLevel($id_sub, $level) {
 		$this->db->where('id_sub', $id_sub);
 		$this->db->where('question_level', $level);

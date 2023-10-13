@@ -44,10 +44,8 @@
                             <td><?= ($value->subtest) ? $value->subtest->sub_name : '' ?></td>
                             <td align=center><?= ($value->type) ? $value->type->type_name : '' ?></td>
                             <td align=center><?= date('d-M-Y', strtotime($value->question_created)) ?></td>
-                            <!-- <td>
-                                <a title="Detail Soal" href="<?= site_url('page/detail_question/'.$value->id_assignment.'/'.$value->id_question.'/true') ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a>
-                            </td> -->
                             <td align=center>
+                                <a title="Edit Soal" href="<?= site_url('page/edit_question/'.$value->id_question.'/'.$value->id_type) ?>" class="btn btn-success btn-sm"><i class="feather feather-eye"></i></a>
                                 <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
                             </td>
                         </tr>

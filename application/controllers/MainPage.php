@@ -380,6 +380,32 @@ class MainPage extends MY_Controller {
 		$this->load->view('MainView',$this->parseData);
 	}
 
+	public function edit_question($id, $id_type) {
+		$dataQuestion = $this->assignment->getQuestionByIdWithAnswer($id);
+		// print_r(json_encode($dataQuestion));
+		// die();
+		$dataSub = $this->master->getAllSub();
+		$dataLesson = $this->master->getAllLesson();
+		$dataLevel = $this->master->getAllLevel();
+
+		$this->parseData['dataQuestion'] = $dataQuestion;
+		$this->parseData['dataSub'] = $dataSub;
+		$this->parseData['dataLesson'] = $dataLesson;
+		$this->parseData['dataLevel'] = $dataLevel;
+		if ($id_type == 1) {
+			$this->parseData['content'] = 'content/assignment/edit_question_benar_salah';
+		} else if ($id_type == 2){
+			$this->parseData['content'] = 'content/assignment/edit_question_berganda';
+		} else if ($id_type == 3) {
+			$this->parseData['content'] = 'content/assignment/edit_question_isian_singkat';
+		} else if ($id_type == 4) {
+			$this->parseData['content'] = 'content/assignment/edit_question_majemuk';
+		} else {
+			$this->parseData['content'] = 'content/assignment/edit_question_menjodohkan';
+		}
+		$this->parseData['title'] = 'Edit Soal ';
+		$this->load->view('MainView',$this->parseData);
+	}
 	public function create_question_type() {
 		$dataType = $this->master->getAllQuestionType();
 		$this->parseData['dataType'] = $dataType;

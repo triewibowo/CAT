@@ -215,10 +215,8 @@
                                 var data_answer = <?php echo json_encode($dataQuestion->answer); ?>;
                                 data_answer.forEach((answer, index) => {
                                     if (index > 0) {
-                                        cloneAnswer();
-                                    }
-                                    if (answer.option_true == 1) {
-                                        chooseAnswer(index)
+                                        exist = answer.id_option;
+                                        cloneAnswer(exist);
                                     }
                                 });
                             });
@@ -230,8 +228,9 @@
                             <div class="col-sm-11">
                                 <div class="row">
                                     <input type="hidden" name="option_<?= $i ?>[id]" value="<?= $dataQuestion->answer[$i]->id_option ?>">
-                                    <input class="form-control col mr-3" name="option_<?= $i ?>[name]" value="<?= $dataQuestion->answer[$i]->option_; ?>"  placeholder="Opsi"></input>
-                                    <input class="form-control col" name="answer_<?= $i ?>" value="<?= $dataQuestion->answer[$i]->option->answer_; ?>" placeholder="Match"></input>
+                                    <input type="hidden" name="answer_<?= $i ?>[id]" value="<?= $dataQuestion->answer[$i]->option->id_option ?>">
+                                    <input class="form-control col mr-3" name="option_<?= $i ?>[name]" value="<?= $dataQuestion->answer[$i]->option_; ?>"  placeholder="Opsi" required></input>
+                                    <input class="form-control col" name="answer_<?= $i ?>[name]" value="<?= $dataQuestion->answer[$i]->option->answer_; ?>" placeholder="Match" required></input>
                                 </div>
                                 <!-- <a style="margin-top:10px" href="#answerImage<?= $i ?>" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a> -->
                             </div>
@@ -259,8 +258,10 @@
                         </div>
                     <?php endfor; ?>
                     <script type="text/javascript">
-                        function cloneAnswer() {
+                        function cloneAnswer(exist = null) {
                             var data_answer = <?php echo json_encode($dataQuestion->answer); ?>;
+                            var optionValue = '';
+                            var matchValue = '';
                             // TOTAL ANSWER //
                             var totalAnswer = $("#totalAnswer").val();
                             totalAnswer++;
@@ -277,14 +278,20 @@
                                     _html += '<div id="chooseAnswer'+totalAnswer+'" class="chooseAnswer"><span class="forAlph">'+alph+'</span></div>';
                                 _html += '</div>';
                                 _html += '<div class="col-sm-11">';
-                                     if (data_answer[totalAnswer]) {
+                                     if (data_answer[totalAnswer] && exist) {
+                                            optionValue = data_answer[totalAnswer].option_;
+                                            matchValue  = data_answer[totalAnswer].option.answer_;
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'" value="'+ data_answer[totalAnswer].id_option+'">';
+                                        _html += '<input type="hidden" name="answer_'+totalAnswer + '[id]' +'" value="'+ data_answer[totalAnswer].option.id_option+'">';
                                     }else{
+                                            optionValue = '';
+                                            matchValue = '';
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'">';
+                                        _html += '<input type="hidden" name="answer_'+totalAnswer + '[id]' +'">';
                                     }
                                 _html += '<div class="row">';
-                                    _html += '<input class="form-control col-sm text-blank mr-3" name="option_'+totalAnswer+ '[name]' +'" value="'+ data_answer[totalAnswer].option_+'" placeholder="Opsi"></input>';
-                                    _html += '<input class="form-control col-sm text-blank" name="answer_'+totalAnswer+'" value="'+ data_answer[totalAnswer].option.answer_+'" placeholder="Match"></input>';
+                                    _html += '<input class="form-control col-sm text-blank mr-3" name="option_'+totalAnswer+ '[name]' +'" value="'+ optionValue +'" placeholder="Opsi" required></input>';
+                                    _html += '<input class="form-control col-sm text-blank" name="answer_'+totalAnswer+ '[name]' +'" value="'+ matchValue +'" placeholder="Match" required></input>';
                                     // _html += '<a style="margin-top:10px" href="#answerImage'+totalAnswer+'" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>';
                                     _html += '</div>';
                                     _html += '<button type="button" style="margin-top:10px" onclick="removeAnswer(\'' + totalAnswer + '\')" class="btn btn-sm btn-outline-danger"><i class="feather feather-x"></i>&nbsp; Hapus Jawaban</a>';

@@ -223,7 +223,8 @@
                                 var data_answer = <?php echo json_encode($dataQuestion->answer); ?>;
                                 data_answer.forEach((answer, index) => {
                                     if (index > 0) {
-                                        cloneAnswer();
+                                        exist = answer.id_option;
+                                        cloneAnswer(exist);
                                     }
                                     if (answer.option_true == 1) {
                                         chooseAnswer(index)
@@ -282,7 +283,7 @@
                         </div>
                     <?php endfor; ?>
                     <script type="text/javascript">
-                        function cloneAnswer() {
+                        function cloneAnswer(exist = null) {
                             var data_answer = <?php echo json_encode($dataQuestion->answer); ?>;
                             // TOTAL ANSWER //
                             var totalAnswer = $("#totalAnswer").val();
@@ -300,7 +301,7 @@
                                     _html += '<div id="chooseAnswer'+totalAnswer+'" class="chooseAnswer" onclick="chooseAnswer(\'' + totalAnswer + '\')"><span class="forAlph">'+alph+'</span></div>';
                                 _html += '</div>';
                                 _html += '<div class="col-sm-11">';
-                                    if (data_answer[totalAnswer]) {
+                                    if (data_answer[totalAnswer] && exist) {
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'" value="'+ data_answer[totalAnswer].id_option+'">';
                                     }else{
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'">';

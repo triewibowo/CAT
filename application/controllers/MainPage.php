@@ -464,6 +464,33 @@ class MainPage extends MY_Controller {
 		$this->parseData['title'] = 'List Laporan Ujian ';
 		$this->load->view('MainView',$this->parseData);
 	}
+	public function report_users($id_assignment) {
+		$dataAssignment = $this->assignment->getAllAssignmentPerAssign($id_assignment);
+
+		foreach ($dataAssignment as $key => $value) {
+    		$value->total_questions = count($value->assign_answers); // Perbarui properti max_percent pada objek $value
+			$value->total_correct = 0;
+			$value->total_false = 0;
+			$value->points = 0;
+			if ($value->assign_answers) {
+				foreach ($value->assign_answers as $k => $v) {
+					if ($v->is_true == '1') {
+						$value->total_correct++; // Perbarui properti value_percent pada objek $v
+					}
+					if($v->is_true == '0'){
+						$value->total_false++; // Perbarui properti value_percent pada objek $v
+					}
+				}
+				$value->points = round(($value->total_correct / count($value->assign_answers)) * 100, 1); // Perbarui properti value_percent pada objek $v
+			}
+		}
+		// print_r(json_encode($dataAssignment));
+		// die();
+		$this->parseData['dataAssignment'] = $dataAssignment;
+		$this->parseData['content'] = 'content/assignment/report_users';
+		$this->parseData['title'] = 'List Laporan Ujian per Siswa';
+		$this->load->view('MainView',$this->parseData);
+	}
 	public function bank() {
 		$dataQuestion = [];
 		// foreach ($this->assignment->getAllQuestion() as $row => $value) {

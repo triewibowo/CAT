@@ -39,6 +39,138 @@ class AssignmentModel extends CI_Model {
 
 		return $assignments;
 	}
+	public function getAllAssignmentPerAssign($id_assignment) {
+
+		$this->db->where("id_assignment", $id_assignment);
+		$this->db->order_by('status', 'desc');
+		$assigns = $this->db->get('assignment_begin')->result_object();
+
+		foreach ($assigns as $key => $assign) {
+
+			$this->db->where('id_assignment', $assign->id_assignment);
+			$assign->assignment = $this->db->get('ms_assignment')->row();
+
+			$this->db->select('ms_student.*, ms_class.class_name');
+			$this->db->from('ms_student');
+			$this->db->join('ms_class', 'ms_class.id_class = ms_student.id_class', 'left');
+			$this->db->where('ms_student.id_student', $assign->id_student);
+			$assign->student = $this->db->get()->row();
+	
+			$this->db->where('id_begin', $assign->id_abegin);
+			$categories = $this->db->get('assignment_begin_categories')->result_object();
+
+			$assign->assignment->categories = $categories;
+
+			foreach ($categories as $key => $category) {
+				$this->db->where('id_cat', $category->id_category);
+				$category->category = $this->db->get('ms_subtest_categories')->row();
+
+				$this->db->where('id_begin', $assign->id_abegin);
+				$this->db->where('id_begin_cat', $category->id_acat);
+				$subtests = $this->db->get('assignment_begin_subtest')->result_object();
+				$category->subtests = $subtests;
+
+				foreach ($subtests as $k => $subtest) {
+					$this->db->where('id_sub', $subtest->id_subtest);
+					$subtest->subtest = $this->db->get('ms_question_subtest')->row();
+
+					$this->db->where('id_assign_begin', $assign->id_abegin);
+					$this->db->where('id_student', $assign->id_student);
+					$this->db->where('id_assign_begin_category', $category->id_acat);
+					$this->db->where('id_assign_begin_subtest', $subtest->id);
+					$assign_question = $this->db->get('assignment_question_answers')->result_object();
+					$subtest->assign_answers = $assign_question;
+
+					foreach ($assign_question as $key => $ass) {
+						// $ass->question = $ass->id_question;
+						$this->db->where('id_question', $ass->id_question);
+						$question = $this->db->get('ms_question')->row();
+						$ass->question = $question;
+
+						if ($question) {
+							if ($question->id_type == 1) {
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										$ass->rel_answer = $rel_answer;
+									}
+								}
+							}else if ($question->id_type == 2){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										$ass->rel_answer = $rel_answer;
+									}
+								}
+							}else if ($question->id_type == 3){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_text')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
+									$this->db->where('id_question', $ass->id_question);
+									$rel_answer = $this->db->get('question_answer')->row();
+									$ass->rel_answer = $rel_answer;
+								}
+							}else if ($question->id_type == 4){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+								$ass->rel_answer = [];
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										array_push($ass->rel_answer,$rel_answer);
+									}
+								}
+							}else{
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_match')->result_object();
+								$ass->answers = $answer;
+								$ass->rel_answer = [];
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_match_id);
+										$rel_answer = $this->db->get('question_match')->row();
+										$_answer = $rel_answer;
+										
+										$this->db->where('id_option', $ans->answer_match_option_id);
+										$rel_match_answer = $this->db->get('question_match_answer')->row();
+										$_answer->option = $rel_match_answer;
+										// $ass->rel_answer->option = $rel_match_answer;
+										array_push($ass->rel_answer,$_answer);
+									}
+								}
+							}
+						}
+					}
+
+					$this->db->where('id_assign_begin', $assign->id_abegin);
+					$this->db->where('id_student', $assign->id_student);
+					$assign->assign_answers = $this->db->get('assignment_question_answers')->result_object();
+				}
+			}
+		}
+
+		return $assigns;
+	}
 	public function getAllAssignmentStudent() {
 		$this->db->order_by('ms_assignment.id_assignment', 'desc');
 		$this->db->where('ms_assignment.assignment_hide', 0);
@@ -594,74 +726,76 @@ class AssignmentModel extends CI_Model {
 						$question = $this->db->get('ms_question')->row();
 						$ass->question = $question;
 
-						if ($question->id_type == 1) {
-							$this->db->where('assignment_question_id', $ass->id_assign_question);
-							$answer = $this->db->get('assignment_answer_singles')->result_object();
-							$ass->answers = $answer;
-
-							if (count($answer) > 0) {
-								foreach ($answer as $keyAns => $ans) {
+						if ($question) {
+							if ($question->id_type == 1) {
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										$ass->rel_answer = $rel_answer;
+									}
+								}
+							}else if ($question->id_type == 2){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										$ass->rel_answer = $rel_answer;
+									}
+								}
+							}else if ($question->id_type == 3){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_text')->result_object();
+								$ass->answers = $answer;
+	
+								if (count($answer) > 0) {
 									$this->db->where('id_question', $ass->id_question);
-									$this->db->where('id_option', $ans->answer_id);
-									$rel_answer = $this->db->get('question_option')->row();
+									$rel_answer = $this->db->get('question_answer')->row();
 									$ass->rel_answer = $rel_answer;
 								}
-							}
-						}else if ($question->id_type == 2){
-							$this->db->where('assignment_question_id', $ass->id_assign_question);
-							$answer = $this->db->get('assignment_answer_singles')->result_object();
-							$ass->answers = $answer;
-
-							if (count($answer) > 0) {
-								foreach ($answer as $keyAns => $ans) {
-									$this->db->where('id_question', $ass->id_question);
-									$this->db->where('id_option', $ans->answer_id);
-									$rel_answer = $this->db->get('question_option')->row();
-									$ass->rel_answer = $rel_answer;
+							}else if ($question->id_type == 4){
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_singles')->result_object();
+								$ass->answers = $answer;
+								$ass->rel_answer = [];
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_id);
+										$rel_answer = $this->db->get('question_option')->row();
+										array_push($ass->rel_answer,$rel_answer);
+									}
 								}
-							}
-						}else if ($question->id_type == 3){
-							$this->db->where('assignment_question_id', $ass->id_assign_question);
-							$answer = $this->db->get('assignment_answer_text')->result_object();
-							$ass->answers = $answer;
-
-							if (count($answer) > 0) {
-								$this->db->where('id_question', $ass->id_question);
-								$rel_answer = $this->db->get('question_answer')->row();
-								$ass->rel_answer = $rel_answer;
-							}
-						}else if ($question->id_type == 4){
-							$this->db->where('assignment_question_id', $ass->id_assign_question);
-							$answer = $this->db->get('assignment_answer_singles')->result_object();
-							$ass->answers = $answer;
-							$ass->rel_answer = [];
-
-							if (count($answer) > 0) {
-								foreach ($answer as $keyAns => $ans) {
-									$this->db->where('id_question', $ass->id_question);
-									$this->db->where('id_option', $ans->answer_id);
-									$rel_answer = $this->db->get('question_option')->row();
-									array_push($ass->rel_answer,$rel_answer);
-								}
-							}
-						}else{
-							$this->db->where('assignment_question_id', $ass->id_assign_question);
-							$answer = $this->db->get('assignment_answer_match')->result_object();
-							$ass->answers = $answer;
-							$ass->rel_answer = [];
-
-							if (count($answer) > 0) {
-								foreach ($answer as $keyAns => $ans) {
-									$this->db->where('id_question', $ass->id_question);
-									$this->db->where('id_option', $ans->answer_match_id);
-									$rel_answer = $this->db->get('question_match')->row();
-									$_answer = $rel_answer;
-									
-									$this->db->where('id_option', $ans->answer_match_option_id);
-									$rel_match_answer = $this->db->get('question_match_answer')->row();
-									$_answer->option = $rel_match_answer;
-									// $ass->rel_answer->option = $rel_match_answer;
-									array_push($ass->rel_answer,$_answer);
+							}else{
+								$this->db->where('assignment_question_id', $ass->id_assign_question);
+								$answer = $this->db->get('assignment_answer_match')->result_object();
+								$ass->answers = $answer;
+								$ass->rel_answer = [];
+	
+								if (count($answer) > 0) {
+									foreach ($answer as $keyAns => $ans) {
+										$this->db->where('id_question', $ass->id_question);
+										$this->db->where('id_option', $ans->answer_match_id);
+										$rel_answer = $this->db->get('question_match')->row();
+										$_answer = $rel_answer;
+										
+										$this->db->where('id_option', $ans->answer_match_option_id);
+										$rel_match_answer = $this->db->get('question_match_answer')->row();
+										$_answer->option = $rel_match_answer;
+										// $ass->rel_answer->option = $rel_match_answer;
+										array_push($ass->rel_answer,$_answer);
+									}
 								}
 							}
 						}

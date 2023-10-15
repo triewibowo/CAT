@@ -82,6 +82,14 @@
                       </div>
                  </div>
                 </div><!-- / Row -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <textarea class="form-control" name="student_address" placeholder="Tulis alamat"></textarea>
+                        </div>
+                    </div>
+                </div>
                  <!-- MODAL SAVE -->
                  <div class="modal modal-info fade" id="save">
                      <div class="modal-dialog">

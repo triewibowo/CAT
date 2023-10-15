@@ -258,6 +258,35 @@ class ExamCtrl extends CI_Controller {
 		}
 	}
 
+	public function profil() {
+			$user = $this->session->globalStudent;
+			$getClass = '';
+			$classes = $this->master->getAllClass();
+			foreach ($classes as $key => $class) {
+				if ($class->id_class == $user->id_class) {
+					$getClass = $class->class_name;
+				}
+			}
+			$this->dataParse['dataClasses'] = $getClass;
+			// print_r(json_encode($dataClasses));
+			// die();
+			$this->dataParse['user'] = $user;
+			$this->dataParse['title'] = 'Profile - ' . $user->student_name;
+			$this->dataParse['content'] = 'exam/content/profile';
+			$this->load->view('MainExam',$this->dataParse);
+	}
+
+	public function profilEdit() {
+			$user = $this->session->globalStudent;
+			// print_r(json_encode($user));
+			// die();
+			$this->dataParse['dataClasses'] = $this->master->getAllClass();
+			$this->dataParse['user'] = $user;
+			$this->dataParse['title'] = 'Profile - ' . $user->student_name;
+			$this->dataParse['content'] = 'exam/content/profile_edit';
+			$this->load->view('MainExam',$this->dataParse);
+	}
+
 	// HANDLER //
 	public function logout() {
 		$this->session->unset_userdata('globalStudent');

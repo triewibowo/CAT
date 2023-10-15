@@ -21,7 +21,7 @@
     <div class="page-title-right d-inline-flex">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= site_url() ?>">Dashboard</a></li>
-            <li class="breadcrumb-item active">List Ujian</li>
+            <li class="breadcrumb-item active">Report Ujian</li>
         </ol>
     </div>
 </div><!-- /.page-title -->
@@ -68,6 +68,7 @@
                             </td>
                             <td align=center>
                                 <a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="feather feather-layers"></i></a>
+                                <a href="<?= site_url('page/report_users/'.$value->id_assignment) ?>" class="btn btn-warning"><i class="feather feather-users"></i></a>
                             </td>
                         </tr>
                         <div class="modal modal-primary fade" id="categories<?= $row ?>">

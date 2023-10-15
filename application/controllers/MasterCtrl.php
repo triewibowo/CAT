@@ -362,6 +362,11 @@ class MasterCtrl extends MY_Controller {
 	public function students($id_student = NULL) {
 		if ($this->input->post()) {
 			$data = $this->input->post();
+			$exam = false;
+			if ($this->input->post('exam')) {
+				$exam = true;
+				unset($data['exam']);
+			}
 			// CHECK NIS //
 			if ($this->input->post('id_student')) {
 				$dataStudent = $this->master->getStudentByNis($data['student_nis']);
@@ -415,7 +420,11 @@ class MasterCtrl extends MY_Controller {
 			$this->master->updateStudent($data);
 			$this->message('Selamat!','Data siswa berhasil diubah','success');
 		}
-		redirect('page/students');
+		if ($exam) {
+			redirect('exam/profil');
+		}else{
+			redirect('page/students');
+		}
 	}
 
 	public function findTypeAndClassForReport($id_lesson) {

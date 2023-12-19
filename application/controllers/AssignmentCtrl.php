@@ -893,7 +893,7 @@ class AssignmentCtrl extends MY_Controller {
 									];
 									// Insert pilihan jawaban ke dalam database
 									$this->assignment->insertOption($pair);
-								} else if ((int) $data[8]['A'] == 2 || (int) $data[8]['A'] == 4) {
+								} else if ((int) $data[8]['A'] == 2 || (int) $data[8]['A'] == 4 || (int) $data[8]['A'] == 6) {
 									$pair = [
 										'id_question' 		=> $questionId,
 										'option_' 			=> $answer,

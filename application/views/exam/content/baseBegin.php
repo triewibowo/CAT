@@ -367,7 +367,9 @@
 		const nextButtonElement = $('#next-button');
 
 		if (ready_question == null) {
-			$('#answer-options').show();
+			// $('#answer-options').show();
+			// Menampilkan opsi jawaban
+			answerOptionsElement.empty();
 			questionElement.text("Tidak ada soal...");
 		}else{
 			$('#answer-options').show();

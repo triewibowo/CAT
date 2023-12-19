@@ -842,6 +842,10 @@ class MainPage extends MY_Controller {
 				$path_name = 'rules_question_menjodohkan.xls';
 				$spreadsheet = IOFactory::load('assets/temp_xls/' . $path_name);
 				break;
+			case '6':
+				$path_name = 'rules_question_benar_salah_majemuk.xls';
+				$spreadsheet = IOFactory::load('assets/temp_xls/' . $path_name);
+				break;
 			
 			default:
 				# code...

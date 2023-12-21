@@ -259,6 +259,15 @@ class AssignmentCtrl extends MY_Controller {
 					$answer = $this->input->post('answer_'.$value->row);
 					$this->optionsMatch($value, $idQuestion, $option, $assignment_path, $answer);
 				}
+			}else if ($type == 6){
+				$answers 			= json_decode($this->input->post('JSONanswer'));
+				$assignment_path 	= $this->input->post('assignment_path');
+				foreach ($answers as $row => $value) {
+					$option = $this->input->post('option_'.$value->row);
+					$answer = $this->input->post('answer_'.$value->row);
+					print_r(json_encode($answer));
+					$this->optionsBenarSalahMajemuk($value, $idQuestion, $option, $assignment_path, $answer);
+				}
 			}
 			$this->message('Yeeayy!','Soal dan jawaban berhasil disimpan :)','success');
 			redirect('page/bank/'.$this->input->post('id_assignment'));
@@ -361,6 +370,24 @@ class AssignmentCtrl extends MY_Controller {
 				$this->db->where('id_question', $id);
 				$this->db->where('option_hide',1);
 				$this->db->delete('question_match');
+			}else if ($type == 6){
+
+				$this->db->where('id_question', $id);
+				$questionOption = $this->db->update('question_option', ['option_hide' => 1]);
+
+				$answers 			= json_decode($this->input->post('JSONanswer'));
+				$assignment_path 	= $this->input->post('assignment_path');
+				foreach ($answers as $row => $value) {
+
+					$option = $this->input->post('option_'.$value->row);
+					$answer = $this->input->post('answer_'.$value->row);
+
+					$this->optionsBenarSalahMajemukUpdate($value, $id, $option, $assignment_path, $answer);
+				}
+
+				$this->db->where('id_question', $id);
+				$this->db->where('option_hide',1);
+				$this->db->delete('question_option');
 			}
 			$this->message('Yeeayy!','Soal dan jawaban berhasil diedit :)','success');
 			redirect('page/bank/'.$this->input->post('id_assignment'));
@@ -445,8 +472,8 @@ class AssignmentCtrl extends MY_Controller {
 	public function optionsBenarSalah($answer, $idQuestion, $id_option = null){
 		$data = [
 			'id_question'    => $idQuestion,
-			'option_'        => ($answer == true) ? 'Benar' : 'Salah',
-			'option_true'    => ($answer == true) ? 1 : 0,
+			'option_'        => ($answer == "true") ? 'Benar' : 'Salah',
+			'option_true'    => ($answer == "true") ? 1 : 0,
 			'option_created' => date('Y-m-d H:i:s')
 		];
 	
@@ -704,6 +731,89 @@ class AssignmentCtrl extends MY_Controller {
 			}
 
 			if ($insertMatchResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+		
+	}
+
+	public function optionsBenarSalahMajemuk($value, $idQuestion, $option, $assignment_path, $answerMatch){
+
+		$answer = [
+			'id_question'		=> $idQuestion,
+			'option_'			=> $option,
+			'option_true'		=> ($answerMatch == "true") ? 1 : 0,
+			'option_created' 	=> date('Y-m-d H:i:s')
+		];
+
+		try {
+			// IMAGE OPTION //
+			if (isset($_FILES['option_image'.$value->row]['name']) && $_FILES['option_image'.$value->row]['name']) {
+				$this->imageConf('assignments/'.$assignment_path); // Validation image
+				if(!$this->upload->do_upload('option_image'.$value->row)) :
+					$this->message('Oopppsss','Unggah jawaban nomor '.($value->row + 1).' gagal, detail -> '.$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$answer['option_image'] = str_replace(' ', '_', $dataUpload['file_name']);
+					// COMPRESS IMAGE //
+					$resolution = ['width' => 500, 'height' => 500];
+					$this->compreesImage('assignments/'.$assignment_path,$dataUpload['file_name'],$resolution);
+				endif;
+			} // END IMAGE OPTION //
+			$insertResult = $this->assignment->insertOption($answer);
+
+			if ($insertResult === false) {
+				return false; // Jika insert gagal, fungsi akan mengembalikan false
+			}
+	
+			return true; // Jika insert berhasil
+		} catch (Exception $e) {
+			return false; // Jika terjadi kesalahan, fungsi akan mengembalikan false
+		}
+		
+	}
+
+	public function optionsBenarSalahMajemukUpdate($value, $idQuestion, $option, $assignment_path, $answerMatch){
+
+		$answer = [
+			'id_question'		=> $idQuestion,
+			'option_'			=> $option['name'],
+			'id_option'			=> $option['id'],
+			'option_true'		=> ($answerMatch == "true") ? 1 : 0,
+			'option_hide'		=> 0,
+			'option_updated' 	=> date('Y-m-d H:i:s')
+		];
+
+		try {
+			// IMAGE OPTION //
+			if (isset($_FILES['option_image'.$value->row]['name']) && $_FILES['option_image'.$value->row]['name']) {
+				$this->imageConf('assignments/'.$assignment_path); // Validation image
+				if(!$this->upload->do_upload('option_image'.$value->row)) :
+					$this->message('Oopppsss','Unggah jawaban nomor '.($value->row + 1).' gagal, detail -> '.$this->upload->display_errors(),'error');
+					redirect('page/create_question/'.$this->input->post('id_assignment'));
+				else :
+					$dataUpload = $this->upload->data();
+					$answer['option_image'] = str_replace(' ', '_', $dataUpload['file_name']);
+					// COMPRESS IMAGE //
+					$resolution = ['width' => 500, 'height' => 500];
+					$this->compreesImage('assignments/'.$assignment_path,$dataUpload['file_name'],$resolution);
+				endif;
+			} // END IMAGE OPTION //
+
+			if ($answer['id_option']) {
+				$insertResult = $this->assignment->updateOption($answer);
+			}else{
+				$answer['option_created'] = date('Y-m-d H:i:s');
+				unset($data['option_updated']);
+				$insertResult = $this->assignment->insertOption($answer);
+			}
+
+			if ($insertResult === false) {
 				return false; // Jika insert gagal, fungsi akan mengembalikan false
 			}
 	

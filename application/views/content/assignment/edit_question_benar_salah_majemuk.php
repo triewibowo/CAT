@@ -14,12 +14,6 @@
                 }
             }
         });
-
-        $("#imagePreview").css({
-            "background-image": "url(<?php echo base_url() ?>" + 'assets/images/assignments/' + <?php echo json_encode($dataQuestion->question_image) ?> + ")",
-            "background-size": "cover",
-            "background-position": "center center"
-        });
     });
 </script>
 <form action="<?= site_url('AssignmentCtrl/edit_question/' . $dataQuestion->id_question) ?>" method="POST" enctype="multipart/form-data">
@@ -36,7 +30,7 @@
     <div class="page-title-right d-inline-flex">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= site_url() ?>">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="<?= site_url('page/assignments') ?>">Pilihan Berganda</a></li>
+            <li class="breadcrumb-item"><a href="<?= site_url('page/assignments') ?>">Pilihan Salah Benar Majemuk</a></li>
             <li class="breadcrumb-item"><a href="<?= site_url('page/bank/') ?>">List Soal</a></li>
             <li class="breadcrumb-item active">Tambah Soal</li>
         </ol>
@@ -48,7 +42,7 @@
         <div class="widget-bg">
             <div class="widget-body">
             <div class="row">
-            <input type="hidden" name="id_type" value="2">
+            <input type="hidden" name="id_type" value="6">
                     <div class="col-lg-4">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
@@ -79,12 +73,6 @@
                                 </select>
                             </div>
                         </div>
-                        <!-- <div class="col-lg-3">
-                            <div class="form-group">
-                                <label>Timer</label>
-                                <input type="number" class="form-control" name="timer" placeholder="Format detik" required>
-                            </div>
-                        </div> -->
                     </div>
                 <legend>Pertanyaan <a href="#" onclick="hideShowQuest()"><i id="iconQuest" class="feather feather-chevron-down"></i></a></legend>
                 <script type="text/javascript">
@@ -122,14 +110,13 @@
                     <textarea data-toggle="tinymce" name="question_" data-plugin-options='{ "height": 300 }'></textarea>
                     <br />
                     <div class="row">
-                        <div class="col-sm-2">
+                        <!-- <div class="col-sm-2">
                             <a href="#imageQuestion" data-toggle="modal" class="btn btn-outline-primary btn-block btn-sm"><i class="feather feather-image"></i> Unggah Gambar</a>
                         </div>
                         <div class="col-sm-2">
                             <a href="#soundQuestion" data-toggle="modal" class="btn btn-outline-success btn-block btn-sm"><i class="feather feather-music"></i> Unggah Suara</a>
-                        </div>
+                        </div> -->
                     </div><!-- / Row -->
-
                     <script>
                         tinymce.init({
                             selector: "textarea[name='question_']",
@@ -177,14 +164,13 @@
                 <style type="text/css">
                     .chooseAnswer {
                         width: 100%;
-                        height: 150px;
+                        height: 40px;
                         background-color: #737373;
                         cursor: pointer;
                         border-radius: 4px;
                         color: white;
-                        font-size: 35px;
+                        font-size: 24px;
                         text-align: center;
-                        padding-top: 40px;
                     }
                     .chooseAnswer.active {
                         background-color: #32B61C;
@@ -205,9 +191,7 @@
                     });
                 </script>
                 <div id="option_">
-                    <?php 
-                        for ($i=0; $i < 1 ; $i++) : 
-                    ?>
+                    <?php for ($i=0; $i < 1 ; $i++) : ?>
                         <script type="text/javascript">
                             $(function(){
                                 var c = '<?= $i ?>';
@@ -234,29 +218,33 @@
                                         exist = answer.id_option;
                                         cloneAnswer(exist);
                                     }
-                                    if (answer.option_true == 1) {
-                                        chooseAnswer(index)
-                                    }
-                                    if (data_answer[index]){ // only image file
-                                    $("#imagePreview" + index).css({
-                                        "background-image": "url(<?php echo base_url() ?>" + 'assets/images/assignments/' + data_answer[index].option_image + ")",
-                                        "background-size": "cover",
-                                        "background-position": "center center"
-                                    });
-                                }
                                 });
                             });
                         </script>
                         <div class="row" id="rowAnswer">
                             <div class="col-sm-1">
-                                <div id="chooseAnswer<?= $i ?>" class="chooseAnswer" onclick="chooseAnswer('<?= $i ?>')"><?php include "numberToChar.php"; ?></div>
+                                <div id="chooseAnswer<?= $i ?>" class="chooseAnswer"><?php include "numberToChar.php"; ?></div>
                             </div>
                             <div class="col-sm-11">
-                                <input type="hidden" name="option_<?= $i ?>[id]" value="<?= $dataQuestion->answer[$i]->id_option ?>">
-                                <textarea class="form-control" style="height:150px" name="option_<?= $i ?>[name]" data-toggle="tinymce"></textarea>
-                                <a style="margin-top:10px" href="#answerImage<?= $i ?>" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>
-                            </div>
-                            <script>
+                                <div class="row mb-2">
+                                    <input type="hidden" name="option_<?= $i ?>[id]" value="<?= $dataQuestion->answer[$i]->id_option ?>">
+                                    <textarea data-toggle="tinymce" name="option_<?= $i ?>[name]" data-plugin-options='{ "height": 150 }'></textarea>
+                                </div>
+                                <div class="row">
+                                <div class="col-lg-2">
+                                        <label>
+                                            <input type="radio" name="answer_<?= $i ?>" value="true" <?php echo ($dataQuestion->answer[$i]->option_true == '1') ? 'checked' : ''; ?>>
+                                            Benar
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>
+                                            <input type="radio" name="answer_<?= $i ?>" value="false" <?php echo ($dataQuestion->answer[$i]->option_true == '0') ? 'checked' : ''; ?>>
+                                            Salah
+                                        </label>
+                                    </div>
+                                </div>
+                                <script>
                                 tinymce.init({
                                     selector: "textarea[name='option_<?= $i ?>[name]']",
                                     height: 100,
@@ -267,6 +255,8 @@
                                     }
                                 });
                             </script>
+                                <!-- <a style="margin-top:10px" href="#answerImage<?= $i ?>" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a> -->
+                            </div>
                         </div><!-- / Row -->
                         <br />
                         <!-- MODAL IMAGE -->
@@ -293,6 +283,8 @@
                     <script type="text/javascript">
                         function cloneAnswer(exist = null) {
                             var data_answer = <?php echo json_encode($dataQuestion->answer); ?>;
+                            var optionValue = '';
+                            var matchValue = '';
                             // TOTAL ANSWER //
                             var totalAnswer = $("#totalAnswer").val();
                             totalAnswer++;
@@ -303,22 +295,38 @@
                             $("#JSONanswer").val(JSON.stringify(JSONanswer));
                             // FOR ANSWER //
                             var _html = '';
-                            
+                            console.log(totalAnswer)
                             var alph = alphabet(totalAnswer);
                             _html += '<div class="row" id="rowAnswer'+totalAnswer+'">';
                                 _html += '<div class="col-sm-1">';
-                                _html += '<div id="chooseAnswer' + totalAnswer + '" class="chooseAnswer" onclick="chooseAnswer(\'' + totalAnswer + '\')"><span class="forAlph">' + alph + '</span></div>';
+                                    _html += '<div id="chooseAnswer'+totalAnswer+'" class="chooseAnswer"><span class="forAlph">'+alph+'</span></div>';
                                 _html += '</div>';
-                                
                                 _html += '<div class="col-sm-11">';
-                                    if (data_answer[totalAnswer] && exist) {
+                                     if (data_answer[totalAnswer] && exist) {
+                                            optionValue = data_answer[totalAnswer].option_;
+                                            matchValue  = data_answer[totalAnswer].option_true;
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'" value="'+ data_answer[totalAnswer].id_option+'">';
                                     }else{
+                                            optionValue = '';
+                                            matchValue = '';
                                         _html += '<input type="hidden" name="option_'+totalAnswer + '[id]' +'">';
                                     }
-                                    _html += '<textarea class="form-control text-blank" style="height:150px" name="option_'+totalAnswer + '[name]' +'" id="textareaBlank'+totalAnswer+'"></textarea>';
-                                    _html += '<a style="margin-top:10px" href="#answerImage'+totalAnswer+'" data-toggle="modal" class="btn btn-sm btn-outline-primary"><i class="feather feather-image"></i>&nbsp; Unggah Gambar</a>';
-                                    _html += '<button type="button" style="margin-top:10px;margin-left:10px" onclick="removeAnswer(\'' + totalAnswer + '\')" class="btn btn-sm btn-outline-danger"><i class="feather feather-x"></i>&nbsp; Hapus Jawaban</button>';
+                                // _html += '<div class="row">';
+                                //     _html += '<input class="form-control col-sm text-blank mr-3" name="option_'+totalAnswer+ '[name]' +'" value="'+ optionValue +'" placeholder="Opsi" required></input>';
+                                //     _html += '<input class="form-control col-sm text-blank" name="answer_'+totalAnswer+ '[name]' +'" value="'+ matchValue +'" placeholder="Match" required></input>';
+                                //     _html += '</div>';
+                                    _html += '<div class="row mb-2"">';
+                                        _html += '<textarea class="form-control text-blank" style="height:150px" name="option_'+totalAnswer + '[name]' +'" id="textareaBlank'+totalAnswer+'"></textarea>';
+                                        _html += '</div>'
+                                        _html += '<div class="row">'
+                                            _html += '<div class="col-lg-2">'
+                                                _html += '<label><input type="radio" name="answer_'+totalAnswer+'" value="true"' + (matchValue == '1' ? 'checked' : '') + '>Benar</label>'
+                                            _html += '</div>'
+                                            _html += '<div class="col-lg-2">'
+                                                _html += '<label><input type="radio" name="answer_'+totalAnswer+'" value="false"' + (matchValue == '0' ? 'checked' : '') + '>Salah</label>'
+                                            _html += '</div>'
+                                            _html += '</div>'
+                                            _html += '<button type="button" style="margin-top:10px" onclick="removeAnswer(\'' + totalAnswer + '\')" class="btn btn-sm btn-outline-danger"><i class="feather feather-x"></i>&nbsp; Hapus Jawaban</a>';
                                 _html += '</div>';
                             _html += '</div>'; // ROW END
                             tinymce.init({
@@ -359,7 +367,6 @@
                                 if (!files.length || !window.FileReader) {
                                     $("#imagePreview"+totalAnswer).css("background", "transparent");
                                 }; // no file selected, or no FileReader support
-
                                 if (/^image/.test( files[0].type)){ // only image file
                                     var reader = new FileReader(); // instance of the FileReader
                                     reader.readAsDataURL(files[0]); // read the local file
@@ -378,13 +385,6 @@
                     <!-- FOR APPEND ANSWER -->
                 </div>
                 <script type="text/javascript">
-                    function chooseAnswer(count) {
-                        $.each($(".chooseAnswer"),function(i,v){
-                            $(this).removeClass('active');
-                        });
-                        $("#chooseAnswer"+count).addClass('active');
-                        $("#choosedAnswer").val(count);
-                    }
                     function removeAnswer(row) {
                         var sure = confirm('Anda yakin ingin menghapus jawaban ini ?');
                         if (sure) {

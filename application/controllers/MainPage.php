@@ -373,6 +373,10 @@ class MainPage extends MY_Controller {
 		if ($id_type==5) {
 			$this->parseData['content'] = 'content/assignment/create_question_5';
 		}
+
+		if ($id_type==6) {
+			$this->parseData['content'] = 'content/assignment/create_question_6';
+		}
 		$this->parseData['dataSub'] = $dataSub;
 		$this->parseData['dataLesson'] = $dataLesson;
 		$this->parseData['dataLevel'] = $dataLevel;
@@ -400,8 +404,10 @@ class MainPage extends MY_Controller {
 			$this->parseData['content'] = 'content/assignment/edit_question_isian_singkat';
 		} else if ($id_type == 4) {
 			$this->parseData['content'] = 'content/assignment/edit_question_majemuk';
-		} else {
+		} else if ($id_type == 5) {
 			$this->parseData['content'] = 'content/assignment/edit_question_menjodohkan';
+		} else if ($id_type == 6) {
+			$this->parseData['content'] = 'content/assignment/edit_question_benar_salah_majemuk';
 		}
 		$this->parseData['title'] = 'Edit Soal ';
 		$this->load->view('MainView',$this->parseData);

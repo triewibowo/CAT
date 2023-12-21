@@ -276,6 +276,11 @@ class AssignmentModel extends CI_Model {
 			$this->db->where('option_hide', 0);
 			$answer = $this->db->get('question_option')->result_object();
 			$question->answer = $answer;
+		}else if ($question->id_type == 6) {
+			$this->db->where('id_question', $id_question);
+			$this->db->where('option_hide', 0);
+			$answer = $this->db->get('question_option')->result_object();
+			$question->answer = $answer;
 		} else {
 			$this->db->where('id_question', $id_question);
 			$this->db->where('option_hide', 0);

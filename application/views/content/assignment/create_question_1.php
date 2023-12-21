@@ -130,7 +130,7 @@
     <div class="col-lg-2">
         <label>
             <input type="radio" name="answer" value="true">
-            Betul
+            Benar
         </label>
     </div>
     <div class="col-lg-2">

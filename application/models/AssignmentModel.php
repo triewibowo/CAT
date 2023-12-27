@@ -933,6 +933,22 @@ class AssignmentModel extends CI_Model {
 
     	return $begin;
 	}
+
+	// GET ASSIGNMENT//
+	public function getAssignmenBegintWithRelation($id) {
+		$this->db->where('id_assignment', $id);
+		$assignment =  $this->db->get('assignment_begin')->row();
+
+		$this->db->where('id_begin', $assignment->id_abegin);
+		$assignment->categories =  $this->db->get('assignment_begin_categories')->result_object();
+
+		foreach ($assignment->categories as $key => $categories) {
+			$this->db->where('id_begin_cat', $categories->id_acat);
+			$categories->subtest =  $this->db->get('assignment_begin_subtest')->result_object();
+		}
+
+		return $assignment;
+	}
 }
 
 /* End of file AssignmentModel.php */

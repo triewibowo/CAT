@@ -33,10 +33,10 @@
 		    <div class="row mb-3">
                 <div class="col-sm"></div>
                 <div class="col-sm-2">
-                    <a id="add-student" class="btn btn-success btn-sm float-right"><i class="feather feather-plus"></i> Tambah siswa</a>
+                    <a id="add-student" class="btn btn-success btn-sm float-right" style="color: #ffffff;"><i class="feather feather-plus"></i> Tambah siswa</a>
                 </div>
             </div>
-            <table class="table table-striped table-hover datatable table-condensed">
+            <table class="table table-striped table-responsive" data-toggle="datatables">
                 <thead>
                     <tr>
                         <th style="text-align: center;">#</th>
@@ -75,11 +75,11 @@
 				<div class="modal-dialog  modal-lg" >
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<button type="button" class="close" aria-hidden="true" id="close-student">&times;</button>
 							<h4 class="modal-title">Tambah siswa</h4>
 						</div>
 						<div class="modal-body">
-						<table class="table" id="student-table">
+						<table class="table table-striped table-responsive" id="student-table">
 							<thead>
 								<tr>
 									<th></th>
@@ -96,6 +96,9 @@
 							</tbody>
 						</table>
 						</div>
+						<div class="modal-footer">
+						<a id="tambah" class="btn btn-primary btn-sm float-right" style="color: #ffffff;"><i class="feather feather-plus"></i>Tambah</a>					
+					    </div>
 					</div>
 				</div>
 			</div>
@@ -109,36 +112,130 @@
 
 <script type="text/javascript">
 	// Function to populate the table
+	var selectedData 	= [];
+	var students 		= [];
+	var assignment 		= [];
+	let idAssignment 	= <?php echo json_encode($idAssignment); ?>;
 	function populateTable(data) {
-			var tableBody = $('#student-table tbody');
+		var tableBody = $('#student-table tbody');
 
-			// Clear existing rows
-			tableBody.empty();
+		// Clear existing rows
+		tableBody.empty();
+		selectedData.length = 0;
 
-			// Populate table with data
-			$.each(data, function(index, student) {
-				var key = index + 1
-				var row = '<tr>' +
-					'<td>' + key + '</td>' +
-					'<td>' + student.name + '</td>' +
-					'<td>' + student.nis + '</td>' +
-					'<td>' + student.class + '</td>' +
-					'<td align="center"><input type="checkbox" name="selectedStudents" value="' + student.nis + '"></td>' +
-					'</tr>';
-				tableBody.append(row);
-			});
+		// Populate table with data
+		$.each(data, function(index, student) {
+			var key = index + 1;
+			var row = '<tr>' +
+				'<td>' + key + '</td>' +
+				'<td>' + student.student_name + '</td>' +
+				'<td>' + student.student_nis + '</td>' +
+				'<td>' + student.class_name + '</td>' +
+				'<td align="center"><input type="checkbox" class="select-checkbox" name="selectedStudents" value="' + student.id_student + '"></td>' +
+				'</tr>';
+			tableBody.append(row);
+		});
+
+		var dataTable = $('#student-table').DataTable();
+
+		if (dataTable) {
+			// DataTable sudah diinisialisasi sebelumnya, hentikan dan hapus
+			dataTable.destroy();
 		}
+
+		// Inisialisasi DataTable
+		$('#student-table').DataTable({
+			lengthChange: false
+		});
+
+		// Add event listener to checkbox
+		$('#student-table tbody').on('change', '.select-checkbox', function() {
+			var isChecked = $(this).is(':checked');
+			var idValue = $(this).val();
+
+			// Cek apakah data dengan ID yang sama sudah ada di dalam selectedData
+			var existingDataIndex = selectedData.findIndex(s => s.id === idValue);
+
+			if (isChecked && existingDataIndex === -1) {
+				// Checkbox is checked, dan data belum ada di dalam selectedData, tambahkan data
+				selectedData.push({
+					id: idValue,
+					name: data.find(s => s.id_student === idValue).student_name,
+					nis: data.find(s => s.id_student === idValue).student_nis,
+					class: data.find(s => s.id_student === idValue).class_name,
+				});
+			} else if (!isChecked && existingDataIndex !== -1) {
+				// Checkbox is unchecked, dan data sudah ada di dalam selectedData, hapus data
+				selectedData.splice(existingDataIndex, 1);
+			}
+
+			// Use 'selectedData' array as needed
+			console.log(selectedData);
+		});
+	}
+
 	// Sample data (replace it with your actual data)
 	$('#add-student').on('click', function() {
         $('#add').modal('show');
+		students = [];
+		selectedData = [];
     
-		var students = [
-				{ name: 'John Doe', nis: '12345', class: '10A' },
-				{ name: 'Jane Doe', nis: '67890', class: '11B' },
-				// Add more data as needed
-			];
 		// Call the function with the sample data
-		populateTable(students);
+		getAssignmentAndStudent().then(() => {
+			populateTable(students);
+		});
+	});
+
+	$('#close-student').on('click', function() {
+		$('.select-checkbox').prop('checked', false);
+		selectedData = [];
+		console.log(selectedData);
+        $('#add').modal('hide');
+	});
+
+	function getAssignmentAndStudent(status) {
+		return new Promise(function(resolve, reject) {
+			$.ajax({
+			url: '<?= base_url('AssignmentCtrl/getAssignmentAndStudent/') ?>' + idAssignment,
+			method: 'GET',
+			data: {
+				id: JSON.stringify(idAssignment)
+			},
+			dataType: 'json',
+			success: function(response) {
+				assignment 		= response.assignment;
+				students 		= response.students;
+				resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
+			},
+			error: function(xhr, status, error) {
+				console.log(error);
+				reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
+			}
+			});
+		});
+	}
+
+	$('#tambah').on('click', function() {
+		console.log(selectedData);
+		// return new Promise(function(resolve, reject) {
+		// 	$.ajax({
+		// 	url: '<?= base_url('exam/getQuestion/') ?>',
+		// 	method: 'POST',
+		// 	data: {
+		// 		student: JSON.stringify(students),
+		// 		assignment: JSON.stringify(assignment),
+		// 	},
+		// 	dataType: 'json',
+		// 	success: function(response) {
+		// 		console.log(response);
+		// 		resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
+		// 	},
+		// 	error: function(xhr, status, error) {
+		// 		console.log(error);
+		// 		reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
+		// 	}
+		// 	});
+		// });
 	});
 
 </script>

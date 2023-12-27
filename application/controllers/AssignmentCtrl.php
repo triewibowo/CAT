@@ -8,13 +8,14 @@ class AssignmentCtrl extends MY_Controller {
 		redirect('page/assignments');
 	}
 	public function create() {
-		// print_r(json_encode($this->input->post()));
-		// die();
+	// 	print_r(json_encode($classes));
+	// die();
+		
 		try {
 			if (!$this->input->post()) {
 				redirect('page/create');
 			}
-			$classes 	= $this->input->post('id_class') ?? null;	
+			$classes 	= ($this->input->post('id_class') && count($this->input->post('id_class')) > 0) ? $this->input->post('id_class') : null;	
 			$categories = $this->input->post('category');
 			$students 	= $this->master->getAllStudentByClass($classes);
 			$password	= $this->input->post('password');
@@ -124,7 +125,7 @@ class AssignmentCtrl extends MY_Controller {
 			foreach ($classes as $key => $class) {
 				$input_class = [
 					'id_assignment'	=> $idAssignment,
-					'id_class'		=> $class->id_class
+					'id_class'		=> $class->id_class != null ? $class->id_class : $class
 				];
 
 				$this->assignment->insertAssignmentClass($input_class);
@@ -1051,6 +1052,21 @@ class AssignmentCtrl extends MY_Controller {
 			return false;
 		}
 	}	
+
+	public function getAssignmentAndStudent($id){
+		$assignment = $this->assignment->getAssignmenBegintWithRelation($id);
+		$students = $this->master->getStudents();
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Data berhasil diambil',
+			'assignment' => $assignment,
+			'students' => $students,
+		];
+		$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+	}
 
 }
 

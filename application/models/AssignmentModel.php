@@ -296,9 +296,13 @@ class AssignmentModel extends CI_Model {
 
 		return $question;
 	}
-	public function getQuestionSubtestLevel($id_sub, $level) {
+	public function getQuestionSubtestLevel($id_sub, $level, $id_student, $id_begin) {
+		$array = $this->getSubtestQuestionId($id_student, $id_begin);
 		$this->db->where('id_sub', $id_sub);
-		$this->db->where('question_level', $level);
+		// $this->db->where('question_level', $level);
+		if ($array != []) {
+			$this->db->where_not_in('id_question', $array);
+		}
 		$this->db->where('question_hide', 0);
 		$this->db->order_by('RAND()'); // Mengurutkan data secara acak
 		$question = $this->db->get('ms_question')->row();
@@ -334,6 +338,23 @@ class AssignmentModel extends CI_Model {
 
 		return $question;
 	}
+
+	public function getSubtestQuestionId($student_id, $id_begin){
+		$resultArray = [];
+		$this->db->select('id_question');
+		$this->db->where('id_student', $student_id);
+		$this->db->where('id_assign_begin', $id_begin);
+		$data = $this->db->get('assignment_question_answers')->result_object();
+		
+		foreach ($data as $key => $value) {
+			array_push($resultArray, $value->id_question);
+		}
+
+		// Menggunakan $resultArray sesuai kebutuhan Anda
+
+		return $resultArray;
+	}
+
 	public function updateQuestion($data) {
 		$this->db->where('id_question', $data['id_question']);
 		return $this->db->update('ms_question', $data);
@@ -657,6 +678,7 @@ class AssignmentModel extends CI_Model {
 		$this->db->where('assignment_active', 1);
 		$this->db->where('status <>', 2);
 		$this->db->join('ms_assignment', 'assignment_begin.id_assignment = ms_assignment.id_assignment', 'left');
+		$this->db->order_by('ms_assignment.assignment_created', 'DESC'); // atau 'DESC' untuk descending
 		$students = $this->db->get('assignment_begin')->result_object();
 
 		foreach ($students as $index => $student) {

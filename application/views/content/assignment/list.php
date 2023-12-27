@@ -65,6 +65,7 @@
                                 <?php else: ?>
                                     <a title="aktifkan Ujian" href="#active<?= $row ?>" data-toggle="modal" class="btn btn-primary btn-sm"><i class="feather feather-check-circle"></i></a>
                                 <?php endif; ?>
+                                <a href="<?= site_url('page/assign_users/'.$value->id_assignment) ?>" class="btn btn-success btn-sm"><i class="feather feather-users"></i></a>
                                 <a title="Hapus Ujian" href="#delete<?= $row ?>" data-toggle="modal" class="btn btn-danger btn-sm"><i class="feather feather-trash"></i></a>
                             </td>
                         </tr>

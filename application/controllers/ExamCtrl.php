@@ -362,7 +362,7 @@ class ExamCtrl extends CI_Controller {
 
 			if (isset($data['level'])) {
 				// Ambil Soal yang sesuai subtest dan level
-				$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level']);
+				$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level'], $data['id_student'], $data['id_begin']);
 			}
 
 			$response = [

@@ -497,6 +497,13 @@ class MainPage extends MY_Controller {
 		$this->parseData['title'] = 'List Laporan Ujian per Siswa';
 		$this->load->view('MainView',$this->parseData);
 	}
+	public function assign_users($id_assignment) {
+		$dataAssignment = $this->assignment->getAllAssignmentPerAssign($id_assignment);
+		$this->parseData['dataAssignment'] = $dataAssignment;
+		$this->parseData['content'] = 'content/assignment/assign_users';
+		$this->parseData['title'] = 'List Siswa Yang Mengikuti Ujian';
+		$this->load->view('MainView',$this->parseData);
+	}
 	public function bank() {
 		$dataQuestion = [];
 		// foreach ($this->assignment->getAllQuestion() as $row => $value) {

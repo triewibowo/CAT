@@ -82,7 +82,7 @@
                                 <?php endif; ?>
                             </td>
 	                        <td>
-								<a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary"><i class="fa fa-eye"></i> Detail</a>
+								<a href="#categories<?= $row ?>" data-toggle="modal" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Detail</a>
 	                        </td>
 	                    </tr>
 
@@ -249,11 +249,11 @@
 												<?php endforeach; ?>
 											</ul>
 										</div>
-										<div class="modal-footer">
+										<!-- <div class="modal-footer">
 											<?php if($value->status != 2): ?>
 												<a href="<?= site_url('exam/beginExam/'.$value->id_abegin) ?>" class="btn btn-primary btn-block">Ya, Saya siap!</a>
 											<?php endif; ?>
-										</div>
+										</div> -->
 									</div>
 								</div>
 							</div>

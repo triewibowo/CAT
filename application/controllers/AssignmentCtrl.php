@@ -1068,6 +1068,78 @@ class AssignmentCtrl extends MY_Controller {
 				->set_output(json_encode($response));
 	}
 
+	public function addStudentAssignment(){
+
+		$students = json_decode($this->input->post('student'), true);
+		$assignment = json_decode($this->input->post('assignment'), true);
+
+		try{
+			// STUDENT //
+			foreach ($students as $key => $student) {
+				$input_student = [
+					'id_assignment'	=> $assignment['id_assignment'],
+					'id_student'	=> $student['id'],
+					'duration'		=> $assignment['duration'],
+					'total_soal'	=> $assignment['total_soal'],
+					'password'		=> mt_rand(1000000, 9999999),
+					'status'		=> 0
+				];
+
+				$id_begin = $this->assignment->insertBegin($input_student);
+
+				foreach ($assignment['categories'] as $key => $category) {
+					$categ = [
+						'id_begin'		=> $id_begin,
+						'id_category'	=> $category['id_category'],
+						'status'		=> 0,
+						'order'			=> $category['order'],
+					];
+
+					$id_begin_cat = $this->assignment->insertAssignmentBeginCategory($categ);
+
+					// ASSIGNMENT SUBTEST
+					foreach ($category['subtest'] as $k => $sub) {
+						$sub = [
+							'id_begin'		=> $id_begin,
+							'id_begin_cat'	=> $id_begin_cat,
+							'id_subtest'	=> $sub['id_subtest'],
+							'qty_soal'		=> $sub['qty_soal'],
+							'timer'			=> $sub['timer'],
+							'status'		=> 0,
+							'total_soal'	=> 0,
+							'order'			=> $sub['order'],
+						];
+
+						$this->assignment->insertAssignmentBeginSubtest($sub);
+					}
+				}
+			}
+
+			$response = [
+				'status' => 'success',
+				'message' => 'Data berhasil diambil',
+				'student' => $student,
+				'assignment' => $assignment,
+			];
+			$this->output
+					->set_content_type('application/json')
+					->set_output(json_encode($response));
+		} catch (\Exception $e) {
+
+			// Jika terjadi error, kirim respons error
+			$response = [
+				'status' => 'error',
+				'message' => 'Terjadi kesalahan saat menyimpan data',
+				'error' => $e->getMessage()
+			];
+	
+			// Mengirim respons JSON
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+		}
+	}
+
 }
 
 /* End of file AssignmentCtrl.php */

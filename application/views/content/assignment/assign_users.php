@@ -216,28 +216,54 @@
 	}
 
 	$('#tambah').on('click', function() {
-		console.log(selectedData);
-		// return new Promise(function(resolve, reject) {
-		// 	$.ajax({
-		// 	url: '<?= base_url('exam/getQuestion/') ?>',
-		// 	method: 'POST',
-		// 	data: {
-		// 		student: JSON.stringify(students),
-		// 		assignment: JSON.stringify(assignment),
-		// 	},
-		// 	dataType: 'json',
-		// 	success: function(response) {
-		// 		console.log(response);
-		// 		resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
-		// 	},
-		// 	error: function(xhr, status, error) {
-		// 		console.log(error);
-		// 		reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
-		// 	}
-		// 	});
-		// });
+		return new Promise(function(resolve, reject) {
+			$.ajax({
+				url: '<?= base_url('AssignmentCtrl/addStudentAssignment/') ?>',
+				method: 'POST',
+				data: {
+					student: JSON.stringify(selectedData),
+					assignment: JSON.stringify(assignment),
+				},
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+					resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
+				},
+				error: function(xhr, status, error) {
+					console.log(error);
+					reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
+				}
+			});
+		})
+		.then(function() {
+			// Menampilkan SweetAlert saat berhasil
+			swal({
+				title: 'Berhasil',
+				text: 'Data siswa berhasil ditambahkan ke assignment.',
+				type: 'success',
+				allowOutsideClick: false,
+				confirmButtonText: 'OK!',
+			})
+				.then(async (result) => {
+					// Reload halaman
+					location.reload();
+			});
+		})
+		.catch(function(error) {
+			// Menampilkan SweetAlert saat berhasil
+			swal({
+				title: 'Gagal',
+				text: 'Terjadi kesalahan saat menambahkan data siswa ke assignment.',
+				type:'error',
+				allowOutsideClick: false,
+				confirmButtonText: 'OK!',
+			})
+				.then(async (result) => {
+					// Reload halaman
+					location.reload();
+			});
+		});
 	});
-
 </script>
 
 <style>

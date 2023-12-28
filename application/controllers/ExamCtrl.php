@@ -259,7 +259,8 @@ class ExamCtrl extends CI_Controller {
 	}
 
 	public function profil() {
-			$user = $this->session->globalStudent;
+			$user_id = $this->session->globalStudent;
+			$user = $this->master->getStudentById($user_id->id_student);
 			$getClass = '';
 			$classes = $this->master->getAllClass();
 			foreach ($classes as $key => $class) {

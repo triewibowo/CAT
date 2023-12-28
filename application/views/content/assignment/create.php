@@ -174,10 +174,11 @@
                                                         <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>" onchange="categoryView(this)">
                                                     </td>
                                                     <td colspan=4>
-                                                        <label><?= $category->cat_name ?></label>
+                                                        <label><?= $category->cat_name ?></label><br>
+                                                        <small id="error-message-cat" style="color:red"></small>
                                                     </td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)">
+                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;" id="catInput" onchange="categoryView(this)">
                                                     </td>
                                                 </tr>
                                                 <?php foreach ($category->subtest as $kc => $subcategory): ?>
@@ -188,16 +189,18 @@
                                                                 <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>" onchange="categoryView(this)">
                                                             </td>
                                                             <td width="45%">
-                                                                <small><?= $subcategory->sub_name ?></small>
+                                                                <small><?= $subcategory->sub_name ?></small><br>
+                                                                <small>* Soal yang tersedia berjmlah <?= $subcategory->question ?></small><br>
+                                                                <small id="error-message" style="color:red"></small>
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)" id="subInput">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;" onchange="categoryView(this)">
+                                                            <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;" onchange="categoryView(this)" id="subQtyInput">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;" onchange="categoryView(this)">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;" onchange="categoryView(this)" id="subInput">
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
@@ -321,6 +324,83 @@
         // console.log(category);
     }
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('#subQtyInput').on('input', function () {
+            validateInputJumlah($(this));
+        });
+    });
+    
+    $(document).ready(function () {
+        $('#subInput').on('input', function () {
+            validateInput($(this));
+        });
+    });
+
+    $(document).ready(function () {
+        $('#catInput').on('input', function () {
+            validateInputCat($(this));
+        });
+    });
+
+    function validateInputJumlah(input) {
+        var value = input.val();
+        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+        if (!isValid) {
+            $('#error-message').html('Masukkan angka saja.');
+            input[0].setCustomValidity('Invalid input');
+        } else {
+        $('#error-message').html('');
+        input[0].setCustomValidity('');
+        }
+
+        // Memastikan nilai tidak melebihi batas maksimum
+        if (value > <?= $subcategory->question ?>) {
+            $('#error-message').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
+            input[0].setCustomValidity('Invalid input');
+        }
+    }
+
+    function validateInput(input) {
+        var value = input.val();
+        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+        if (!isValid) {
+            $('#error-message').html('Masukkan angka saja.');
+            input[0].setCustomValidity('Invalid input');
+        } else {
+        $('#error-message').html('');
+        input[0].setCustomValidity('');
+        }
+
+        // Memastikan nilai tidak melebihi batas maksimum
+        if (value > <?= $subcategory->question ?>) {
+            $('#error-message').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
+            input[0].setCustomValidity('Invalid input');
+        }
+    }
+
+    function validateInputCat(input) {
+        var value = input.val();
+        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+        if (!isValid) {
+            $('#error-message-cat').html('Masukkan angka saja.');
+            input[0].setCustomValidity('Invalid input');
+        } else {
+        $('#error-message-cat').html('');
+        input[0].setCustomValidity('');
+        }
+
+        // Memastikan nilai tidak melebihi batas maksimum
+        if (value > <?= $subcategory->question ?>) {
+            $('#error-message-cat').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
+            input[0].setCustomValidity('Invalid input');
+        }
+    }
+    </script>
 
 <style>
   .subcategory {

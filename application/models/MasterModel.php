@@ -79,7 +79,15 @@ class MasterModel extends CI_Model {
 					if ($sub) {
 						$subtest->sub_name = $sub->sub_name;
 					}
+
+					$this->db->where('id_sub', $subtest->id_sub);
+					$question = $this->db->count_all_results('ms_question');
+					if ($question) {
+						$subtest->question = $question;
+					}
+
 				}
+
 			}
 			
 			$category->subtest = $subtests;

@@ -55,7 +55,7 @@
                        <div class="col-sm-6">
                          <div class="form-group">
                              <label>Email</label>
-                             <input type="email" class="form-control" name="student_email" placeholder="info@youremail.com">
+                             <input type="email" class="form-control" name="student_email" placeholder="info@youremail.com" required>
                          </div>
                        </div>
                        <div class="col-sm-6">

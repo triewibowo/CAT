@@ -29,6 +29,11 @@ class AuthModel extends CI_Model {
 		$this->db->where('student_hide', 0);
 		return $this->db->get('ms_student')->row_object();
 	}
+	public function getStudentByEmail($email) {
+		$this->db->where('student_email', $email);
+		$this->db->where('student_hide', 0);
+		return $this->db->get('ms_student')->row_object();
+	}
 
 }
 

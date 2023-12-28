@@ -41,7 +41,8 @@
                                             <div class="input-group-addon">
                                                 <span class="fa fa-user"></span>
                                             </div>
-                                            <input type="number" class="form-control" placeholder="NIS" name="student_nis" required>
+                                            <!-- <input type="number" class="form-control" placeholder="NIS" name="student_nis" required> -->
+                                            <input type="email" class="form-control" placeholder="Email" name="student_email" required>
                                         </div>
                                     </div>
                                 </div>

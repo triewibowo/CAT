@@ -376,6 +376,13 @@ class MasterCtrl extends MY_Controller {
 						redirect('page/student_edit/'.$data['id_student']);
 					}
 				}
+				$dataStudent = $this->master->getStudentByEmail($data['student_email']);
+				if ($dataStudent) {
+					if ($dataStudent->id_student != $data['id_student']) {
+						$this->message('Ooppsss!','Email sudah terdaftar, silahkan coba Email lain','error');
+						redirect('page/student_edit/'.$data['id_student']);
+					}
+				}
 			} else {
 				if ($this->master->getStudentByNis($data['student_nis'])) {
 					$this->message('Ooppsss!','NIS sudah terdaftar, silahkan coba NIS lain','error');

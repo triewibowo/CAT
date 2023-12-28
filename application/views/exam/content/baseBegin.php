@@ -58,7 +58,7 @@
 					<div class="panel">
 						<div class="panel-body" style="padding: 1.5rem 5rem;background-color:#fbfbfb">
 							<!-- SOAL -->
-							<img src="image.jpg" id="image-question" alt="Image description" style="height:350px; margin-bottom:45px;">
+							<img src="image.jpg" id="image-question" alt="Image description" style="height:250px; margin-bottom:45px; display: block; margin-left: auto; margin-right: auto;">
 							<!-- <p style="font-size:12px; margin-bottom:10px" class="container mb-0">Read the sentence carefully then choose the most correct answer.</p> -->
 							<div id="question-container" class="cat-question">
 							<div id="question" style="margin-bottom:15px;"></div>
@@ -373,7 +373,7 @@
 			questionElement.text("Tidak ada soal...");
 		}else{
 			$('#answer-options').show();
-			questionElement.html(((qty == 0) ? '1' : (qty + 1)) + '. ' + ready_question.question_);
+			questionElement.html( '<span class="question-number">' + ((qty == 0) ? '1' : (qty + 1)) + '. ' + ready_question.question_);
 		
 			if (ready_question.question_image) {
 				$('#image-question').show();
@@ -403,7 +403,7 @@
 						.html(ready_question.answer[i].option_);
 
 					if (ready_question.answer[i].option_image) {
-						const img = $('<img style="height:190px; margin-bottom:1rem">')
+						const img = $('<img style="width:150px; height:150px; margin-bottom:1rem; display: block; margin-left: auto; margin-right: auto; object-fit: contain;">')
 							.attr('src', '<?php echo base_url() ?>' + "assets/images/assignments/" + ready_question.answer[i].option_image)
 							.addClass('answer-image');
 						
@@ -487,7 +487,7 @@
 					const labelText = ready_question.answer[i].option_;
 
 					if (ready_question.answer[i].option_image) {
-						const img = $('<img style="height:190px; margin-botttom:1rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
+						const img = $('<img style="height:150px; width:150px; object-fit: contain; margin-botttom:1rem">') // Menggunakan margin-right untuk memberi jarak ke kanan
 							.attr('src', '<?php echo base_url() ?>' + "assets/images/assignments/" + ready_question.answer[i].option_image)
 							.addClass('answer-image');
 						
@@ -772,5 +772,9 @@
             padding: 10px;
             margin: 5px 0;
         }
+
+		.question-number p {
+			display: inline;
+		}
 
 </style>

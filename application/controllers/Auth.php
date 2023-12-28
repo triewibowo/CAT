@@ -76,7 +76,8 @@ class Auth extends CI_Controller {
 	public function exam() {
 		if ($this->input->post()) {
 			$data = $this->input->post();
-			$student = $this->auth->getStudentByNis($data['student_nis']);
+			// $student = $this->auth->getStudentByNis($data['student_nis']);
+			$student = $this->auth->getStudentByEmail($data['student_email']);
 			if ($student) {
 				if (password_verify($data['student_password'],$student->student_password)) {
 					$sess_ = [
@@ -87,11 +88,11 @@ class Auth extends CI_Controller {
 					$this->message('Wohoooo!!','Login berhasil di verifikasi, selamat datang '.$student->student_name,'success');
 					redirect('exam/lists');	
 				} else {
-					$this->message('Oooppss','NIS dan password tidak sesuai, silahkan coba lagi','danger');
+					$this->message('Oooppss','Email dan password tidak sesuai, silahkan coba lagi','danger');
 					redirect('Auth/exam');	
 				}
 			} else {
-				$this->message('Oooppss','NIS tidak terdaftar, silahkan coba lagi','danger');
+				$this->message('Oooppss','Email tidak terdaftar, silahkan coba lagi','danger');
 				redirect('Auth/exam');
 			}
 		} else {

@@ -499,7 +499,12 @@ class MainPage extends MY_Controller {
 	}
 	public function assign_users($id_assignment) {
 		$dataAssignment = $this->assignment->getAllAssignmentPerAssign($id_assignment);
+		$idStudents		= [];
+		foreach ($dataAssignment as $key => $data) {
+			array_push($idStudents, $data->id_student);
+		}
 		$this->parseData['dataAssignment'] = $dataAssignment;
+		$this->parseData['idStudents'] = $idStudents;
 		$this->parseData['idAssignment'] = $id_assignment;
 		$this->parseData['content'] = 'content/assignment/assign_users';
 		$this->parseData['title'] = 'List Siswa Yang Mengikuti Ujian';

@@ -1054,6 +1054,7 @@ class AssignmentCtrl extends MY_Controller {
 	}	
 
 	public function getAssignmentAndStudent($id){
+
 		$assignment = $this->assignment->getAssignmenBegintWithRelation($id);
 		$students = $this->master->getStudents();
 
@@ -1069,6 +1070,23 @@ class AssignmentCtrl extends MY_Controller {
 	}
 
 	public function addStudentAssignment(){
+
+		if (json_decode($this->input->post('student'), true) == []){
+			// Jika terjadi error, kirim respons error
+			$response = [
+				'status' => 'error',
+				'message' => 'Anda belum memilih murid',
+				'error' => 'error'
+			];
+	
+			// Mengirim respons JSON
+			$this->output
+				->set_status_header(400)
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+
+			return;
+		}
 
 		$students = json_decode($this->input->post('student'), true);
 		$assignment = json_decode($this->input->post('assignment'), true);
@@ -1129,7 +1147,7 @@ class AssignmentCtrl extends MY_Controller {
 			// Jika terjadi error, kirim respons error
 			$response = [
 				'status' => 'error',
-				'message' => 'Terjadi kesalahan saat menyimpan data',
+				'message' => 'Terjadi kesalahan saat menambahkan data siswa ke assignment.',
 				'error' => $e->getMessage()
 			];
 	

@@ -116,6 +116,7 @@
 	var students 		= [];
 	var assignment 		= [];
 	let idAssignment 	= <?php echo json_encode($idAssignment); ?>;
+	let idStudents 		= <?php echo json_encode($idStudents); ?>;
 	function populateTable(data) {
 		var tableBody = $('#student-table tbody');
 
@@ -125,15 +126,18 @@
 
 		// Populate table with data
 		$.each(data, function(index, student) {
-			var key = index + 1;
-			var row = '<tr>' +
-				'<td>' + key + '</td>' +
-				'<td>' + student.student_name + '</td>' +
-				'<td>' + student.student_nis + '</td>' +
-				'<td>' + student.class_name + '</td>' +
-				'<td align="center"><input type="checkbox" class="select-checkbox" name="selectedStudents" value="' + student.id_student + '"></td>' +
-				'</tr>';
-			tableBody.append(row);
+			// Cek apakah id_student termasuk dalam excludedIds
+			if (idStudents.indexOf(student.id_student) == -1) {
+				var key = index + 1;
+				var row = '<tr>' +
+					'<td>' + key + '</td>' +
+					'<td>' + student.student_name + '</td>' +
+					'<td>' + student.student_nis + '</td>' +
+					'<td>' + student.class_name + '</td>' +
+					'<td align="center"><input type="checkbox" class="select-checkbox" name="selectedStudents" value="' + student.id_student + '"></td>' +
+					'</tr>';
+				tableBody.append(row);
+			}
 		});
 
 		var dataTable = $('#student-table').DataTable();
@@ -196,21 +200,22 @@
 	function getAssignmentAndStudent(status) {
 		return new Promise(function(resolve, reject) {
 			$.ajax({
-			url: '<?= base_url('AssignmentCtrl/getAssignmentAndStudent/') ?>' + idAssignment,
-			method: 'GET',
-			data: {
-				id: JSON.stringify(idAssignment)
-			},
-			dataType: 'json',
-			success: function(response) {
-				assignment 		= response.assignment;
-				students 		= response.students;
-				resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
-			},
-			error: function(xhr, status, error) {
-				console.log(error);
-				reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
-			}
+				url: '<?= base_url('AssignmentCtrl/getAssignmentAndStudent/') ?>' + idAssignment,
+				method: 'GET',
+				data: {
+					id: idAssignment,
+					id_student_except: idStudents
+				},
+				dataType: 'json',
+				success: function(response) {
+					assignment = response.assignment;
+					students = response.students;
+					resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
+				},
+				error: function(xhr, status, error) {
+					console.log('Error:', error);
+					reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
+				}
 			});
 		});
 	}
@@ -231,6 +236,8 @@
 				},
 				error: function(xhr, status, error) {
 					console.log(error);
+					 // Mengambil response dari objek xhr
+					var responseText = xhr.responseText;
 					reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
 				}
 			});
@@ -239,7 +246,7 @@
 			// Menampilkan SweetAlert saat berhasil
 			swal({
 				title: 'Berhasil',
-				text: 'Data siswa berhasil ditambahkan ke assignment.',
+				text: 'Data siswa berhasil ditambahkan.',
 				type: 'success',
 				allowOutsideClick: false,
 				confirmButtonText: 'OK!',
@@ -253,7 +260,7 @@
 			// Menampilkan SweetAlert saat berhasil
 			swal({
 				title: 'Gagal',
-				text: 'Terjadi kesalahan saat menambahkan data siswa ke assignment.',
+				text: 'Terjadi kesalahan saat menambahkan data siswa.',
 				type:'error',
 				allowOutsideClick: false,
 				confirmButtonText: 'OK!',

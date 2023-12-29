@@ -175,12 +175,33 @@
                                                     </td>
                                                     <td colspan=4>
                                                         <label><?= $category->cat_name ?></label><br>
-                                                        <small id="error-message-cat" style="color:red"></small>
+                                                        <small id="error-message-cat<?= $key ?>" style="color:red"></small>
                                                     </td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;" id="catInput" onchange="categoryView(this)">
+                                                        <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][order]" placeholder="Urutan" disabled style="height:35px;" id="catInput<?= $key ?>" onchange="categoryView(this)">
                                                     </td>
                                                 </tr>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $('#catInput<?= $key ?>').on('input', function () {
+                                                            validateInputCat($(this));
+                                                        });
+                                                    });
+
+                                                    function validateInputCat(input) {
+                                                        var key = input.attr('id').replace('catInput', '');
+                                                        var value = input.val();
+                                                        var isValid = /^\d+$/.test(value);
+
+                                                        if (!isValid) {
+                                                            $('#error-message-cat' + key).html('Masukkan angka saja.');
+                                                            input[0].setCustomValidity('Invalid input');
+                                                        } else {
+                                                            $('#error-message-cat' + key).html('');
+                                                            input[0].setCustomValidity('');
+                                                        }
+                                                    }
+                                                </script>
                                                 <?php foreach ($category->subtest as $kc => $subcategory): ?>
                                                     <?php if ($subcategory->id_cat == $category->id_cat): ?>
                                                         <tr class="subcategory subcategory-<?= $category->id_cat ?>" style="display: none;">
@@ -191,18 +212,65 @@
                                                             <td width="45%">
                                                                 <small><?= $subcategory->sub_name ?></small><br>
                                                                 <small>* Soal yang tersedia berjmlah <?= $subcategory->question ?></small><br>
-                                                                <small id="error-message" style="color:red"></small>
+                                                                <small id="error-message<?= $key ?><?= $kc ?>" style="color:red"></small>
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)" id="subInput">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][order]" placeholder="Urutan" disabled style="height:35px;" onchange="categoryView(this)" id="subInput<?= $key ?><?= $kc ?>">
                                                             </td>
                                                             <td>
-                                                            <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;" onchange="categoryView(this)" id="subQtyInput">
+                                                            <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][question_qty]" placeholder="Jumlah" disabled style="height:35px;" onchange="categoryView(this)" id="subQtyInput<?= $key ?><?= $kc ?>">
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;" onchange="categoryView(this)" id="subInput">
+                                                                <input type="number" class="form-control" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][timer]" placeholder="Waktu" disabled style="height:35px;" onchange="categoryView(this)" id="subInput<?= $key ?><?= $kc ?>">
                                                             </td>
                                                         </tr>
+                                                        <script>
+                                                            $(document).ready(function () {
+                                                                $('#subQtyInput<?= $key ?><?= $kc ?>').on('input', function () {
+                                                                    validateInputJumlah($(this));
+                                                                });
+                                                            });
+                                                            
+                                                            $(document).ready(function () {
+                                                                $('#subInput<?= $key ?><?= $kc ?>').on('input', function () {
+                                                                    validateInput($(this));
+                                                                });
+                                                            });
+
+                                                            function validateInputJumlah(input) {
+                                                                var key = input.attr('id').replace('subQtyInput', '');
+                                                                var value = input.val();
+                                                                var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+                                                                if (!isValid) {
+                                                                    $('#error-message' + key).html('Masukkan angka saja.');
+                                                                    input[0].setCustomValidity('Invalid input');
+                                                                } else {
+                                                                $('#error-message' + key).html('');
+                                                                input[0].setCustomValidity('');
+                                                                }
+
+                                                                // Memastikan nilai tidak melebihi batas maksimum
+                                                                if (value > <?= $subcategory->question ?>) {
+                                                                    $('#error-message' + key).html('Nilai maksimum adalah <?= $subcategory->question ?>.');
+                                                                    input[0].setCustomValidity('Invalid input');
+                                                                }
+                                                            }
+
+                                                            function validateInput(input) {
+                                                                var key = input.attr('id').replace('subInput', '');
+                                                                var value = input.val();
+                                                                var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+                                                                if (!isValid) {
+                                                                    $('#error-message' + key).html('Masukkan angka saja.');
+                                                                    input[0].setCustomValidity('Invalid input');
+                                                                } else {
+                                                                $('#error-message' + key).html('');
+                                                                input[0].setCustomValidity('');
+                                                                }
+                                                            }
+                                                            </script>
                                                     <?php endif; ?>
                                                 <?php endforeach; ?>
                                             <?php endforeach; ?>
@@ -324,83 +392,6 @@
         // console.log(category);
     }
 </script>
-
-<script>
-    $(document).ready(function () {
-        $('#subQtyInput').on('input', function () {
-            validateInputJumlah($(this));
-        });
-    });
-    
-    $(document).ready(function () {
-        $('#subInput').on('input', function () {
-            validateInput($(this));
-        });
-    });
-
-    $(document).ready(function () {
-        $('#catInput').on('input', function () {
-            validateInputCat($(this));
-        });
-    });
-
-    function validateInputJumlah(input) {
-        var value = input.val();
-        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
-
-        if (!isValid) {
-            $('#error-message').html('Masukkan angka saja.');
-            input[0].setCustomValidity('Invalid input');
-        } else {
-        $('#error-message').html('');
-        input[0].setCustomValidity('');
-        }
-
-        // Memastikan nilai tidak melebihi batas maksimum
-        if (value > <?= $subcategory->question ?>) {
-            $('#error-message').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
-            input[0].setCustomValidity('Invalid input');
-        }
-    }
-
-    function validateInput(input) {
-        var value = input.val();
-        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
-
-        if (!isValid) {
-            $('#error-message').html('Masukkan angka saja.');
-            input[0].setCustomValidity('Invalid input');
-        } else {
-        $('#error-message').html('');
-        input[0].setCustomValidity('');
-        }
-
-        // Memastikan nilai tidak melebihi batas maksimum
-        if (value > <?= $subcategory->question ?>) {
-            $('#error-message').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
-            input[0].setCustomValidity('Invalid input');
-        }
-    }
-
-    function validateInputCat(input) {
-        var value = input.val();
-        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
-
-        if (!isValid) {
-            $('#error-message-cat').html('Masukkan angka saja.');
-            input[0].setCustomValidity('Invalid input');
-        } else {
-        $('#error-message-cat').html('');
-        input[0].setCustomValidity('');
-        }
-
-        // Memastikan nilai tidak melebihi batas maksimum
-        if (value > <?= $subcategory->question ?>) {
-            $('#error-message-cat').html('Nilai maksimum adalah <?= $subcategory->question ?>.');
-            input[0].setCustomValidity('Invalid input');
-        }
-    }
-    </script>
 
 <style>
   .subcategory {

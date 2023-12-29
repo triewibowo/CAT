@@ -462,7 +462,11 @@ class MainPage extends MY_Controller {
 					$value->value++; // Perbarui properti value_percent pada objek $v
 				}
 			}
-			$value->percent = round(($value->value / count($value->assigns)) * 100, 1); // Perbarui properti value_percent pada objek $v
+			$value->percent = 0;  // Inisialisasi dengan nilai default
+
+			if (!empty($value->assigns)) {
+				$value->percent = round(($value->value / count($value->assigns)) * 100, 1);
+			} // Perbarui properti value_percent pada objek $v
 			
 		}
 		$this->parseData['dataAssignment'] = $dataAssignment;

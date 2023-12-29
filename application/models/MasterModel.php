@@ -81,6 +81,7 @@ class MasterModel extends CI_Model {
 					}
 
 					$this->db->where('id_sub', $subtest->id_sub);
+					$this->db->where('question_hide', 0);
 					$question = $this->db->count_all_results('ms_question');
 					if ($question) {
 						$subtest->question = $question;

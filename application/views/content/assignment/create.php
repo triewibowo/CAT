@@ -211,7 +211,7 @@
                                                             </td>
                                                             <td width="45%">
                                                                 <small><?= $subcategory->sub_name ?></small><br>
-                                                                <small>* Soal yang tersedia berjmlah <?= $subcategory->question ?></small><br>
+                                                                <small>* Soal yang tersedia berjmlah <?= isset($subcategory->question) ? $subcategory->question : 0 ?></small><br>
                                                                 <small id="error-message<?= $key ?><?= $kc ?>" style="color:red"></small>
                                                             </td>
                                                             <td>

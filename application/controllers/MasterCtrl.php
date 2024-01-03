@@ -388,6 +388,13 @@ class MasterCtrl extends MY_Controller {
 					$this->message('Ooppsss!','NIS sudah terdaftar, silahkan coba NIS lain','error');
 					redirect('page/student_add');
 				}
+				$dataStudent = $this->master->getStudentByEmail($data['student_email']);
+				if ($dataStudent) {
+					if ($dataStudent->id_student != $data['id_student']) {
+						$this->message('Ooppsss!','Email sudah terdaftar, silahkan coba Email lain','error');
+						redirect('page/student_add');
+					}
+				}
 			} // VALIDATION NIS AVAILABLE //
 
 

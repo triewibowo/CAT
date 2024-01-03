@@ -152,11 +152,11 @@
                     </div>
 
                      <!-- MODAL CLASSES KATEGORI --> 
-                     <div class="modal fade modal-success" id="classes_kat">
+                     <div class="modal fade modal-success" id="classes_kat" data-backdrop="static">
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
                                     <h4 class="modal-title text-inverse">Pilih Kategori</h4>
                                 </div>
                                 <div class="modal-body">
@@ -171,7 +171,7 @@
                                             <?php foreach ($dataCategories as $key => $category): ?>
                                                 <tr>
                                                     <td>
-                                                        <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>" onchange="categoryView(this)">
+                                                        <input type="checkbox" name="category[<?= $category->id_cat ?>][id]" class="category-checkbox" data-id="<?= $category->id_cat ?>" data-name="<?= $category->cat_name ?>" value="<?= $category->id_cat ?>" onchange="categoryView(this)" <?php echo (count($category->subtest) == 0 ) ? 'disabled' : ''; ?>>
                                                     </td>
                                                     <td colspan=4>
                                                         <label><?= $category->cat_name ?></label><br>
@@ -193,7 +193,7 @@
                                                         var value = input.val();
                                                         var isValid = /^\d+$/.test(value);
 
-                                                        if (!isValid) {
+                                                        if (!isValid || value == '0') {
                                                             $('#error-message-cat' + key).html('Masukkan angka saja.');
                                                             input[0].setCustomValidity('Invalid input');
                                                         } else {
@@ -207,7 +207,7 @@
                                                         <tr class="subcategory subcategory-<?= $category->id_cat ?>" style="display: none;">
                                                             <td></td>
                                                             <td>
-                                                                <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>" onchange="categoryView(this)">
+                                                                <input type="checkbox" name="category[<?= $category->id_cat ?>][sub][<?= $kc ?>][id]" class="subcategory-checkbox" data-id="<?= $subcategory->id_sub ?>"  data-name="<?= $subcategory->sub_name ?>" value="<?= $subcategory->id_sub ?>" onchange="categoryView(this)" <?php echo (!isset($subcategory->question)) ? 'disabled' : ''; ?>>
                                                             </td>
                                                             <td width="45%">
                                                                 <small><?= $subcategory->sub_name ?></small><br>
@@ -227,7 +227,9 @@
                                                         <script>
                                                             $(document).ready(function () {
                                                                 $('#subQtyInput<?= $key ?><?= $kc ?>').on('input', function () {
-                                                                    validateInputJumlah($(this));
+                                                                    var sumQuestion = <?php echo json_encode(isset($dataCategories[$key]->subtest[$kc]->question) ? $dataCategories[$key]->subtest[$kc]->question : 0); ?>;
+                                                                    console.log(sumQuestion);
+                                                                    validateInputJumlah($(this), sumQuestion);
                                                                 });
                                                             });
                                                             
@@ -237,40 +239,7 @@
                                                                 });
                                                             });
 
-                                                            function validateInputJumlah(input) {
-                                                                var key = input.attr('id').replace('subQtyInput', '');
-                                                                var value = input.val();
-                                                                var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
-
-                                                                if (!isValid) {
-                                                                    $('#error-message' + key).html('Masukkan angka saja.');
-                                                                    input[0].setCustomValidity('Invalid input');
-                                                                } else {
-                                                                $('#error-message' + key).html('');
-                                                                input[0].setCustomValidity('');
-                                                                }
-
-                                                                // Memastikan nilai tidak melebihi batas maksimum
-                                                                if (value > <?= $subcategory->question ?>) {
-                                                                    $('#error-message' + key).html('Nilai maksimum adalah <?= $subcategory->question ?>.');
-                                                                    input[0].setCustomValidity('Invalid input');
-                                                                }
-                                                            }
-
-                                                            function validateInput(input) {
-                                                                var key = input.attr('id').replace('subInput', '');
-                                                                var value = input.val();
-                                                                var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
-
-                                                                if (!isValid) {
-                                                                    $('#error-message' + key).html('Masukkan angka saja.');
-                                                                    input[0].setCustomValidity('Invalid input');
-                                                                } else {
-                                                                $('#error-message' + key).html('');
-                                                                input[0].setCustomValidity('');
-                                                                }
-                                                            }
-                                                            </script>
+                                                        </script>
                                                     <?php endif; ?>
                                                 <?php endforeach; ?>
                                             <?php endforeach; ?>
@@ -278,7 +247,7 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-success btn-block" data-dismiss="modal">Simpan!</button>
+                                    <button type="button" class="btn btn-outline-success btn-block" onclick="validateAndSave()">Simpan!</button>
                                 </div>
                             </div>
                         </div>
@@ -391,6 +360,100 @@
         // eval(categoryValue + " =" + );
         // console.log(category);
     }
+
+    
+    function validateInputJumlah(input, sum) {
+        console.log(input);
+        var key = input.attr('id').replace('subQtyInput', '');
+        var value = input.val();
+        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+        if (!isValid || value == '0') {
+            $('#error-message' + key).html('Masukkan angka saja.');
+            input[0].setCustomValidity('Invalid input');
+            console.log(input[0].checkValidity());
+        } else {
+            $('#error-message' + key).html('');
+            input[0].setCustomValidity('');
+            console.log(input[0].checkValidity());
+        }
+
+        // Memastikan nilai tidak melebihi batas maksimum
+        if (value > sum) {
+            $('#error-message' + key).html('Nilai maksimum adalah ' + sum + '.');
+            input[0].setCustomValidity('Invalid input');
+            console.log(input[0].checkValidity());
+        } else {
+            $('#error-message' + key).html('');
+            input[0].setCustomValidity('');
+            console.log(input[0].checkValidity());
+        }
+    }
+
+    function validateInput(input) {
+        var key = input.attr('id').replace('subInput', '');
+        var value = input.val();
+        var isValid = /^\d+$/.test(value); // Memastikan hanya angka yang diizinkan
+
+        if (!isValid || value == '0') {
+            $('#error-message' + key).html('Masukkan angka saja.');
+            input[0].setCustomValidity('Invalid input');
+        } else {
+            $('#error-message' + key).html('');
+            input[0].setCustomValidity('');
+        }
+    }
+
+    function validateAndSave() {
+        // Lakukan validasi di sini, misalnya:
+        var isValid = true;
+
+        // Validasi khusus untuk setiap input
+        <?php foreach ($dataCategories as $key => $category): ?>
+            <?php foreach ($category->subtest as $kc => $subcategory): ?>
+                // Validasi input jumlah
+                $('#subQtyInput<?= $key ?><?= $kc ?>').on('input', function () {
+                    var sumQuestion = <?php echo json_encode(isset($dataCategories[$key]->subtest[$kc]->question) ? $dataCategories[$key]->subtest[$kc]->question : 0); ?>;
+                    console.log(sumQuestion);
+                    validateInputJumlah($(this), sumQuestion);
+                });
+                $('#subInput<?= $key ?><?= $kc ?>').on('input', function () {
+                    validateInput($(this));
+                });
+                var subQtyInput<?= $key ?><?= $kc ?> = $('#subQtyInput<?= $key ?><?= $kc ?>');
+                // validateInputJumlah(subQtyInput<?= $key ?><?= $kc ?>);
+
+                // // Validasi input lainnya (jika ada)
+                var subInput<?= $key ?><?= $kc ?> = $('#subInput<?= $key ?><?= $kc ?>');
+                // validateInput(subInput<?= $key ?><?= $kc ?>);
+
+                // Cek apakah ada pesan kesalahan untuk input ini
+                if (subQtyInput<?= $key ?><?= $kc ?>[0].checkValidity() === false || subInput<?= $key ?><?= $kc ?>[0].checkValidity() === false) {
+                    isValid = false;
+                }
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+
+        // Jika valid, tutup modal dan lakukan penyimpanan
+        if (isValid) {
+            $('#classes_kat').modal('hide');
+            // Lakukan logika penyimpanan atau tindakan lainnya di sini
+            // Misalnya, tampilkan swal fire untuk memberi tahu pengguna bahwa penyimpanan berhasil
+            swal({
+                icon: 'success',
+                title: 'Berhasil Diterapkan!',
+                text: 'Subtes berhasil Diterapkan.',
+            });
+        } else {
+            // Jika tidak valid, munculkan swal fire untuk memberi tahu pengguna ada kesalahan
+            swal({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terdapat kesalahan dalam pengisian form.',
+            });
+        }
+    }
+
 </script>
 
 <style>

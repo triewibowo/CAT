@@ -296,15 +296,19 @@ class AssignmentModel extends CI_Model {
 
 		return $question;
 	}
-	public function getQuestionSubtestLevel($id_sub, $level, $id_student, $id_begin) {
+	public function getQuestionSubtestLevel($id_question, $id_sub, $level, $id_student, $id_begin) {
 		$array = $this->getSubtestQuestionId($id_student, $id_begin);
-		$this->db->where('id_sub', $id_sub);
-		// $this->db->where('question_level', $level);
 		if ($array != []) {
 			$this->db->where_not_in('id_question', $array);
 		}
-		$this->db->where('question_hide', 0);
 		$this->db->order_by('RAND()'); // Mengurutkan data secara acak
+		$this->db->where('id_sub', $id_sub);
+		// $this->db->where('question_level', $level);
+		if ($id_question) {
+			$this->db->where('id_question', $id_question);
+		}
+		
+		$this->db->where('question_hide', 0);
 		$question = $this->db->get('ms_question')->row();
 
 		if ($question) {

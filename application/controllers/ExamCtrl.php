@@ -268,8 +268,8 @@ class ExamCtrl extends CI_Controller {
 					$getClass = $class->class_name;
 				}
 			}
-			$this->dataParse['dataClasses'] = $getClass;
-			// print_r(json_encode($dataClasses));
+			$user->dataClasses = $getClass;
+			// print_r(json_encode($user));
 			// die();
 			$this->dataParse['user'] = $user;
 			$this->dataParse['title'] = 'Profile - ' . $user->student_name;
@@ -278,9 +278,20 @@ class ExamCtrl extends CI_Controller {
 	}
 
 	public function profilEdit() {
-			$user = $this->session->globalStudent;
+			// $user = $this->session->globalStudent;
 			// print_r(json_encode($user));
 			// die();
+			$user_id = $this->session->globalStudent;
+			$user = $this->master->getStudentById($user_id->id_student);
+			$getClass = '';
+			$classes = $this->master->getAllClass();
+			foreach ($classes as $key => $class) {
+				print_r(json_encode($class->id_class));
+				if ($class->id_class == $user->id_class) {
+					$getClass = $class->class_name;
+				}
+			}
+			$user->dataClasses = $getClass;
 			$this->dataParse['dataClasses'] = $this->master->getAllClass();
 			$this->dataParse['user'] = $user;
 			$this->dataParse['title'] = 'Profile - ' . $user->student_name;
@@ -306,6 +317,7 @@ class ExamCtrl extends CI_Controller {
 		$assign_question_id = null;
 		$subtest_status = 1;
 		$soal = [];
+		$id_question = $data['id_question'];
 		try{
 
 			// Update total soal subtest ke proses
@@ -363,7 +375,7 @@ class ExamCtrl extends CI_Controller {
 
 			if (isset($data['level'])) {
 				// Ambil Soal yang sesuai subtest dan level
-				$soal = $this->assignment->getQuestionSubtestLevel($id_sub, $data['level'], $data['id_student'], $data['id_begin']);
+				$soal = $this->assignment->getQuestionSubtestLevel($id_question,$id_sub, $data['level'], $data['id_student'], $data['id_begin']);
 			}
 
 			$response = [

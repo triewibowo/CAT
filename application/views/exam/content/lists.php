@@ -74,7 +74,7 @@
 							<hr style="margin-top:5px; margin-bottom:5px">
 							<h3 style="margin-bottom: 5px !important;"><?= $value->assignment->assignment_name ?></h3>
 							<p class="text-muted"><?= $value->assignment->assignment_type ?></p>
-							<p><a href="#password<?= $row ?>" data-toggle="modal" class="btn btn-default btn-block" style="border-color: #6610f2 !important"><i class="fa fa-pencil"></i> Ujian</a></p>
+							<p><a href="#password<?= $row ?>" data-toggle="modal" class="btn btn-default btn-block" style="border-color: #6610f2 !important" onclick="removeLocalStorage()"><i class="fa fa-pencil"></i> Ujian</a></p>
 						</div>
 					</div>
 				</div>
@@ -99,6 +99,7 @@
 							</div>
 							<script>
 								$(document).ready(function () {
+									localStorage.removeItem('idQuestion');
 									$('#password-error').hide();
 									// Handler saat tombol "Check Password" diklik
 									$('#checkPasswordBtn<?= $row ?>').click(function () {
@@ -164,7 +165,7 @@
 													<?php endforeach; ?>
 													<li class="list-group-item row" data-toggle="collapse" data-target="#collapseExample<?= $category->id_acat ?>" aria-expanded="false" aria-controls="collapseExample">
 														<div class="col-sm-9">
-															<div style="font-weight: 900;"><?= $category->category->cat_name ?></div>
+															<div style="font-weight: 900;"><?= $category->category ? $category->category->cat_name : '-' ?></div>
 														</div>
 														<div class="col-sm-3">
 															<span class="badge bg-primary rounded-pill"><?= number_format($totalCategoryTimer, 1) ?> Menit</span>
@@ -226,14 +227,10 @@
 </div>
 
 <script>
-	$(document).ready(function () {
-		var passwordError = $('#password-error');
-		<?php if ($password == $value->password) { ?>
-			passwordError.hide(); // Sembunyikan pesan kesalahan jika password cocok
-		<?php } else { ?>
-			passwordError.show(); // Tampilkan pesan kesalahan jika password tidak cocok
-		<?php } ?>
-	});
+    function removeLocalStorage() {
+        // Hapus item dari localStorage
+        localStorage.removeItem('idQuestion');
+    }
 </script>
 
 <style>

@@ -176,6 +176,14 @@
 		rollSubtest();
         $('#start').modal('show');
     });
+
+	// Saat pengguna menekan tombol reload atau menggeser URL
+	$(window).on('beforeunload', function(event) {
+		// Tampilkan dialog konfirmasi
+		var confirmationMessage = 'Apakah Anda yakin ingin me-reload halaman?';
+		event.returnValue = confirmationMessage; // Untuk browser yang tidak mendukung standard
+		return confirmationMessage;
+	});
 	
 	// VARIABLE
 	var duration;
@@ -202,6 +210,7 @@
     });
 
 	$('#continue').on('click', function() {
+		localStorage.removeItem('idQuestion');
         // set interval for every second
 		getQuestion();
 		updateProgress();
@@ -232,13 +241,15 @@
 				'level' 		: level,
 				'qty'			: qty,
 				'id_begin'		: id_begin,
-				'id_student'	: id_student
+				'id_student'	: id_student,
+				'id_question'	: localStorage.getItem('idQuestion') ? localStorage.getItem('idQuestion') : null
 			};
 			timer = setInterval(setTime, 1000);
 			totalSeconds = duration * 60;
 			var title_ujian = document.getElementById("title-ujian");
 			title_ujian.innerHTML = "Ujian : " + ready_category.category.cat_name + ' - ' + ready_subtest.subtest.sub_name;
 		}else{
+			localStorage.removeItem('idQuestion');
 			$('#done_exam').modal('show');
 		}
 	}
@@ -269,7 +280,8 @@
 				'duration'		: totalSeconds / 60,
 				'id_begin'		: id_begin,
 				'id_student'	: id_student,
-				'id_category'	: ready_category.id_category
+				'id_category'	: ready_category.id_category,
+				'id_question'	: null
 			};
 			getQuestion();
         }
@@ -290,7 +302,8 @@
 			'duration'		: totalSeconds / 60,
 			'id_begin'		: id_begin,
 			'id_student'	: id_student,
-			'id_category'	: ready_category.id_category
+			'id_category'	: ready_category.id_category,
+			'id_question'	: null
 		};
 		getQuestion();
 		updateProgress();
@@ -334,7 +347,9 @@
 				ready_subtest.status   	= parseInt(response.subtest.status);
 				begin_status			= response.exams.status;
 				answer_user				= [];
+				localStorage.setItem('idQuestion', response.data.id_question);
 				if(response.subtest_status == true){
+					localStorage.removeItem('idQuestion');
 					params = [];
 					ready_category 	= [];
 					ready_subtest	= [];

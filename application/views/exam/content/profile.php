@@ -57,7 +57,7 @@
                     <h6 class="mb-0">Kelas</h6>
                 </div>
                 <div class="col-sm-9 text-secondary">
-                    <?php echo $dataClasses ?>
+                    <?php echo $user->dataClasses ?>
                 </div>
                 </div>
                 <hr>

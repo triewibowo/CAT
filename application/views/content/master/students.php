@@ -35,13 +35,13 @@
                             <div class="input-group-addon"><i class="feather feather-filter"></i></div>
                         </div>
                     </div>
-                    <div class="col-sm-2">
+                    <!-- <div class="col-sm-2">
                         <div class="form-group">
                             <?php if ($cls > 0): ?>
                                 <a href="<?= site_url('page/ExportStudent') ?>" onclick="return confirm('Apa anda yakin ?')" class="btn btn-success"> Export Excel</a>
                             <?php endif ?>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-sm">
                         <a href="<?= site_url('page/student_add') ?>" class="btn btn-success float-right btn-sm"><i class="feather feather-plus"></i> Create</a>
                     </div>

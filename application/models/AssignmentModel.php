@@ -385,9 +385,24 @@ class AssignmentModel extends CI_Model {
 		$this->db->where('id_aclass', $id_aclass);
 		return $this->db->delete('assignment_class');
 	}
-	public function getAllQuestion() {
+	public function getAllQuestion($isub, $startDate, $endDate) {
 		$this->db->where('ms_question.question_hide', 0);
 		$this->db->order_by('ms_question.id_question', 'desc');
+
+		// Validasi untuk 'id_sub'
+		if (!empty($isub) && $isub !== 'null') {
+			$this->db->where('ms_question.id_sub', $isub);
+		}
+	
+		// Validasi untuk rentang tanggal 'question_created'
+		if (!empty($startDate) && !empty($endDate)) {
+			$this->db->where('ms_question.question_created BETWEEN ' . "'" . $startDate . "'" . ' AND ' . "'" . $endDate . "'");
+		} elseif (!empty($startDate)) {
+			$this->db->where('ms_question.question_created >=', $startDate);
+		} elseif (!empty($endDate)) {
+			$this->db->where('ms_question.question_created <=', $endDate);
+		}
+
 		// $this->db->join('ms_question_subtest', 'ms_question.id_sub = ms_question_subtest.id_sub', 'left');
 		// return $this->db->get('ms_question')->result_object();
 		$questions = $this->db->get('ms_question')->result_object();

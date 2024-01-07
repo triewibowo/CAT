@@ -160,7 +160,7 @@
 													<?php $totalCategoryTimer = 0; // Inisialisasi total timer untuk kategori ?>
 													<?php foreach ($category->subtests as $key => $sub): ?>
 														<?php 
-															$totalCategoryTimer += $sub->timer;
+															$totalCategoryTimer += $sub->timer ? $sub->timer : 0;
 														?>
 													<?php endforeach; ?>
 													<li class="list-group-item row" data-toggle="collapse" data-target="#collapseExample<?= $category->id_acat ?>" aria-expanded="false" aria-controls="collapseExample">
@@ -181,7 +181,7 @@
 													<div class="collapse" id="collapseExample<?= $category->id_acat ?>">
 														<?php foreach ($category->subtests as $key => $sub): ?>
 															<?php 
-																$totalCategoryTimer += $sub->timer;
+																$totalCategoryTimer += $sub->timer ? $sub->timer : 0;
 															?>
 														<li class="list-group-item striped-li row">
 															<div class="col-sm-9" style="margin-left: 20px;">

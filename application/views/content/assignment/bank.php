@@ -17,9 +17,50 @@
  <div class="widget-holder widget-full-height col-md-12">
     <div class="widget-bg">
         <div class="widget-body">
-            <div class="row mb-3">
-                <div class="col-sm"></div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <select id="isub" class="form-control">
+                            <option value="null">Pilih subtest</option>
+                            <?php
+                                foreach ($msSubtest as $s) {
+                                    if ($s->id_sub == $sub) {
+                                        $sl = 'selected';
+                                    } else {
+                                        $sl = '';
+                                    }
+                                    echo "<option value='$s->id_sub' $sl>$s->sub_name</option>";
+                                }
+                            ?>
+                        </select>
+                        <div class="input-group-addon"><i class="feather feather-filter"></i></div>
+                    </div>
+                </div>
+
                 <div class="col-sm-2">
+                    <div class="input-group">
+                        <label for="startDate" class="sr-only">Start Date:</label>
+                        <input type="date" id="startDate" class="form-control" placeholder="Start Date">
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="input-group">
+                        <label for="endDate" class="sr-only">End Date:</label>
+                        <input type="date" id="endDate" class="form-control" placeholder="End Date">
+                    </div>
+                </div>
+                <div class="col-sm pt-2">
+                    <a href="#" class="float-left" id="resetFilter">
+                        Reset
+                    </a>
+                </div>
+                <div class="col-sm-2">
+                    <a href="#" class="btn btn-info btn-sm float-right" onclick="applyFilter()"><i class="feather feather-filter"></i>  Terapkan Filter</a>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm">
                     <a href="<?= site_url('page/create_question_type') ?>" class="btn btn-success btn-sm float-right"><i class="feather feather-plus"></i> Create</a>
                 </div>
             </div>
@@ -73,3 +114,31 @@
     <!-- /.widget-bg -->
 </div>
 </div>
+
+<script>
+	 function applyFilter() {
+        const isubValue = document.getElementById('isub').value;
+        const startDateValue = document.getElementById('startDate').value;
+        const endDateValue = document.getElementById('endDate').value;
+
+        // Modify this function based on your requirements
+        // For example, redirect to the filtered URL
+        window.location = `<?=base_url('page/bank')?>/?isub=${isubValue}&start_date=${startDateValue}&end_date=${endDateValue}`;
+    }
+
+     // Tangani klik pada tombol reset
+     $('#resetFilter').on('click', function (event) {
+        event.preventDefault();
+
+        // Reset nilai tanggal ke null
+        $('#startDate, #endDate').val('');
+
+        // Reset nilai isub ke default (misalnya, 'null')
+        $('#isub').val('null');
+
+        // Tambahkan logika lain untuk mereset nilai filter yang lain jika diperlukan
+
+        // Simpan atau terapkan logika reset lainnya di sini
+        applyFilter();
+    });
+</script>

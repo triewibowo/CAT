@@ -516,26 +516,26 @@ class MainPage extends MY_Controller {
 	}
 	public function bank() {
 		$dataQuestion = [];
-		// foreach ($this->assignment->getAllQuestion() as $row => $value) {
-		// 	$assignmentQuestion = $this->assignment->getIdAssignmentByQuestion($value->id_question);
-		// 	if ($assignmentQuestion) {
-		// 		$Assignment = $this->assignment->getAssignmentById($assignmentQuestion->id_assignment);
-		// 		if ($Assignment) {
-		// 			if ($Assignment->id_ == $this->session->userdata('id_')) {
-		// 				$value->totalAnswer = count($this->assignment->getAnswerByQuestion($value->id_question));
-		// 				$value->id_assignment = $this->assignment->getIdAssignmentByQuestion($value->id_question)->id_assignment;
-		// 				array_push($dataQuestion, $value);
-		// 			}
-		// 		}
-		// 	}
-		// }
+	
+		// Mendapatkan nilai filter dari URL
+		$isub = $this->input->get('isub');
+		$startDate = $this->input->get('start_date');
+		$endDate = $this->input->get('end_date');
 
-		// $this->parseData['dataQuestion'] = $dataQuestion;
-		$this->parseData['dataQuestion'] = $this->assignment->getAllQuestion();
+		// print_r(json_encode($isub));
+		// die();
+	
+		$this->parseData['msSubtest'] = $this->master->getAllSubtest();
+		$this->parseData['sub'] = $isub;
+		
+		// Menggunakan nilai filter untuk mengambil pertanyaan yang sesuai
+		$this->parseData['dataQuestion'] = $this->assignment->getAllQuestion($isub, $startDate, $endDate);
+	
 		$this->parseData['content'] = 'content/assignment/bank';
 		$this->parseData['title'] = 'Bank Soal ';
-		$this->load->view('MainView',$this->parseData);
+		$this->load->view('MainView', $this->parseData);
 	}
+	
 	public function results() {
 		if ($this->input->post()) {
 			$dataAssignments = [];

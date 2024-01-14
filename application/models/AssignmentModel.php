@@ -314,7 +314,8 @@ class AssignmentModel extends CI_Model {
 		if ($question) {
 			if ($question->id_type == 1 ||
 				$question->id_type == 2 ||
-				$question->id_type == 4) {
+				$question->id_type == 4 ||
+				$question->id_type == 6) {
 				$this->db->where('id_question', $question->id_question);
 				$this->db->where('option_hide', 0);
 				$question->answer = $this->db->get('question_option')->result_object();
@@ -385,7 +386,7 @@ class AssignmentModel extends CI_Model {
 		$this->db->where('id_aclass', $id_aclass);
 		return $this->db->delete('assignment_class');
 	}
-	public function getAllQuestion($isub, $startDate, $endDate) {
+	public function getAllQuestion($isub=null, $startDate=null, $endDate=null) {
 		$this->db->where('ms_question.question_hide', 0);
 		$this->db->order_by('ms_question.id_question', 'desc');
 

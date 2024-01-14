@@ -55,7 +55,7 @@
 			<div class="row">
 				<div class="col-sm-2"></div>
 				<div class="col-sm-8">
-					<div class="panel">
+					<div class="panel" id="question-container">
 						<div class="panel-body" style="padding: 1.5rem 5rem;background-color:#fbfbfb">
 							<!-- SOAL -->
 							<img src="image.jpg" id="image-question" alt="Image description" style="height:250px; margin-bottom:45px; display: block; margin-left: auto; margin-right: auto;">
@@ -69,6 +69,11 @@
 							</div>
 							</div>
 						</div>
+					</div>
+
+					<div id="load-question" style="display: none !important;">
+						<i class="fa fa-refresh fa-spin" style="margin-bottom: .5em; font-size:2em"></i>
+						<p>Loading...</p>
 					</div>
 				</div>
 				<div class="col-sm-2"></div>
@@ -218,7 +223,6 @@
     });
 	
 	function rollSubtest(){
-		console.log(begin_status)
 		if (begin_status != 2) {
 			exams.categories.forEach(exam_category => {
 				if(exam_category.status != 2){
@@ -288,7 +292,6 @@
     }
 
 	function nextQuestion(){
-		console.log(qty)
 		qty += 1;
 		checkAnswer(answer_user);
 		params = {
@@ -330,6 +333,8 @@
 	}
 
 	function getQuestion(status) {
+		$('#question-container').hide();
+      	$('#load-question').attr('style', 'text-align: center').show();
 		return new Promise(function(resolve, reject) {
 			$.ajax({
 			url: '<?= base_url('exam/getQuestion/') ?>',
@@ -348,6 +353,8 @@
 				begin_status			= response.exams.status;
 				answer_user				= [];
 				localStorage.setItem('idQuestion', response.data.id_question);
+				$('#question-container').show();
+        		$('#load-question').attr('style', 'display: none !important');
 				if(response.subtest_status == true){
 					localStorage.removeItem('idQuestion');
 					params = [];
@@ -366,7 +373,6 @@
 				resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
 			},
 			error: function(xhr, status, error) {
-				console.log(error);
 				reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
 			}
 			});
@@ -546,7 +552,7 @@
 					const answerOption = $('<div class="row" style="margin-bottom:10px">');
 					
 					const label = $('<div class="col-sm-6">')
-						.append($('<label class="btn btn-default btn-block" style="text-align:left">')
+						.append($('<label class="btn btn-default btn-block long-label" style="text-align:left">')
 							.html(optionText.answer[i].option_));
 
 					const select = $('<div class="col-sm-6">')
@@ -581,6 +587,68 @@
 					answerOption.append(select);
 					answerOptionsElement.append(answerOption);
 				}
+			}else if (ready_question.id_type == 6){
+				// Buat tabel dengan jQuery
+				var table = $("<table>").attr("id", "optionsTable").attr("class", "table table-striped");
+
+				// Tambahkan header tabel
+				var thead = $("<thead>").appendTo(table);
+				$("<tr>").append(
+					$("<th>").attr("style", "text-align:center").text("No."),
+					$("<th>").attr("width", "60%").text("Option"),
+					$("<th>").attr("style", "text-align:center").text("Benar/Salah")
+				).appendTo(thead);
+
+				// Tambahkan body tabel
+				var tbody = $("<tbody>").appendTo(table);
+
+				// Tambahkan data ke tabel
+				for (var i = 0; i < ready_question.answer.length; i++) {
+					// Buat fungsi closure untuk menyimpan nilai i yang benar
+					function createChangeHandler(index) {
+						return function () {
+							// Gunakan nilai i yang benar
+							var tableAndData = {
+								value: $(this).val(),
+								answer: ready_question.answer[index]
+							};
+							inputAnswer(tableAndData);
+						};
+					}
+
+					var currentIndex = i;
+					var id = ready_question.answer[currentIndex].id_option;
+					var checkAnswer = ready_question.answer[currentIndex].option_true;
+
+					var row = $("<tr>").append(
+						$("<td>").attr("style", "text-align:center").text(currentIndex + 1),
+						$("<td>").html(ready_question.answer[currentIndex].option_),
+						$("<td>").attr("style", "text-align:center").append(
+							$("<div>").attr("class", "btn-group").attr("data-toggle", "buttons").append(
+								$("<label>").addClass('btn btn-default btn-sm').append(
+									$("<input>").attr({
+										type: 'radio',
+										name: 'radio_' + currentIndex,
+										value: '1'
+									})
+									.on('change', createChangeHandler(currentIndex)),
+									'Benar'
+								),
+								$("<label>").addClass('btn btn-default btn-sm').append(
+									$("<input>").attr({
+										type: 'radio',
+										name: 'radio_' + currentIndex,
+										value: '0'
+									})
+									.on('change', createChangeHandler(currentIndex)),
+									'Salah'
+								),
+							)
+						)
+					).appendTo(tbody);
+				}
+
+				answerOptionsElement.append(table);
 			}
 		}
 	}
@@ -604,12 +672,27 @@
 		}else if (ready_question.id_type == 3){
 			let user_input = $(`input[name="answer-match-text${ready_question.id_question}"]`).val(); // Mendapatkan nilai input teks
 			answer_user = user_input;
-		}else{
+		}else if (ready_question.id_type == 5){
 			var data = id;
 			setTimeout(() => {
 				answer_user.push(data);
 			}, 500);
-			console.log(answer_user);
+			var index = -1;
+			// Cari indeks di mana id cocok dalam array
+			if (answer_user.length > 0) {
+			   index = answer_user.findIndex(item => item.answer.id_option == id.answer.id_option);
+			}
+
+			// Periksa jika id cocok ditemukan
+			if (index !== -1) {
+				// Hapus objek yang cocok dari array
+				answer_user.splice(index, 1);
+			}
+		}else if (ready_question.id_type == 6){
+			var data = id;
+			setTimeout(() => {
+				answer_user.push(data);
+			}, 500);
 			var index = -1;
 			// Cari indeks di mana id cocok dalam array
 			if (answer_user.length > 0) {
@@ -632,13 +715,11 @@
 					level += 1;
 					isTrue = 1;
 				}
-				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
 					isTrue = 0;
 				}
-				console.log("salah")
 			}
 		}
 		else if (ready_question.id_type == 1) {
@@ -648,13 +729,11 @@
 					level += 1;
 					isTrue = 1;
 				}
-				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
 					isTrue = 0;
 				}
-				console.log("salah")
 			}
 		}
 		else if (ready_question.id_type == 4) {
@@ -674,13 +753,11 @@
 					level += 1;
 					isTrue = 1;
 				}
-				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
 					isTrue = 0;
 				}
-				console.log("salah")
 			}
 
 		}else if (ready_question.id_type == 3){// Mendapatkan nilai input teks
@@ -691,15 +768,13 @@
 					level += 1;
 					isTrue = 1;
 				}
-				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
 					isTrue = 0;
 				}
-				console.log("salah")
 			}
-		}else{
+		}else if (ready_question.id_type == 5){
 			var isFalse = false;
 			input.forEach(element => {
 				if (element.answer.match.id_match != element.matchAnswer.id_match) {
@@ -712,13 +787,30 @@
 					level += 1;
 					isTrue = 1;
 				}
-				console.log("benar")
 			}else{
 				if (level > 1) {
 					level -= 1;
 					isTrue = 0;
 				}
-				console.log("salah")
+			}
+		}else if (ready_question.id_type == 6){
+			var isFalse = false;
+			input.forEach(element => {
+				if (element.answer.option_true != element.value) {
+					isFalse = true;
+				}
+			});
+
+			if (!isFalse) {
+				if (level < 5) {
+					level += 1;
+					isTrue = 1;
+				}
+			}else{
+				if (level > 1) {
+					level -= 1;
+					isTrue = 0;
+				}
 			}
 		}
 
@@ -790,6 +882,11 @@
 
 		.question-number p {
 			display: inline;
+		}
+
+		.long-label {
+			word-wrap: break-word; /* Mengizinkan pemisahan kata pada baris baru */
+			white-space: normal;   /* Mengizinkan pemisahan baris */
 		}
 
 </style>

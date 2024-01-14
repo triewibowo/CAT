@@ -43,7 +43,7 @@
             <div class="widget-body">
             <div class="row">
             <input type="hidden" name="id_type" value="2">
-                    <div class="col-lg-4">
+                    <div class="col-lg">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
                                 <select class="form-control" name="id_sub">
@@ -53,7 +53,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg">
                             <div class="form-group">
                                 <label>Pelajaran</label>
                                 <select class="form-control" name="id_lesson">
@@ -63,7 +63,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg">
                             <div class="form-group">
                                 <label>Level Soal</label>
                                 <select class="form-control" name="id_level">

@@ -41,7 +41,7 @@
             <div class="widget-body">
                   <div class="row">
                   <input type="hidden" name="id_type" value="3">
-                    <div class="col-lg-3">
+                    <div class="col-lg">
                    <div class="form-group">
                                 <label>Jenis Sub Tes</label>
                                 <select class="form-control" name="id_sub">
@@ -51,7 +51,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg">
                             <div class="form-group">
                                 <label>Pelajaran</label>
                                 <select class="form-control" name="id_lesson">
@@ -61,7 +61,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg">
                             <div class="form-group">
                                 <label>Level Soal</label>
                                 <select class="form-control" name="id_level">
@@ -71,12 +71,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <!-- <div class="col-lg-3">
                             <div class="form-group">
                                 <label>Timer</label>
                                 <input type="number" class="form-control" name="timer" placeholder="Format detik" required>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 <legend>Pertanyaan <a href="#" onclick="hideShowQuest()"><i id="iconQuest" class="feather feather-chevron-down"></i></a></legend>
                 <script type="text/javascript">

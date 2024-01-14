@@ -1,7 +1,7 @@
 <div class="x-hnavigation" style="background-color:#337ab7; color:white">
     <div class="x-hnavigation-logo">
         <center>
-            <h3 style="margin-top:30px; color:white">COMPUTER APTITUDE TEST</h3>
+            <h3 style="margin-top:30px; color:white">COMPUTER ADAPTIVE TEST</h3>
         </center>
     </div>
     <ul>

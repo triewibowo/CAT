@@ -66,7 +66,7 @@
                 <div class="card-login-web-admin">
                     <div class="login-content px-3 w-100 text-center">
                         <img src="<?php echo base_url('assets/img/logo.png'); ?>" width="40%" style="margin-bottom:1em"/>
-                        <h5 class="heading-font-family fw-300 pd-b-30"><strong>COMPUTER APTITUDE TEST</strong></h5>
+                        <h5 class="heading-font-family fw-300 pd-b-30"><strong>COMPUTER ADAPTIVE TEST</strong></h5>
     
                         <form class="text-center" action="<?= site_url('Auth/login') ?>" method="POST">
                         <div class="form-group">

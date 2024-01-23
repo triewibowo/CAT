@@ -286,7 +286,7 @@ class ExamCtrl extends CI_Controller {
 			$getClass = '';
 			$classes = $this->master->getAllClass();
 			foreach ($classes as $key => $class) {
-				print_r(json_encode($class->id_class));
+				// print_r(json_encode($class->id_class));
 				if ($class->id_class == $user->id_class) {
 					$getClass = $class->class_name;
 				}
@@ -305,6 +305,40 @@ class ExamCtrl extends CI_Controller {
 		$this->session->unset_userdata('examToken');
 		$this->message('','Silahkan login kembali untuk melanjutkan','success');
 		redirect('Auth/exam');
+	}
+
+	public function updateDurationSubtest(){
+		$data = json_decode($this->input->post('question'), true);
+		try{
+			// Update total soal subtest ke proses
+			$d = [
+				'id' 			=> $data['subtest']['id'],
+				'timer' 		=> isset($data['duration']) ? $data['duration'] : $data['subtest']['timer'],
+			];
+			$subtest = $this->assignment->updateAssignmentBeginSubtest($d);
+			$response = [
+				'status' => 'success',
+				'message' => 'Durasi berhasil diupdate',
+			];
+			// Mengirim respons JSON
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+
+		} catch (\Exception $e) {
+
+			// Jika terjadi error, kirim respons error
+			$response = [
+				'status' => 'error',
+				'message' => 'Terjadi kesalahan saat mengambil data',
+				'error' => $e->getMessage()
+			];
+
+			// Mengirim respons JSON
+			$this->output
+				->set_content_type('application/json')
+				->set_output(json_encode($response));
+		}
 	}
 
 	public function getQuestion(){
@@ -340,7 +374,7 @@ class ExamCtrl extends CI_Controller {
 
 			
 			// Update status subtest ke selesai
-			if($data['subtest']['status'] == 1 && (int) $data['subtest']['qty_soal'] <= $data['qty'] || isset($data['time_off']) && $data['time_off']){
+			if(($data['subtest']['status'] == 1 || $data['subtest']['status'] == 0) && (int) $data['subtest']['qty_soal'] <= $data['qty'] || isset($data['time_off']) && $data['time_off']){
 				$d = [
 					'id' => $data['subtest']['id'],
 					'status' 	=> 2,

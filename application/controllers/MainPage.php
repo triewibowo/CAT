@@ -173,17 +173,18 @@ class MainPage extends MY_Controller {
 		}
 	}
 	public function student_add() {
-		if ($this->session->userdata('level') == 'guru') {
-			$dataClasses = $this->master->getClassByTeacher($this->session->userdata('id_'));
-		} else {
-			$dataClasses = $this->master->getAllClass();
-		}
-		foreach ($dataClasses as $row => $value) {
-			if (count($this->master->getStudentByClass($value->id_class)) >= 20) {
-				unset($dataClasses[$row]);
-			}
-		}
-		$this->parseData['dataClasses'] = $dataClasses;
+		// if ($this->session->userdata('level') == 'guru') {
+		// 	$dataClasses = $this->master->getClassByTeacher($this->session->userdata('id_'));
+		// } else {
+		// 	$dataClasses = $this->master->getAllClass();
+		// }
+		// foreach ($dataClasses as $row => $value) {
+		// 	if (count($this->master->getStudentByClass($value->id_class)) >= 20) {
+		// 		unset($dataClasses[$row]);
+		// 	}
+		// }
+		// $this->parseData['dataClasses'] = $dataClasses;
+		$this->parseData['dataClasses'] = $this->master->getAllClass();
 		$this->parseData['content'] = 'content/master/student_add';
 		$this->parseData['title'] = 'Tambah Siswa ';
 		$this->load->view('MainView',$this->parseData);
@@ -196,17 +197,18 @@ class MainPage extends MY_Controller {
 		if (!$dataStudent) {
 			redirect('page/students');
 		}
-		if ($this->session->userdata('level') == 'guru') {
-			$dataClasses = $this->master->getClassByTeacher($this->session->userdata('id_'));
-		} else {
-			$dataClasses = $this->master->getAllClass();
-		}
-		foreach ($dataClasses as $row => $value) {
-			if (count($this->master->getStudentByClass($value->id_class)) >= 20) {
-				unset($dataClasses[$row]);
-			}
-		}
-		$this->parseData['dataClasses'] = $dataClasses;
+		// if ($this->session->userdata('level') == 'guru') {
+		// 	$dataClasses = $this->master->getClassByTeacher($this->session->userdata('id_'));
+		// } else {
+		// 	$dataClasses = $this->master->getAllClass();
+		// }
+		// foreach ($dataClasses as $row => $value) {
+		// 	if (count($this->master->getStudentByClass($value->id_class)) >= 20) {
+		// 		unset($dataClasses[$row]);
+		// 	}
+		// }
+		// $this->parseData['dataClasses'] = $dataClasses;
+		$this->parseData['dataClasses'] = $this->master->getAllClass();
 		$this->parseData['dataStudent'] = $dataStudent;
 		$this->parseData['content'] = 'content/master/student_edit';
 		$this->parseData['title'] = 'Ubah Siswa ';
@@ -444,7 +446,7 @@ class MainPage extends MY_Controller {
 	public function assignments() {
 		$dataAssignment = $this->assignment->getAllAssignment();
 		foreach ($dataAssignment as $row => $value) {
-			$dataAssignment[$row]->totalQuestion = count($this->assignment->getQuestionByAssignment($value->id_assignment));
+			$value->totalQuestion = $value->assigns[0]->total_soal;
 		}
 		$this->parseData['dataAssignment'] = $dataAssignment;
 		$this->parseData['content'] = 'content/assignment/list';

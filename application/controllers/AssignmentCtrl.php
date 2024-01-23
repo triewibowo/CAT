@@ -66,7 +66,7 @@ class AssignmentCtrl extends MY_Controller {
 						'id_category'	=> $id_categories,
 						'id_subtest'	=> $cat['id'],
 						'qty_soal'		=> $cat['question_qty'],
-						'timer'			=> $cat['timer'],
+						'timer'			=> $cat['timer'] * 60,
 						'status'		=> 0,
 					];
 
@@ -105,7 +105,7 @@ class AssignmentCtrl extends MY_Controller {
 							'id_begin_cat'	=> $id_begin_cat,
 							'id_subtest'	=> $cat['id'],
 							'qty_soal'		=> $cat['question_qty'],
-							'timer'			=> $cat['timer'],
+							'timer'			=> $cat['timer'] * 60,
 							'status'		=> 0,
 							'status'		=> 0,
 							'total_soal'	=> 0,

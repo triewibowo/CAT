@@ -137,7 +137,7 @@
 													<span style="font-weight: 900;"><?= $value->assignment->assignment_type ?></span>
 												</div>
 												<div class="col-sm-4" style="text-align: center;">
-													Sisa Waktu :
+													Total Waktu :
 													<span style="font-weight: 900;"><?= number_format($value->duration, 1) ?> Menit</span>
 												</div>
 												<div class="col-sm-4" style="text-align: right;">
@@ -160,7 +160,7 @@
 													<?php $totalCategoryTimer = 0; // Inisialisasi total timer untuk kategori ?>
 													<?php foreach ($category->subtests as $key => $sub): ?>
 														<?php 
-															$totalCategoryTimer += $sub->timer ? $sub->timer : 0;
+															$totalCategoryTimer += $sub->timer ? $sub->timer / 60 : 0;
 														?>
 													<?php endforeach; ?>
 													<li class="list-group-item row" data-toggle="collapse" data-target="#collapseExample<?= $category->id_acat ?>" aria-expanded="false" aria-controls="collapseExample">
@@ -181,7 +181,7 @@
 													<div class="collapse" id="collapseExample<?= $category->id_acat ?>">
 														<?php foreach ($category->subtests as $key => $sub): ?>
 															<?php 
-																$totalCategoryTimer += $sub->timer ? $sub->timer : 0;
+																$totalCategoryTimer += $sub->timer ? $sub->timer / 60 : 0;
 															?>
 														<li class="list-group-item striped-li row">
 															<div class="col-sm-9" style="margin-left: 20px;">
@@ -195,7 +195,7 @@
 																<?php endif; ?>
 															</div>
 															<div class="col-sm-2">
-																<div style="font-weight:600; font-size:10px"><?= number_format($sub->timer, 1) ?> Menit</div>
+																<div style="font-weight:600; font-size:10px"><?= number_format($sub->timer ? $sub->timer / 60 : 0, 1) ?> Menit</div>
 																<div style="font-weight:100; font-size:10px">Sisa Soal <?= $sub->total_soal ?>/<?= $sub->qty_soal ?></div>
 															</div>
 														</li>

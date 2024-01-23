@@ -147,7 +147,7 @@
 					<small>Jawablah dengan keyakinan anda sendiri</small>
 				</div>
 				<div class="modal-footer">
-					<button id="continue" class="btn btn-primary btn-flat btn-block"><i class="fa fa-check-square"></i> Lanjutkan!</button>
+					<button id="continue-button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-check-square"></i> <span id="countdown-label"></span></button>
 				</div>
 			</div>
 		</div>
@@ -176,20 +176,6 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript">
-	$(document).ready(function() {
-		$('#image-question').hide();
-		rollSubtest();
-        $('#start').modal('show');
-    });
-
-	// Saat pengguna menekan tombol reload atau menggeser URL
-	$(window).on('beforeunload', function(event) {
-		// Tampilkan dialog konfirmasi
-		var confirmationMessage = 'Apakah Anda yakin ingin me-reload halaman?';
-		event.returnValue = confirmationMessage; // Untuk browser yang tidak mendukung standard
-		return confirmationMessage;
-	});
-	
 	// VARIABLE
 	var duration;
 	var timer;
@@ -199,6 +185,7 @@
 	var ready_subtest	= [];
 	var ready_question	= [];
 	var params			= [];
+	var paramsBr		= [];
 	var level 			= 3;
 	var answer_user 	= [];
 	let qty 			= 0;
@@ -206,21 +193,52 @@
 	let id_begin 		= <?php echo json_encode($dataAssignments->id_abegin); ?>;
 	let id_student 		= <?php echo json_encode($dataAssignments->id_student); ?>;
 	var	exams 			= <?php echo json_encode($dataAssignments->assignment); ?>;
+	var timeoutId;
 
-	$('#start').on('click', function() {
+	$(document).ready(function() {
+		$('#image-question').hide();
+		// rollSubtest();
+        $('#start').modal('show');
+    });
+
+	// Saat pengguna menekan tombol reload atau menggeser URL
+	$(window).on('beforeunload', async function(event) {
+		// Tampilkan dialog konfirmasi
+		paramsBr = {
+			'subtest'		: ready_subtest,
+			'id_begin'		: id_begin,
+			'id_student'	: id_student,
+			'duration'		: totalSeconds,
+		};
+
+		await beforeReloadProcess();
+		var confirmationMessage = 'Apakah Anda yakin ingin me-reload halaman?';
+		event.returnValue = confirmationMessage; // Untuk browser yang tidak mendukung standard
+		return confirmationMessage;
+	});
+	
+
+	$('#start').on('click', async function() {
         // set interval for every second
+		await rollSubtest();
 		getQuestion();
 		updateProgress();
         $('#start').modal('hide');
     });
 
-	$('#continue').on('click', function() {
+	$('#continue-button').on('click', function() {
+		continueButton();
+    });
+
+	async function continueButton() {
 		localStorage.removeItem('idQuestion');
-        // set interval for every second
+		clearTimeout(timeoutId);
+		await rollSubtest();
 		getQuestion();
 		updateProgress();
         $('#continue').modal('hide');
-    });
+		return;
+	}
 	
 	function rollSubtest(){
 		if (begin_status != 2) {
@@ -249,12 +267,14 @@
 				'id_question'	: localStorage.getItem('idQuestion') ? localStorage.getItem('idQuestion') : null
 			};
 			timer = setInterval(setTime, 1000);
-			totalSeconds = duration * 60;
+			totalSeconds = duration;
 			var title_ujian = document.getElementById("title-ujian");
 			title_ujian.innerHTML = "Ujian : " + ready_category.category.cat_name + ' - ' + ready_subtest.subtest.sub_name;
 		}else{
 			localStorage.removeItem('idQuestion');
 			$('#done_exam').modal('show');
+			clearInterval(timer);
+			$('#continue').modal('hide'); // Menampilkan modal
 		}
 	}
 
@@ -268,28 +288,31 @@
     }
 
 	function setTime() {
-        var minutesLabel = document.getElementById("minutes");
-        var secondsLabel = document.getElementById("seconds");
-        --totalSeconds;
-        secondsLabel.innerHTML = pad(totalSeconds % 60);
-        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
-        if(totalSeconds == 0){
-            clearInterval(timer);
+		var minutesLabel = document.getElementById("minutes");
+		var secondsLabel = document.getElementById("seconds");
+
+		if (totalSeconds > 0) {
+			--totalSeconds;
+			secondsLabel.innerHTML = pad(totalSeconds % 60);
+			minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+		} else {
+			clearInterval(timer);
 			params = {
-				'subtest'		: ready_subtest,
-				'question'		: ready_question.id_question,
-				'is_true' 		: isTrue,
-				'time_off' 		: true,
-				'qty'			: qty,
-				'duration'		: totalSeconds / 60,
-				'id_begin'		: id_begin,
-				'id_student'	: id_student,
-				'id_category'	: ready_category.id_category,
-				'id_question'	: null
+				'subtest'       : ready_subtest,
+				'question'      : ready_question.id_question,
+				'is_true'       : isTrue,
+				'time_off'      : true,
+				'qty'           : qty,
+				'duration'      : totalSeconds,
+				'id_begin'      : id_begin,
+				'id_student'    : id_student,
+				'id_category'   : ready_category.id_category,
+				'id_question'   : null
 			};
 			getQuestion();
-        }
-    }
+		}
+	}
+
 
 	function nextQuestion(){
 		qty += 1;
@@ -302,7 +325,7 @@
 			'is_true' 		: isTrue,
 			'level' 		: level,
 			'qty'			: qty,
-			'duration'		: totalSeconds / 60,
+			'duration'		: totalSeconds,
 			'id_begin'		: id_begin,
 			'id_student'	: id_student,
 			'id_category'	: ready_category.id_category,
@@ -333,6 +356,7 @@
 	}
 
 	function getQuestion(status) {
+		countdown = 3;
 		$('#question-container').hide();
       	$('#load-question').attr('style', 'text-align: center').show();
 		return new Promise(function(resolve, reject) {
@@ -363,9 +387,12 @@
 					ready_question	= [];
 					answer_user		= [];
 					qty				= 0;
-					rollSubtest();
 					if (begin_status != 2) {
-						$('#continue').modal('show');
+						clearInterval(timer);
+						$('#continue').modal('show'); // Menampilkan modal
+						countdownTimer(3)
+					}else{
+						rollSubtest();
 					}
 				}else{
 					showQuestion();
@@ -377,6 +404,39 @@
 			}
 			});
 		});
+	}
+
+	function beforeReloadProcess() {
+		return new Promise(function(resolve, reject) {
+			$.ajax({
+			url: '<?= base_url('exam/updateDurationSubtest/') ?>',
+			method: 'POST',
+			data: {
+				question: JSON.stringify(paramsBr)
+			},
+			dataType: 'json',
+			success: function(response) {
+				resolve(); // Menggunakan resolve() untuk menandakan bahwa operasi telah selesai
+			},
+			error: function(xhr, status, error) {
+				reject(error); // Menggunakan reject() untuk menandakan bahwa operasi gagal
+			}
+			});
+		});
+	}
+
+	function countdownTimer(seconds) {
+		if (seconds >= 0) {
+			console.log(seconds); // Gantilah dengan fungsi atau tindakan yang ingin Anda eksekusi
+			$('#countdown-label').text('Lanjutkan dalam ' + seconds + ' detik');
+			// Membuat timeout untuk memanggil dirinya sendiri setelah 1 detik
+			timeoutId = setTimeout(function () {
+				countdownTimer(seconds - 1);
+			}, 1000);
+		} else {
+			console.log("Waktu habis!");
+			continueButton();
+		}
 	}
 
 	// SOAL DAN JAWABAN

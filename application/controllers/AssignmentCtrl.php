@@ -36,10 +36,14 @@ class AssignmentCtrl extends MY_Controller {
 			if ($this->input->post('show_report')) {
 				$data['show_report'] = 1;
 			}
+			if ($classes == null) {
+				$data['is_all_student'] = 1;
+			}
 			$data['id_'] = $this->session->userdata('id_');
 			$data['author_'] = $this->session->userdata('level');
 			$data['assignment_created'] = date('Y-m-d H:i:s');
 			$data['assignment_active'] = 1;
+			$data['status'] = 0; //STATUS WAITING
 			$dirName = date('s').'-'.substr(sha1($data['id_']), 4,7).'-'.$data['id_'];
 			if (!is_dir('assets/images/assignments/'.$dirName)) {
 				mkdir('./assets/images/assignments/' . $dirName, 0777, TRUE);
@@ -75,61 +79,61 @@ class AssignmentCtrl extends MY_Controller {
 			}
 			
 			// STUDENT //
-			foreach ($students as $key => $student) {
-				$input_student = [
-					'id_assignment'	=> $idAssignment,
-					'id_student'	=> $student->id_student,
-					'duration'		=> $duration,
-					'total_soal'	=> $total_soal,
-					'password'		=> mt_rand(1000000, 9999999),
-					'status'		=> 0
-				];
+			// foreach ($students as $key => $student) {
+			// 	$input_student = [
+			// 		'id_assignment'	=> $idAssignment,
+			// 		'id_student'	=> $student->id_student,
+			// 		'duration'		=> $duration,
+			// 		'total_soal'	=> $total_soal,
+			// 		'password'		=> mt_rand(1000000, 9999999),
+			// 		'status'		=> 0
+			// 	];
 
-				$id_begin = $this->assignment->insertBegin($input_student);
+			// 	$id_begin = $this->assignment->insertBegin($input_student);
 
-				foreach ($categories as $key => $category) {
-					$categ = [
-						'id_begin'		=> $id_begin,
-						'id_category'	=> $category['id'],
-						'status'		=> 0,
-						'order'		=> $category['order'],
+			// 	foreach ($categories as $key => $category) {
+			// 		$categ = [
+			// 			'id_begin'		=> $id_begin,
+			// 			'id_category'	=> $category['id'],
+			// 			'status'		=> 0,
+			// 			'order'		=> $category['order'],
+			// 		];
+
+			// 		$id_begin_cat = $this->assignment->insertAssignmentBeginCategory($categ);
+
+			// 		// ASSIGNMENT SUBTEST
+			// 		foreach ($category['sub'] as $k => $cat) {
+
+			// 			$sub = [
+			// 				'id_begin'		=> $id_begin,
+			// 				'id_begin_cat'	=> $id_begin_cat,
+			// 				'id_subtest'	=> $cat['id'],
+			// 				'qty_soal'		=> $cat['question_qty'],
+			// 				'timer'			=> $cat['timer'] * 60,
+			// 				'status'		=> 0,
+			// 				'status'		=> 0,
+			// 				'total_soal'	=> 0,
+			// 				'order'			=> $cat['order'],
+			// 			];
+
+			// 			$this->assignment->insertAssignmentBeginSubtest($sub);
+			// 		}
+			// 	}
+			// }
+
+			// CLASS //
+			if ($classes != null) {
+				// $classes = $this->master->getAllClass();
+				foreach ($classes as $key => $class) {
+					$input_class = [
+						'id_assignment'	=> $idAssignment,
+						'id_class'		=> $class->id_class != null ? $class->id_class : $class
 					];
-
-					$id_begin_cat = $this->assignment->insertAssignmentBeginCategory($categ);
-
-					// ASSIGNMENT SUBTEST
-					foreach ($category['sub'] as $k => $cat) {
-
-						$sub = [
-							'id_begin'		=> $id_begin,
-							'id_begin_cat'	=> $id_begin_cat,
-							'id_subtest'	=> $cat['id'],
-							'qty_soal'		=> $cat['question_qty'],
-							'timer'			=> $cat['timer'] * 60,
-							'status'		=> 0,
-							'status'		=> 0,
-							'total_soal'	=> 0,
-							'order'			=> $cat['order'],
-						];
-
-						$this->assignment->insertAssignmentBeginSubtest($sub);
-					}
+	
+					$this->assignment->insertAssignmentClass($input_class);
 				}
 			}
 
-			// CLASS //
-			if ($classes == null) {
-				$classes = $this->master->getAllClass();
-			}
-
-			foreach ($classes as $key => $class) {
-				$input_class = [
-					'id_assignment'	=> $idAssignment,
-					'id_class'		=> $class->id_class != null ? $class->id_class : $class
-				];
-
-				$this->assignment->insertAssignmentClass($input_class);
-			}
 
 			$this->message('Selamat!','Data ujian berhasil di simpan, silahkan buat soal untuk melanjutkan','success');
 			redirect('page/assignments/');

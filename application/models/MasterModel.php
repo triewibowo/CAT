@@ -88,9 +88,9 @@ class MasterModel extends CI_Model {
 					}
 
 				}
-
 			}
 			
+			// $category->subtest = [];
 			$category->subtest = $subtests;
 		}
 

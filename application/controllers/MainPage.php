@@ -216,6 +216,8 @@ class MainPage extends MY_Controller {
 	}
 	public function create() {
 		$this->parseData['dataCategories'] = $this->master->getAllSubtestCatWithRelation();
+		// print_r(json_encode($this->parseData['dataCategories']));
+		// die();
 		$this->parseData['dataClasses'] = $this->master->getAllClass();
 		$this->parseData['content'] = 'content/assignment/create';
 		$this->parseData['title'] = 'Buat Ujian ';
@@ -445,9 +447,22 @@ class MainPage extends MY_Controller {
 	}
 	public function assignments() {
 		$dataAssignment = $this->assignment->getAllAssignment();
-		foreach ($dataAssignment as $row => $value) {
-			$value->totalQuestion = $value->assigns[0]->total_soal;
+		foreach ($dataAssignment as $value) {
+			$totalQtySoal = 0;
+		
+			foreach ($value->categories as $category) {
+				foreach ($category->subtests as $subtest) {
+					// Mengakses nilai qty_soal dan menambahkannya ke total
+					$totalQtySoal += (int)$subtest->qty_soal;
+				}
+			}
+		
+			// Menyimpan nilai total ke properti totalQuestion pada setiap elemen dataAssignment
+			$value->totalQuestion = $totalQtySoal;
 		}
+		
+		// print_r(json_encode($dataAssignment));
+		// die();
 		$this->parseData['dataAssignment'] = $dataAssignment;
 		$this->parseData['content'] = 'content/assignment/list';
 		$this->parseData['title'] = 'List Ujian ';
